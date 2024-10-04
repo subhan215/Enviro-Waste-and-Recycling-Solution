@@ -19,10 +19,11 @@ const generate_access_token = function (user_id,email_id,name){
         process.env.ACCESS_TOKEN_SECRET
     )
 }
-const generate_refresh_token  = function (user_id){
+const generate_refresh_token  = function (user_id , email_id){
     return jwt.sign(
         {
             user_id,
+            email_id
         },
         process.env.REFRESH_TOKEN_SECRET
     )
@@ -33,10 +34,11 @@ const generate_access_and_refresh_tokens = async(user_id,email_id,name) => {
     try {
         console.log("in generate tokens")
         const access_token = generate_access_token(user_id,email_id,name)
-        const refresh_token = generate_refresh_token(user_id)
+        const refresh_token = generate_refresh_token(user_id ,email_id)
         console.log("Access token",access_token)
         console.log("Refresh token",refresh_token)
-        await pool.query('update "User" set refresh_token = $1 where user_id = $2' , [refresh_token , user_id])        
+        await pool.query('update "User" set refresh_token = $1 where user_id = $2 and email_id = $3' , [refresh_token , user_id  , email_id])        
+        await pool.query('update company set refresh_token = $1 where user_id = $2 and email_id = $3' , [refresh_token , user_id  , email_id]) 
         return {access_token , refresh_token}
     } catch (error) {
         console.log(error)
