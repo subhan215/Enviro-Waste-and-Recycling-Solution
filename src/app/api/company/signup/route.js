@@ -14,7 +14,7 @@ export async function POST(req) {
   // Trim input fields
   const trimmedData = {
     name: name?.trim(),
-    email: email?.trim(),
+    email_id: email?.trim(),
     password: password?.trim(),
     confirmPassword: confirmPassword?.trim(),
     phone: phone?.trim(),
@@ -22,11 +22,11 @@ export async function POST(req) {
   };
 
   // Validate input fields
-  if (!trimmedData.name || !trimmedData.email || !trimmedData.password || !trimmedData.confirmPassword || !trimmedData.phone || !trimmedData.services) {
+  if (!trimmedData.name || !trimmedData.email_id || !trimmedData.password || !trimmedData.confirmPassword || !trimmedData.phone || !trimmedData.services) {
     return new Response(JSON.stringify({ success: false, message: "All fields are required." }), { status: 400 });
   }
 
-  if (!validateEmail(trimmedData.email)) {
+  if (!validateEmail(trimmedData.email_id)) {
     return new Response(JSON.stringify({ success: false, message: "Invalid email format." }), { status: 400 });
   }
 
@@ -37,7 +37,7 @@ export async function POST(req) {
   try {
     // Check if the user already exists
     console.log("db q1");
-    const companyExist = await pool.query('SELECT * FROM Company WHERE email = $1 LIMIT 1', [trimmedData.email]);
+    const companyExist = await pool.query('SELECT * FROM Company WHERE email_id = $1 LIMIT 1', [trimmedData.email_id]);
     console.log("db q2");
 
     if (companyExist.rows.length > 0) {
@@ -48,8 +48,8 @@ export async function POST(req) {
     const hashedPassword = await bcrypt.hash(trimmedData.password, saltRounds);
 
     const result = await pool.query(
-      'INSERT INTO Company (name, email, password, phone, services) VALUES ($1, $2, $3, $4, $5) RETURNING id, name, email, phone, services',
-      [trimmedData.name, trimmedData.email, hashedPassword, trimmedData.phone, trimmedData.services]
+      'INSERT INTO Company (name, email_id, password, phone, services) VALUES ($1, $2, $3, $4, $5) RETURNING user_id, name, email_id, phone, services',
+      [trimmedData.name, trimmedData.email_id, hashedPassword, trimmedData.phone, trimmedData.services]
     );
 
     const user = result.rows[0];
