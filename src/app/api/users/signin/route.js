@@ -2,6 +2,10 @@ import { pool } from "../../../../database/database";
 import { check_password, generate_access_and_refresh_tokens } from "../../../../utils/user.utils";
 import jwt from "jsonwebtoken" ; 
 export async function POST(req) {
+
+
+
+  
   try {
     // Extract token from cookies or Authorization header
     const token = (req.cookies?.get('access_token')?.value || req.headers.get('Authorization')?.replace('Bearer ', ''))?.replace(/^["']|["']$/g, '');
