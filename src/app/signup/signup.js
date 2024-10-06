@@ -1,112 +1,62 @@
 "use client"; // Ensure the component is treated as a client component
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { setCookie } from "../../cookies/setCookie";
-import { removeCookie } from "../../cookies/removeCookie";
-import { getCookie } from "../../cookies/getCookie";
-import Link from "next/link";
+import Link from "next/link"; // Correct import statement for Link
 
-const SignIn = () => {
-  const [accessToken, setAccessToken] = useState(getCookie("access_token"));
-  const refreshToken = getCookie("refresh_token");
+const SignUp = () => {
   const [userData, setUserData] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
-  const handleSignIn = async () => {
+  const [error, setError] = useState("");
+
+  const handleSignUp = async () => {
+    setError(""); // Reset error
+    if (userData.password !== userData.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     try {
-      console.log("Sending data:", userData);
-      const response = await fetch("/api/users/signin", {
+      const response = await fetch("/api/users/signup", {
         headers: {
           "Content-Type": "application/json",
         },
         method: "POST",
-        body: JSON.stringify(userData),
+        body: JSON.stringify({ email: userData.email, password: userData.password }),
       });
 
       const responseData = await response.json();
       if (responseData.success) {
         alert(responseData.message);
+        // Optionally log in the user or redirect
         setCookie("access_token", responseData.data.access_token, 2);
         setCookie("refresh_token", responseData.data.refresh_token, 2);
-        // Redirect or update state to show home or profile page
       } else {
         alert(responseData.message);
       }
     } catch (error) {
-      alert(error.message);
+      setError(error.message);
     }
   };
-
-  const logInWithAccessToken = async (access_token) => {
-    try {
-      const response = await fetch("/api/users/signin", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token}`,
-        },
-        method: "POST",
-      });
-
-      const responseData = await response.json();
-      if (responseData.success) {
-        alert(responseData.message);
-      } else {
-        alert(responseData.message);
-        removeCookie("access_token");
-      }
-    } catch (error) {
-      alert(error.message);
-    }
-  };
-
-  const refreshAccessToken = async (refresh_token) => {
-    try {
-      const response = await fetch("/api/users/refresh_token", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${refresh_token}`,
-        },
-        method: "GET",
-      });
-
-      const responseData = await response.json();
-      if (responseData.success) {
-        alert(responseData.message);
-        setCookie("access_token", responseData.data.access_token, 2);
-        setAccessToken(responseData.data.access_token);
-      } else {
-        alert(responseData.message);
-        removeCookie("refresh_token");
-      }
-    } catch (error) {
-      alert(error.message);
-    }
-  };
-
-  useEffect(() => {
-    if (accessToken) {
-      logInWithAccessToken(accessToken);
-    }
-  }, [accessToken]);
-
-  useEffect(() => {
-    if (!accessToken && refreshToken) {
-      refreshAccessToken(refreshToken);
-    }
-  }, [refreshToken]);
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-[#f8fcf9] group/design-root overflow-x-hidden" style={{ fontFamily: '"Public Sans", "Noto Sans", sans-serif' }}>
+    <div
+      className="relative flex min-h-screen flex-col bg-[#f8fcf9] group/design-root overflow-x-hidden"
+      style={{ fontFamily: '"Public Sans", "Noto Sans", sans-serif' }}
+    >
       <div className="flex justify-center items-center flex-1">
         <div className="layout-content-container flex flex-col w-[512px] max-w-[512px] py-5 max-w-[960px]">
           <h3 className="text-[#0e1b11] tracking-light text-2xl font-bold leading-tight px-4 text-center pb-2 pt-5">
-            Welcome to Enviro
+            Create an Account
           </h3>
           <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
             <label className="flex flex-col min-w-40 flex-1">
               <input
+                type="email"
                 placeholder="Enter your email"
                 className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#0e1b11] focus:outline-0 focus:ring-0 border-none bg-[#e7f3ea] focus:border-none h-14 placeholder:text-[#4e975f] p-4 text-base font-normal leading-normal"
                 onChange={(e) => setUserData({ ...userData, email: e.target.value })}
@@ -116,24 +66,34 @@ const SignIn = () => {
           <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
             <label className="flex flex-col min-w-40 flex-1">
               <input
-                placeholder="Enter your password"
                 type="password"
+                placeholder="Enter your password"
                 className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#0e1b11] focus:outline-0 focus:ring-0 border-none bg-[#e7f3ea] focus:border-none h-14 placeholder:text-[#4e975f] p-4 text-base font-normal leading-normal"
                 onChange={(e) => setUserData({ ...userData, password: e.target.value })}
               />
             </label>
           </div>
-          <p className="text-[#4e975f] text-sm font-normal leading-normal pb-3 pt-1 px-4 underline">Forgot password?</p>
+          <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <label className="flex flex-col min-w-40 flex-1">
+              <input
+                type="password"
+                placeholder="Confirm your password"
+                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#0e1b11] focus:outline-0 focus:ring-0 border-none bg-[#e7f3ea] focus:border-none h-14 placeholder:text-[#4e975f] p-4 text-base font-normal leading-normal"
+                onChange={(e) => setUserData({ ...userData, confirmPassword: e.target.value })}
+              />
+            </label>
+          </div>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
           <div className="flex px-4 py-3">
             <button
               className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#17cf42] text-[#0e1b11] text-sm font-bold leading-normal tracking-[0.015em]"
-              onClick={handleSignIn}
+              onClick={handleSignUp}
             >
-              <span className="truncate">Login</span>
+              <span className="truncate">Sign Up</span>
             </button>
           </div>
           <p className="text-[#4e975f] text-sm font-normal leading-normal pb-3 pt-1 px-4 text-center">
-            Don't have an account? <Link href="/signup">Create one</Link>
+            Already have an account? <Link href="/signin">Sign in</Link>
           </p>
           <p className="text-[#4e975f] text-sm font-normal leading-normal pb-3 pt-1 px-4 text-center">Or continue with</p>
           <div className="flex px-4 py-3">
@@ -152,4 +112,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignUp; // Ensure this line is present
