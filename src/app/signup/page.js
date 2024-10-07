@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 // Company Registration Form Component
 const CompanyRegistrationForm = () => {
-    const router = useRouter();
     const [data, setData] = useState({
         name: "",
         email: "",
@@ -286,15 +285,19 @@ const SignUp = () => {
                                 />
                             </label>
                             <label className="flex flex-col min-w-40 flex-1 mb-4">
-                                <input
-                                    type="text"
-                                    name="gender"
-                                    placeholder="Gender"
-                                    className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#4e975f] text-base font-normal"
-                                    required
-                                    onChange={handleInputChange}
-                                />
+                            <select
+                                name="gender"
+                                className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] text-base font-normal"
+                                required
+                                onChange={handleInputChange}
+                                value={data.gender}
+                            >
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                </select>
                             </label>
+
                             <label className="flex flex-col min-w-40 flex-1 mb-4">
                                 <input
                                     type="tel"
