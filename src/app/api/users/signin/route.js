@@ -2,9 +2,6 @@ import { pool } from "../../../../database/database";
 import { check_password, generate_access_and_refresh_tokens } from "../../../../utils/user.utils";
 import jwt from "jsonwebtoken" ; 
 export async function POST(req) {
-
-
-
   
   try {
     // Extract token from cookies or Authorization header
@@ -51,7 +48,7 @@ console.log('token:', token);
         { status: 400 }
       );
     }
-
+   
     // Check if user exists
     let does_user_email_exist = await pool.query(
       'SELECT * FROM "User" WHERE email_id = $1',

@@ -1,4 +1,4 @@
-require('dotenv').config();
+
 const { Pool } = require('pg');
 
 // PostgreSQL pool setup
