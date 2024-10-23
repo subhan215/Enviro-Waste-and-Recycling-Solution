@@ -1,5 +1,5 @@
 "use client"; // Ensure the component is treated as a client component
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 // Company Registration Form Component
@@ -158,6 +158,7 @@ const SignUp = () => {
     };
 
     const handleSignUp = async (e) => {
+        console.log(data)
         e.preventDefault();
         if (data.password === data.confirmPassword) {
             try {
@@ -189,7 +190,28 @@ const SignUp = () => {
     const handleOptionChange = (e) => {
         setSelectedOption(e.target.value);
     };
+    const [allAreas , setAllAreas] = useState([]) ; 
+    const getAllAreas = async () => {
+        try {
+            const response = await fetch("api/area/get_all_areas")
+            const responseData = await response.json();
+            console.log(responseData)
+            if (responseData.success) {
+                alert(responseData.message);
+                setAllAreas(responseData.data)
+            }
+            else {
+                alert(responseData.message)
+            }
 
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+    useEffect(()=> {
+        getAllAreas() ;
+        console.log(allAreas)
+    } , [])
     return (
         <div className="relative flex min-h-screen flex-col bg-[#f8fcf9] overflow-x-hidden" style={{ fontFamily: '"Public Sans", "Noto Sans", sans-serif' }}>
 
@@ -293,8 +315,8 @@ const SignUp = () => {
                                 value={data.gender}
                             >
                                 <option value="">Select Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
                                 </select>
                             </label>
 
@@ -310,15 +332,27 @@ const SignUp = () => {
                             </label>
 
                             <label className="flex flex-col min-w-40 flex-1 mb-4">
-                                <input
-                                    type="numner"
-                                    name="area_id"
-                                    placeholder="Area id"
-                                    className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#4e975f] text-base font-normal"
-                                    required
-                                    onChange={handleInputChange}
-                                />
-                            </label>
+                            {/* Dropdown for selecting area */}
+                            <select
+                                id="area"
+                                value={data.area_id}
+                                onChange={(e) => setData({ ...data, area_id: e.target.value })}
+                                className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] text-base font-normal"
+                                required
+                            >
+                                <option value="" disabled selected>Select Area</option>
+                                
+                                {allAreas?.length > 0 ? (
+                                    allAreas.map((area) => (
+                                        <option key={area.area_id} value={area.area_id}>
+                                            <span>{area.name}</span>
+                                        </option>
+                                    ))
+                                ) : (
+                                    <option value="">No areas available</option>
+                                )}
+                            </select>
+                        </label>
                             <button
                                 type="submit"
                                 className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#17cf42] text-[#0e1b11] text-sm font-bold leading-normal"

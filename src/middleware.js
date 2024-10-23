@@ -33,5 +33,5 @@ export async function middleware(req) {
 
 // Matcher configuration: only apply middleware to specific routes
 export const config = {
-  matcher: ['/dashboard/:path*', '/profile/:path*' , '/'], // Apply middleware to these routes
+  matcher: ['/dashboard/:path*', '/profile/:path*' , "/asjahjsa"], // Apply middleware to these routes
 };

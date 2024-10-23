@@ -19,7 +19,7 @@ export async function POST(req) {
     gender,
     age,
     mobile,
-    area_id,
+    area_id: parseInt(area_id),
   };
 
   // Validate input fields

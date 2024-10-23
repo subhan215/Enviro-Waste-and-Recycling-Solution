@@ -1,38 +1,104 @@
-import React from "react" ; 
-const Nav = () => {
-    return (
-        <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7f3ea] px-10 py-3">
-          <div className="flex items-center gap-4 text-[#0e1b11]">
-            <div className="size-4">
-              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M12.0799 24L4 19.2479L9.95537 8.75216L18.04 13.4961L18.0446 4H29.9554L29.96 13.4961L38.0446 8.75216L44 19.2479L35.92 24L44 28.7521L38.0446 39.2479L29.96 34.5039L29.9554 44H18.0446L18.04 34.5039L9.95537 39.2479L4 28.7521L12.0799 24Z"
-                  fill="currentColor"
-                ></path>
-              </svg>
-            </div>
-            <h2 className="text-[#0e1b11] text-lg font-bold leading-tight tracking-[-0.015em]">Enviro</h2>
-          </div>
-          <div className="flex flex-1 justify-end gap-8">
-            <div className="flex items-center gap-9">
-              <a className="text-[#0e1b11] text-sm font-medium leading-normal" href="#">
-                Home
-              </a>
-              <a className="text-[#0e1b11] text-sm font-medium leading-normal" href="#">
-                About Us
-              </a>
-              <a className="text-[#0e1b11] text-sm font-medium leading-normal" href="#">
-                Services
-              </a>
-              <a className="text-[#0e1b11] text-sm font-medium leading-normal" href="#">
-                Contact
-              </a>
-            </div>
-          </div>
-        </header>
+"use client";
+import React, { useState, useEffect } from "react";
+import { FiMenu, FiX } from "react-icons/fi"; // Icons for the hamburger menu
 
-    )
-}
-export default Nav;
+const ModernNavbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
+
+  // Function to toggle the mobile menu
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
+  // Function to handle screen resizing
+  const handleResize = () => {
+    if (window.innerWidth >= 768) {
+      setIsOpen(false); // Close the mobile menu when the screen is large
+      setIsLargeScreen(true); // Update to indicate a large screen
+    } else {
+      setIsLargeScreen(false); // It's a mobile screen now
+    }
+  };
+
+  // Set up event listener for screen resizing
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+
+    // Call the handler once on component mount to set the initial state
+    handleResize();
+
+    // Cleanup listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  return (
+    <header className="bg-white shadow-md sticky top-0 z-50">
+      <nav className="container mx-auto flex justify-between items-center p-5">
+        {/* Logo */}
+        <div className="text-2xl font-bold text-green-600">
+          <a href="#">Enviro</a>
+        </div>
+
+        {/* Full Navbar for larger screens */}
+        <div className="hidden md:flex gap-8 items-center">
+          <a href="#" className="text-gray-700 hover:text-green-600 transition">
+            Home
+          </a>
+          <a href="#" className="text-gray-700 hover:text-green-600 transition">
+            About Us
+          </a>
+          <a href="#" className="text-gray-700 hover:text-green-600 transition">
+            Services
+          </a>
+          <a href="#" className="text-gray-700 hover:text-green-600 transition">
+            Contact
+          </a>
+          <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
+            Get Started
+          </button>
+        </div>
+
+        {/* Hamburger Menu for mobile screens */}
+        <div className="md:hidden flex items-center">
+          <button onClick={toggleMenu}>
+            {isOpen ? (
+              <FiX className="text-3xl text-green-600" />
+            ) : (
+              <FiMenu className="text-3xl text-green-600" />
+            )}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile Menu Sliding from the Left */}
+      <div
+        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg transition-transform transform ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } duration-300 ease-in-out z-40`}
+      >
+        <div className="flex flex-col p-5 gap-6">
+          <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition">
+            Home
+          </a>
+          <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition">
+            About Us
+          </a>
+          <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition">
+            Services
+          </a>
+          <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition">
+            Contact
+          </a>
+          <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition mt-4">
+            Get Started
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+export default ModernNavbar;

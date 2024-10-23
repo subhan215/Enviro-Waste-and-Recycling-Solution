@@ -22,30 +22,8 @@ const Page = () => {
                 backgroundRepeat: "no-repeat",
             }}
         >
-            <header className="bg-[#17cf42] text-[#0e1b11] p-6 flex items-center justify-between shadow-md">
-                <h1 className="text-3xl font-bold">Welcome to the Dashboard</h1>
-                <button className="bg-[#0e1b11] text-white py-2 px-4 rounded-xl font-bold hover:bg-[#444c48] transition duration-300">
-                    Registered Complaints
-                </button>
-            </header>
+           
 
-            <div className="flex justify-between items-center mt-8 px-6">
-                <div className="flex space-x-4">
-                    <button
-                        className="bg-[#0e1b11] text-white py-2 px-4 rounded-xl font-bold hover:bg-[#444c48] transition duration-300"
-                        onClick={handleSignInClick}
-                    >
-                        Sign In
-                    </button>
-                    <button
-                        className="bg-[#0e1b11] text-white py-2 px-4 rounded-xl font-bold hover:bg-[#444c48] transition duration-300"
-                        onClick={handleSignUpClick}
-                    >
-                        Sign Up
-                    </button>
-                </div>
-                
-            </div>
 
             <div className="flex flex-col items-center justify-center py-8">
                 <div className="border-t-4 border-dotted border-[#0e1b11] w-full mb-2"></div>

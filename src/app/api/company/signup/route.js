@@ -36,23 +36,33 @@ export async function POST(req) {
 
   try {
     // Check if the user already exists
-    console.log("db q1");
     const companyExist = await pool.query('SELECT * FROM Company WHERE email_id = $1 LIMIT 1', [trimmedData.email_id]);
-    console.log("db q2");
 
     if (companyExist.rows.length > 0) {
       return new Response(JSON.stringify({ success: false, message: "Email already exists!" }), { status: 400 });
     }
 
-    // Hash the password and then store the user
+    // Hash the password and then store the company
     const hashedPassword = await bcrypt.hash(trimmedData.password, saltRounds);
 
+    // Insert into Company table (services field removed)
     const result = await pool.query(
-      'INSERT INTO Company (name, email_id, password, phone, services) VALUES ($1, $2, $3, $4, $5) RETURNING user_id, name, email_id, phone, services',
-      [trimmedData.name, trimmedData.email_id, hashedPassword, trimmedData.phone, trimmedData.services]
+      'INSERT INTO Company (name, email_id, password, phone) VALUES ($1, $2, $3, $4) RETURNING user_id, name, email_id, phone',
+      [trimmedData.name, trimmedData.email_id, hashedPassword, trimmedData.phone]
     );
 
     const user = result.rows[0];
+
+    // Insert into Company_Services table
+    const serviceInsertQueries = trimmedData.services.map(service => {
+      return pool.query(
+        'INSERT INTO Company_Services (company_id, service) VALUES ($1, $2)',
+        [user.user_id, service]
+      );
+    });
+
+    // Wait for all service inserts to complete
+    await Promise.all(serviceInsertQueries);
 
     return new Response(JSON.stringify({ success: true, userData: user, message: "Account registered successfully." }), { status: 200 });
 
