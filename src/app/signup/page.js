@@ -1,7 +1,6 @@
 "use client"; // Ensure the component is treated as a client component
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 // Company Registration Form Component
 const CompanyRegistrationForm = () => {
     const [data, setData] = useState({
@@ -307,6 +306,7 @@ const SignUp = () => {
                                 />
                             </label>
                             <label className="flex flex-col min-w-40 flex-1 mb-4">
+<<<<<<< Updated upstream
                             <select
                                 name="gender"
                                 className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] text-base font-normal"
@@ -318,8 +318,17 @@ const SignUp = () => {
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                                 </select>
+=======
+                                <input
+                                    type="text"
+                                    name="gender"
+                                    placeholder="Gender"
+                                    className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#4e975f] text-base font-normal"
+                                    required
+                                    onChange={handleInputChange}
+                                />
+>>>>>>> Stashed changes
                             </label>
-
                             <label className="flex flex-col min-w-40 flex-1 mb-4">
                                 <input
                                     type="tel"
