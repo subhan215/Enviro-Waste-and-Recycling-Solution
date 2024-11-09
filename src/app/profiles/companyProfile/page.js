@@ -5,6 +5,7 @@ import Manage_Areas from "../../components/company_dashboard/Manage_Areas" ;
 import View_Assigned_Areas from "../../components/company_dashboard/View_Assigned_Areas" ; 
 import Trucks_Information from "../../components/company_dashboard/Trucks_Information" ; 
 import MissedPickups from "../../components/company_dashboard/Missed_Pickups" ;
+import RecyclingCenters from "../../components/company_dashboard/Recycling_Centers" ; 
 const CompanyProfilePage = () => {
   const [selectedOption, setSelectedOption] = useState("manageAreas");
 
@@ -37,6 +38,10 @@ const CompanyProfilePage = () => {
           return (
             <MissedPickups />
           );        
+        case "recyclingCenters" : 
+        return(
+          <RecyclingCenters />
+        )  ;  
       default:
         return <p>Select an option to get started.</p>;
     }
@@ -88,6 +93,15 @@ const CompanyProfilePage = () => {
           >
             Missed Pickups
           </li>
+          <li
+            className={`py-2 px-4 mb-2 rounded cursor-pointer ${
+              selectedOption === "recyclingCenters" ? "bg-gray-200" : ""
+            }`}
+            onClick={() => setSelectedOption("recyclingCenters")}
+          >
+            Recycling Centers
+          </li>
+
         </ul>
       </div>
 
