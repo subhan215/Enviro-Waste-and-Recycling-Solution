@@ -59,7 +59,7 @@ export async function POST(req) {
         const currentTime = new Date();
         const currentHour = currentTime.getHours();
 
-        if (currentHour > 13) { // 13:00 is 1 PM in 24-hour format
+        if (currentHour >= 13) { // 13:00 is 1 PM in 24-hour format
             missed_pickup = await pool.query(
                 'INSERT INTO missed_pickup(user_id, area_id, status, company_id , created_at) VALUES ($1, $2, $3, $4 , $5) RETURNING *', 
                 [userId, areaId, "pending", companyId , new Date()]
