@@ -157,18 +157,19 @@ const ReportMissedPickups = () => {
                 formData.append("clean_or_unclean_image", selectedImage);
             }
 
-            let response = await fetch(`/api/testfileupload`, {
+            let response = await fetch(`/api/pickup/report_missed_pickup/`, {
                 method: "POST",
                 body: formData,
             });
 
             const responseData = await response.json();
             console.log("Response Data : ", responseData);
-            if (responseData.data[0] == 1) { //classified as unclean
+            if (responseData.success) {     //All conditions, constraints, checks etc passed
                 getAllMissedPickups();
-                alert("Image classified as unclean - Missed pickup reported successfully. ");
+                console.log("Message : ", responseData.message);
+                alert("Missed pickup reported successfully.");
             } else {
-                alert("Your image was classified as clean/spam, try again");
+                alert(responseData.message);
             }
         } catch (error) {
             alert(error.message);
@@ -235,8 +236,9 @@ const ReportMissedPickups = () => {
                 {allMissedPickups.length > 0 ? (
                     allMissedPickups.map((pickup, index) => (
                         <li key={index}>
-                            <strong>Date:</strong> {new Date(pickup.created_at).toLocaleDateString()}
-                            | <strong>Status:</strong> {pickup.status}
+                            <strong>ID:</strong> {pickup.missed_pickup_id}
+                            <strong> Date:</strong> {new Date(pickup.created_at).toLocaleDateString()}
+                            <strong> Status:</strong> {pickup.status}
                             {pickup.status === "marked completed by company" && (
                                 <>
                                     <button onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "completed")}>
