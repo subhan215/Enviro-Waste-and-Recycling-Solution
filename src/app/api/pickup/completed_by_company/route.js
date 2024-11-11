@@ -90,8 +90,8 @@ export async function PUT(req) {
 
         // Update the status in the missed_pickup table
         const updatedPickup = await pool.query(
-            'UPDATE missed_pickup SET status = $1 WHERE missed_pickup_id = $2 AND company_id = $3 RETURNING *',
-            [updatedStatus, missed_pickup_id, userId]
+            'UPDATE missed_pickup SET status = $1, clean_img = $4 WHERE missed_pickup_id = $2 AND company_id = $3 RETURNING *',
+            [updatedStatus, missed_pickup_id, userId , upload_clean_or_unclean_image_to_cloud.url]
         );
 
         // Log the updated row
