@@ -1,7 +1,6 @@
 "use client"; // Ensure the component is treated as a client component
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 // Company Registration Form Component
 const CompanyRegistrationForm = () => {
     const [data, setData] = useState({
@@ -95,7 +94,7 @@ const CompanyRegistrationForm = () => {
                                     name="services"
                                     value="wasteCollection"
                                     className="form-checkbox h-5 w-5 text-[#0e1b11] bg-[#e7f3ea] border-[#4e975f] rounded"
-                                    onChange={(e) => setData({ ...data, services: [...data.services, "Waste Collection"] })}
+                                    onChange={() => setData({ ...data, services: [...data.services, "Waste Collection"] })}
                                 />
                                 <span className="text-[#0e1b11] text-base font-normal">Waste Collection</span>
                             </label>
@@ -106,7 +105,7 @@ const CompanyRegistrationForm = () => {
                                     name="services"
                                     value="recycling"
                                     className="form-checkbox h-5 w-5 text-[#0e1b11] bg-[#e7f3ea] border-[#4e975f] rounded"
-                                    onChange={(e) => setData({ ...data, services: [...data.services, "Recycling"] })}
+                                    onChange={() => setData({ ...data, services: [...data.services, "Recycling"] })}
                                 />
                                 <span className="text-[#0e1b11] text-base font-normal">Recycling</span>
                             </label>
@@ -150,7 +149,7 @@ const SignUp = () => {
         mobile: "",
         area_id: ""
     });
-    const [complaintDescription, setComplaintDescription] = useState("");
+   // const [complaintDescription, setComplaintDescription] = useState("");
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -318,6 +317,7 @@ const SignUp = () => {
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                                 </select>
+=======
                                 <input
                                     type="text"
                                     name="gender"
@@ -326,7 +326,9 @@ const SignUp = () => {
                                     required
                                     onChange={handleInputChange}
                                 />
+>>>>>>> Stashed changes
                             </label>
+
                             <label className="flex flex-col min-w-40 flex-1 mb-4">
                                 <input
                                     type="tel"

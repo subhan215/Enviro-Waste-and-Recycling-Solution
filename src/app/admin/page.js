@@ -12,30 +12,30 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('dashboard')
 
   return (
-    <div className="flex h-screen bg-[#0e1b11] text-[#17cf42]">
+    <div className="flex h-screen bg-white text-[#17cf42]">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#0e1b11] border-r border-[#17cf42]">
+      <aside className="w-64 bg-white border-r border-[#17cf42]">
         <div className="p-4">
           <h1 className="text-2xl font-bold">Admin Panel</h1>
         </div>
         <nav className="mt-4">
           <TabsList className="flex flex-col w-full">
-            <TabsTrigger value="dashboard" onClick={() => setActiveTab('dashboard')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-[#0e1b11] data-[state=active]:bg-[#17cf42] data-[state=active]:text-[#0e1b11]">
+            <TabsTrigger value="dashboard" onClick={() => setActiveTab('dashboard')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
               Dashboard
             </TabsTrigger>
-            <TabsTrigger value="companies" onClick={() => setActiveTab('companies')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-[#0e1b11] data-[state=active]:bg-[#17cf42] data-[state=active]:text-[#0e1b11]">
+            <TabsTrigger value="companies" onClick={() => setActiveTab('companies')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
               <Building2 className="mr-2 h-4 w-4" />
               Companies
             </TabsTrigger>
-            <TabsTrigger value="agreements" onClick={() => setActiveTab('agreements')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-[#0e1b11] data-[state=active]:bg-[#17cf42] data-[state=active]:text-[#0e1b11]">
+            <TabsTrigger value="agreements" onClick={() => setActiveTab('agreements')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
               <FileText className="mr-2 h-4 w-4" />
               Agreements
             </TabsTrigger>
-            <TabsTrigger value="missed-pickups" onClick={() => setActiveTab('missed-pickups')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-[#0e1b11] data-[state=active]:bg-[#17cf42] data-[state=active]:text-[#0e1b11]">
+            <TabsTrigger value="missed-pickups" onClick={() => setActiveTab('missed-pickups')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
               <Trash2 className="mr-2 h-4 w-4" />
               Missed Pick-Ups
             </TabsTrigger>
-            <TabsTrigger value="transactions" onClick={() => setActiveTab('transactions')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-[#0e1b11] data-[state=active]:bg-[#17cf42] data-[state=active]:text-[#0e1b11]">
+            <TabsTrigger value="transactions" onClick={() => setActiveTab('transactions')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
               <DollarSign className="mr-2 h-4 w-4" />
               Transactions
             </TabsTrigger>
@@ -47,7 +47,7 @@ export default function AdminPanel() {
       <main className="flex-1 p-8">
         <Tabs value={activeTab} className="space-y-4">
           <TabsContent value="dashboard">
-            <h2 className="text-2xl font-bold mb-4">Dashboard Overview</h2>
+            <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Dashboard Overview</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <DashboardCard title="Total Companies" value="24" icon={<Building2 className="h-4 w-4" />} />
               <DashboardCard title="Active Agreements" value="18" icon={<FileText className="h-4 w-4" />} />
@@ -57,22 +57,22 @@ export default function AdminPanel() {
           </TabsContent>
 
           <TabsContent value="companies">
-            <h2 className="text-2xl font-bold mb-4">Manage Companies</h2>
+            <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Manage Companies</h2>
             <CompaniesTable />
           </TabsContent>
 
           <TabsContent value="agreements">
-            <h2 className="text-2xl font-bold mb-4">Manage Agreements</h2>
+            <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Manage Agreements</h2>
             <AgreementsTable />
           </TabsContent>
 
           <TabsContent value="missed-pickups">
-            <h2 className="text-2xl font-bold mb-4">Missed Pick-Ups</h2>
+            <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Missed Pick-Ups</h2>
             <MissedPickupsTable />
           </TabsContent>
 
           <TabsContent value="transactions">
-            <h2 className="text-2xl font-bold mb-4">Transactions Overview</h2>
+            <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Transactions Overview</h2>
             <TransactionsTable />
           </TabsContent>
         </Tabs>
@@ -83,7 +83,7 @@ export default function AdminPanel() {
 
 function DashboardCard({ title, value, icon }) {
   return (
-    <Card className="bg-[#0e1b11] border border-[#17cf42]">
+    <Card className="bg-white border border-[#17cf42]">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-[#17cf42]">{title}</CardTitle>
         {icon}
@@ -105,8 +105,8 @@ function CompaniesTable() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <Input placeholder="Search companies..." className="max-w-sm bg-[#0e1b11] text-[#17cf42] border-[#17cf42] focus:border-[#17cf42] focus:ring-[#17cf42]" />
-        <Button className="bg-[#17cf42] text-[#0e1b11] hover:bg-[#0e1b11] hover:text-[#17cf42] hover:border-[#17cf42] hover:border">Add New Company</Button>
+        <Input placeholder="Search companies..." className="max-w-sm bg-white text-[#17cf42] border-[#17cf42] focus:border-[#17cf42] focus:ring-[#17cf42]" />
+        <Button className="bg-[#17cf42] text-white hover:bg-white hover:text-[#17cf42] hover:border-[#17cf42] hover:border">Add New Company</Button>
       </div>
       <Table className="border-[#17cf42]">
         <TableHeader>
@@ -126,8 +126,8 @@ function CompaniesTable() {
               <TableCell className="text-[#17cf42]">{company.location}</TableCell>
               <TableCell className="text-[#17cf42]">{company.status}</TableCell>
               <TableCell>
-                <Button variant="outline" size="sm" className="mr-2">Edit</Button>
-                <Button variant="outline" size="sm">Delete</Button>
+                <Button variant="outline" size="sm" className="mr-2 border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white">Edit</Button>
+                <Button variant="outline" size="sm" className="border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white">Delete</Button>
               </TableCell>
             </TableRow>
           ))}
@@ -147,8 +147,8 @@ function AgreementsTable() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <Input placeholder="Search agreements..." className="max-w-sm bg-[#0e1b11] text-[#17cf42] border-[#17cf42] focus:border-[#17cf42] focus:ring-[#17cf42]" />
-        <Button className="bg-[#17cf42] text-[#0e1b11] hover:bg-[#0e1b11] hover:text-[#17cf42] hover:border-[#17cf42] hover:border">Add New Agreement</Button>
+        <Input placeholder="Search agreements..." className="max-w-sm bg-white text-[#17cf42] border-[#17cf42] focus:border-[#17cf42] focus:ring-[#17cf42]" />
+        <Button className="bg-[#17cf42] text-white hover:bg-white hover:text-[#17cf42] hover:border-[#17cf42] hover:border">Add New Agreement</Button>
       </div>
       <Table className="border-[#17cf42]">
         <TableHeader>
@@ -170,8 +170,8 @@ function AgreementsTable() {
               <TableCell className="text-[#17cf42]">{agreement.endDate}</TableCell>
               <TableCell className="text-[#17cf42]">{agreement.status}</TableCell>
               <TableCell>
-                <Button variant="outline" size="sm" className="mr-2">View</Button>
-                <Button variant="outline" size="sm">Edit</Button>
+                <Button variant="outline" size="sm" className="mr-2 border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white">View</Button>
+                <Button variant="outline" size="sm" className="border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white">Edit</Button>
               </TableCell>
             </TableRow>
           ))}
@@ -191,8 +191,8 @@ function MissedPickupsTable() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <Input placeholder="Search missed pick-ups..." className="max-w-sm bg-[#0e1b11] text-[#17cf42] border-[#17cf42] focus:border-[#17cf42] focus:ring-[#17cf42]" />
-        <Button className="bg-[#17cf42] text-[#0e1b11] hover:bg-[#0e1b11] hover:text-[#17cf42] hover:border-[#17cf42] hover:border">Report New Missed Pick-Up</Button>
+        <Input placeholder="Search missed pick-ups..." className="max-w-sm bg-white text-[#17cf42] border-[#17cf42] focus:border-[#17cf42] focus:ring-[#17cf42]" />
+        <Button className="bg-[#17cf42] text-white hover:bg-white hover:text-[#17cf42] hover:border-[#17cf42] hover:border">Report New Missed Pick-Up</Button>
       </div>
       <Table className="border-[#17cf42]">
         <TableHeader>
@@ -214,8 +214,8 @@ function MissedPickupsTable() {
               <TableCell className="text-[#17cf42]">{pickup.location}</TableCell>
               <TableCell className="text-[#17cf42]">{pickup.status}</TableCell>
               <TableCell>
-                <Button variant="outline" size="sm" className="mr-2">Update Status</Button>
-                <Button variant="outline" size="sm">View Details</Button>
+                <Button variant="outline" size="sm" className="mr-2 border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white">Update Status</Button>
+                <Button variant="outline" size="sm" className="border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white">View Details</Button>
               </TableCell>
             </TableRow>
           ))}
@@ -235,8 +235,8 @@ function TransactionsTable() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <Input placeholder="Search transactions..." className="max-w-sm bg-[#0e1b11] text-[#17cf42] border-[#17cf42] focus:border-[#17cf42] focus:ring-[#17cf42]" />
-        <Button className="bg-[#17cf42] text-[#0e1b11] hover:bg-[#0e1b11] hover:text-[#17cf42] hover:border-[#17cf42] hover:border">Generate Report</Button>
+        <Input placeholder="Search transactions..." className="max-w-sm bg-white text-[#17cf42] border-[#17cf42] focus:border-[#17cf42] focus:ring-[#17cf42]" />
+        <Button className="bg-[#17cf42] text-white hover:bg-white hover:text-[#17cf42] hover:border-[#17cf42] hover:border">Generate Report</Button>
       </div>
       <Table className="border-[#17cf42]">
         <TableHeader>
@@ -258,7 +258,7 @@ function TransactionsTable() {
               <TableCell className="text-[#17cf42]">{transaction.amount}</TableCell>
               <TableCell className="text-[#17cf42]">{transaction.type}</TableCell>
               <TableCell>
-                <Button variant="outline" size="sm">View Details</Button>
+                <Button variant="outline" size="sm" className="border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white">View Details</Button>
               </TableCell>
             </TableRow>
           ))}
