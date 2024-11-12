@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "@/components/ui/table"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "../components/ui/Button"
+import { Input } from "../components/ui/Input"
+import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "../components/ui/Table"
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs"
 import { Building2, FileText, Trash2, DollarSign } from 'lucide-react'
 
 export default function AdminPanel() {

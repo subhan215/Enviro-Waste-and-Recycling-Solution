@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import ReportMissedPickups from "../../components/user_dashboard/ReportMissedPickups"; // Component for reporting missed pickups
-
+import CreateRequestForRecycledWaste from "../../components/user_dashboard/CreateRequestForRecycledWaste" ; 
 const UserProfilePage = () => {
   const [selectedOption, setSelectedOption] = useState("reportMissedPickups");
 
@@ -10,6 +10,10 @@ const UserProfilePage = () => {
     switch (selectedOption) {
       case "reportMissedPickups":
         return <ReportMissedPickups />;
+        case "createRequestForRecycledWaste": 
+        return(
+          <CreateRequestForRecycledWaste />
+        )  ;  
       default:
         return <p>Select an option to get started.</p>;
     }
@@ -28,6 +32,14 @@ const UserProfilePage = () => {
             onClick={() => setSelectedOption("reportMissedPickups")}
           >
             Report Missed Pickups
+          </li>
+          <li
+            className={`py-2 px-4 mb-2 rounded cursor-pointer ${
+              selectedOption === "createRequestForRecycledWaste" ? "bg-gray-200" : ""
+            }`}
+            onClick={() => setSelectedOption("createRequestForRecycledWaste")}
+          >
+              Create Request For Recycled Waste
           </li>
         </ul>
       </div>

@@ -6,6 +6,7 @@ import View_Assigned_Areas from "../../components/company_dashboard/View_Assigne
 import Trucks_Information from "../../components/company_dashboard/Trucks_Information" ; 
 import MissedPickups from "../../components/company_dashboard/Missed_Pickups" ;
 import RecyclingCenters from "../../components/company_dashboard/Recycling_Centers" ; 
+import AcceptRequests from "../../components/company_dashboard/AcceptRequests" ; 
 const CompanyProfilePage = () => {
   const [selectedOption, setSelectedOption] = useState("manageAreas");
 
@@ -42,6 +43,11 @@ const CompanyProfilePage = () => {
         return(
           <RecyclingCenters />
         )  ;  
+        case "requests" : 
+        return (
+          <AcceptRequests />
+        ) ; 
+        
       default:
         return <p>Select an option to get started.</p>;
     }
@@ -101,7 +107,14 @@ const CompanyProfilePage = () => {
           >
             Recycling Centers
           </li>
-
+          <li
+            className={`py-2 px-4 mb-2 rounded cursor-pointer ${
+              selectedOption === "recyclingCenters" ? "bg-gray-200" : ""
+            }`}
+            onClick={() => setSelectedOption("requests")}
+          >
+            Accept Requests
+          </li>
         </ul>
       </div>
 
