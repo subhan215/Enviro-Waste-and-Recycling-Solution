@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -24,16 +24,14 @@ function CreateRequestForRecycledWaste() {
     const [map, setMap] = useState(null);
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [currentRequest, setCurrentRequest] = useState(null);
     const [requestData, setRequestData] = useState({
-        waste: '',
-        preferredDate: '',
-        preferredTime: '',
         latitude: '',
         longitude: ''
     });
+
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevents the default form submission behavior
-        
+        e.preventDefault();
         try {
             const response = await axios.post('/api/requests/request_for_recycled_waste', {
                 waste,
@@ -41,37 +39,27 @@ function CreateRequestForRecycledWaste() {
                 preferredTime,
                 latitude: requestData.latitude,
                 longitude: requestData.longitude,
-                userId: 2
+                userId: 2 // Replace with dynamic user ID as needed
             });
-    
+
             if (response.data.success) {
                 setSuccessMessage('Request submitted successfully!');
                 setWaste('');
                 setPreferredDate('');
                 setPreferredTime('');
                 setLocationName('');
-                setRequestData({
-                    waste: '',
-                    preferredDate: '',
-                    preferredTime: '',
-                    latitude: '',
-                    longitude: ''
-                });
+                setRequestData({ latitude: '', longitude: '' });
             }
         } catch (err) {
-            if (err.response && err.response.data && err.response.data.message) {
-                setError(err.response.data.message);
-            } else {
-                setError('An unexpected error occurred.');
-            }
+            setError(err.response?.data?.message || 'An unexpected error occurred.');
         }
     };
-    
+
     const LocationMarker = () => {
         useMapEvents({
             click(e) {
                 const { lat, lng } = e.latlng;
-                setRequestData(prev => ({ ...prev, latitude: lat, longitude: lng }));
+                setRequestData({ latitude: lat, longitude: lng });
             }
         });
 
@@ -93,7 +81,7 @@ function CreateRequestForRecycledWaste() {
 
             if (response.data && response.data.length > 0) {
                 const { lat, lon } = response.data[0];
-                setRequestData(prev => ({ ...prev, latitude: lat, longitude: lon }));
+                setRequestData({ latitude: lat, longitude: lon });
 
                 if (map) {
                     map.setView([lat, lon], 14);
@@ -101,13 +89,84 @@ function CreateRequestForRecycledWaste() {
             } else {
                 setError('Location not found');
             }
-        } catch (err) {
+        } catch {
             setError('Error searching for location');
         }
     };
 
+    useEffect(() => {
+        const fetchCurrentRequest = async () => {
+            try {
+                const response = await axios.get(`/api/requests/request_for_recycled_waste/2`); // Replace '2' with dynamic user ID as needed
+                setCurrentRequest(response.data.requests);
+                console.log(response)
+            } catch {
+                setError('Failed to fetch current request');
+            }
+        };
+
+        fetchCurrentRequest();
+    }, []);
+    const deleteRequest = async (requestId) => {
+        try {
+            console.log(`Attempting to delete request with ID: ${requestId}`);
+            const response = await axios.delete(`/api/requests/delete_request/${requestId}`);
+    
+            console.log('Response:', response);
+    
+            if (response.data.success) {
+                setCurrentRequest(null);
+                alert(response.data.message);
+            } else {
+                // Handle case where the server responded but with an issue (e.g., no success flag)
+                console.error('Delete operation failed:', response.data);
+                setError('Delete operation did not succeed.');
+                alert(response.data.message || 'An error occurred while deleting the request.');
+            }
+        } catch (err) {
+            // Detailed error logging
+            console.error('Error occurred during delete request:', err);
+    
+            if (err.response) {
+                // Server responded with a status other than 2xx
+                console.error('Error Response Data:', err.response.data);
+                console.error('Error Response Status:', err.response.status);
+                console.error('Error Response Headers:', err.response.headers);
+                setError(err.response.data.message || 'Failed to delete the request');
+                alert(`Error: ${err.response.data.message || 'Failed to delete the request'}`);
+            } else if (err.request) {
+                // Request was made but no response received
+                console.error('No response received:', err.request);
+                setError('No response from the server.');
+                alert('No response received from the server.');
+            } else {
+                // Other unexpected errors
+                console.error('Error Message:', err.message);
+                setError('Unexpected error occurred.');
+                alert(`Error: ${err.message}`);
+            }
+        }
+    };
+    const acceptOffer = async (requestId) => {
+        try {
+            // Send POST request with requestId in the body
+            const response = await axios.post('/api/requests/accept_Offer', { requestId });
+    
+            // Handle response
+            if (response.status === 201) {
+                alert(response.data.message); // Success message
+                // Optionally update the UI state, e.g., reset the current request or show the schedule
+            } else {
+                alert(response.data.message); // Error message if status is not 201
+            }
+        } catch (error) {
+            console.error('Error accepting the offer:', error);
+            alert('Failed to accept the offer, please try again.');
+        }
+    };
     return (
-        <div>
+        
+        <div> {!currentRequest ? <div>
             <h2>Create Request for Recycled Waste</h2>
             <form onSubmit={handleSubmit}>
                 <div>
@@ -167,6 +226,25 @@ function CreateRequestForRecycledWaste() {
                     <LocationMarker />
                 </MapContainer>
             </form>
+            </div> : <div>
+            <h3>Request Details</h3>
+            <ul>
+                {currentRequest.request_id && <li><strong>Request ID:</strong> {currentRequest.request_id}</li>}
+                {currentRequest.user_id && <li><strong>User ID:</strong> {currentRequest.user_id}</li>}
+                {currentRequest.weight && <li><strong>Weight:</strong> {currentRequest.weight} kg</li>}
+                {currentRequest.latitude && <li><strong>Latitude:</strong> {currentRequest.latitude}</li>}
+                {currentRequest.longitude && <li><strong>Longitude:</strong> {currentRequest.longitude}</li>}
+                {currentRequest.date && <li><strong>Date:</strong> {currentRequest.date}</li>}
+                {currentRequest.time && <li><strong>Time:</strong> {currentRequest.time}</li>}
+                {currentRequest.offered_price && <li><strong>Offered Price:</strong> {currentRequest.offered_price}</li>}
+                {currentRequest.offered_by && <li><strong>Offered By:</strong> {currentRequest.offered_by}</li>}
+            </ul>
+            <button onClick={()=> acceptOffer(currentRequest.request_id)}>
+                Accept
+            </button>
+            <button onClick={()=> deleteRequest(currentRequest.request_id)}>Delete</button>
+        </div>}
+            
         </div>
     );
 }
