@@ -157,18 +157,19 @@ const ReportMissedPickups = () => {
                 formData.append("clean_or_unclean_image", selectedImage);
             }
 
-            let response = await fetch(`/api/testfileupload`, {
+            let response = await fetch(`/api/pickup/report_missed_pickup/`, {
                 method: "POST",
                 body: formData,
             });
 
             const responseData = await response.json();
             console.log("Response Data : ", responseData);
-            if (responseData.data[0] == 1) { //classified as unclean
+            if (responseData.success) {     //All conditions, constraints, checks etc passed
                 getAllMissedPickups();
-                alert("Image classified as unclean - Missed pickup reported successfully. ");
+                console.log("Message : ", responseData.message);
+                alert("Missed pickup reported successfully.");
             } else {
-                alert("Your image was classified as clean/spam, try again");
+                alert(responseData.message);
             }
         } catch (error) {
             alert(error.message);
@@ -229,46 +230,59 @@ const ReportMissedPickups = () => {
 
     return (
         <div>
-            <h2>Missed Pickups</h2>
-            {/* List of missed pickups */}
-            <ul>
-                {allMissedPickups.length > 0 ? (
-                    allMissedPickups.map((pickup, index) => (
-                        <li key={index}>
-                            <strong>Date:</strong> {new Date(pickup.created_at).toLocaleDateString()}
-                            | <strong>Status:</strong> {pickup.status}
-                            {pickup.status === "marked completed by company" && (
-                                <>
-                                    <button onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "completed")}>
-                                        Mark as Completed
-                                    </button>
-                                    <button onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "pending")}>
-                                        Mark as Pending
-                                    </button>
-                                </>
-                            )}
-                            {
-                                pickup.status === "pending" && (
-                                    <>
-                                        <button onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "marked completed by user")}>
-                                            Mark as Completed From Your Side
-                                        </button>
-                                    </>
-                                )
-                            }
-                        </li>
-                    ))
-                ) : (
-                    <p>No missed pickups reported yet.</p>
-                )}
-            </ul>
-
-            <form onSubmit={reportMissedPickup}>
-                <input type="file" accept="image/*" onChange={handleImageChange} />
-                <button type="submit">Report Missed Pickup</button>
-            </form>
+          <h2>Missed Pickups</h2>
+          {/* List of missed pickups */}
+          <ul>
+            {allMissedPickups.length > 0 ? (
+              allMissedPickups.map((pickup, index) => (
+                <li key={index}>
+                  <strong>ID:</strong> {pickup.missed_pickup_id}
+                  <strong> Date:</strong> {new Date(pickup.created_at).toLocaleDateString()}
+                  <strong> Status:</strong> {pickup.status}
+                  
+                  {/* Display Clean Image */}
+                  {pickup.clean_img && (
+                    <div>
+                      <strong>Clean Image:</strong>
+                      <img
+                        src={pickup.clean_img}
+                        alt="Clean Pickup"
+                        style={{ width: '100px', height: '100px', objectFit: 'cover' }} // Adjust as necessary
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Conditional buttons based on status */}
+                  {pickup.status === "marked completed by company" && (
+                    <>
+                      <button onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "completed")}>
+                        Mark as Completed
+                      </button>
+                      <button onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "pending")}>
+                        Mark as Pending
+                      </button>
+                    </>
+                  )}
+                  {pickup.status === "pending" && (
+                    <button onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "marked completed by user")}>
+                      Mark as Completed From Your Side
+                    </button>
+                  )}
+                </li>
+              ))
+            ) : (
+              <p>No missed pickups reported yet.</p>
+            )}
+          </ul>
+      
+          {/* Form for Reporting Missed Pickup */}
+          <form onSubmit={reportMissedPickup}>
+            <input type="file" accept="image/*" onChange={handleImageChange} />
+            <button type="submit">Report Missed Pickup</button>
+          </form>
         </div>
-    );
+      );
+      
 };
 
 export default ReportMissedPickups;

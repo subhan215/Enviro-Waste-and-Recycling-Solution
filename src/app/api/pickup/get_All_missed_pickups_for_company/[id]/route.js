@@ -22,7 +22,7 @@ export async function GET(req, { params }) {
     try {
         // Fetch all missed pickups that are not completed for the given company id
         all_missed_pickups = await pool.query(
-            'SELECT status, missed_pickup_id , created_at FROM missed_pickup WHERE company_id = $1 AND status != $2',
+            'SELECT status, missed_pickup_id , created_at, unclean_img FROM missed_pickup WHERE company_id = $1 AND status != $2',
             [id, "completed"]
         );
 

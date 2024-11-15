@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+<<<<<<< HEAD
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "@/components/ui/table"
@@ -8,6 +9,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Building2, FileText, Trash2, DollarSign, AlertTriangle, Search } from 'lucide-react'
+=======
+import { Button } from "../components/ui/Button"
+import { Input } from "../components/ui/Input"
+import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "../components/ui/Table"
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs"
+import { Building2, FileText, Trash2, DollarSign } from 'lucide-react'
+>>>>>>> e10b7dbc60b218f554f38f221f9e1df967f91578
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('dashboard')

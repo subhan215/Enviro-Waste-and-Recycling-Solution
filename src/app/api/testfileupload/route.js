@@ -28,14 +28,13 @@ export async function POST(req) {
     .filter(line => line.trim() !== "") // Remove empty lines    
 
     console.log(typeof(clean_or_unclean_fin[0]));
-    
+
 
     //cloudinary wala kaam
     const upload_clean_or_unclean_image_to_cloud = await upload_to_cloundiary(path)
     if(!upload_clean_or_unclean_image_to_cloud){
         return NextResponse.json({ "message" : "Unable to upload to cloundinary" , success:false })
     }
-
 
 
     function convertToNumbers(data) {
