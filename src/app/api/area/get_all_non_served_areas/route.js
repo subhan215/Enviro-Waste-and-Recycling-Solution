@@ -1,6 +1,6 @@
 import { pool } from "../../../../database/database";
 
-export async function GET(req) {
+export async function GET() {
     let all_areas;
     try {
     all_areas = await pool.query('select * from area where company_id is null');

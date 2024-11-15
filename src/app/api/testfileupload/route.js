@@ -1,5 +1,5 @@
 import { writeFile } from "fs/promises";
-import { pool } from "../../../database/database";
+//import { pool } from "../../../database/database";
 import { upload_to_cloundiary } from "../../../utils/cloudinary";
 import { NextResponse } from "next/server"
 import * as geminiAi from "../../../utils/geminiAi"
