@@ -27,7 +27,7 @@ export default function HomePage() {
     router.push("/complaints")
   }
 
-  const handleServiceClick = (service: string) => {
+  const handleServiceClick = (service) => {
     router.push(`/services/${service}`)
   }
 

@@ -27,7 +27,7 @@ const RecyclingCenters = ({ companyId }) => {
     useEffect(() => {
         const fetchRecyclingCenters = async () => {
             try {
-                const response = await axios.get(`/api/company/recycling_center/get_company_recycling_centers/${1}`);
+                const response = await axios.get(`/api/company/recycling_center/get_company_recycling_centers/${10}`);
                 console.log(response)
                 setRecyclingCenters(response.data.data);
                 setLoading(false);
@@ -44,7 +44,7 @@ const RecyclingCenters = ({ companyId }) => {
         // Fetch areas from your API when the component mounts
         const fetchAreas = async () => {
             try {
-                const response = await fetch(`/api/company/recycling_center/get_unassigned_areas/${1}`); // Adjust this URL as needed
+                const response = await fetch(`/api/company/recycling_center/get_unassigned_areas/${10}`); // Adjust this URL as needed
                 const data = await response.json();
                 if (data.success) {
                     setAreas(data.data); // Assuming the API returns an array of areas
@@ -86,7 +86,7 @@ const RecyclingCenters = ({ companyId }) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    company_id: 1,
+                    company_id: 10,
                     area_id: newCenter.area_id,
                     latitude: newCenter.latitude,
                     longitude: newCenter.longitude,

@@ -39,7 +39,7 @@ function CreateRequestForRecycledWaste() {
                 preferredTime,
                 latitude: requestData.latitude,
                 longitude: requestData.longitude,
-                userId: 2 // Replace with dynamic user ID as needed
+                userId: 1 // Replace with dynamic user ID as needed
             });
 
             if (response.data.success) {
@@ -97,7 +97,7 @@ function CreateRequestForRecycledWaste() {
     useEffect(() => {
         const fetchCurrentRequest = async () => {
             try {
-                const response = await axios.get(`/api/requests/request_for_recycled_waste/2`); // Replace '2' with dynamic user ID as needed
+                const response = await axios.get(`/api/requests/request_for_recycled_waste/1`); // Replace '2' with dynamic user ID as needed
                 setCurrentRequest(response.data.requests);
                 console.log(response)
             } catch {
