@@ -1,15 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {Button} from "../components/ui/Button"
-import { Button } from "../components/ui/Button"
 import { Input } from "../components/ui/Input"
 import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "../components/ui/Table"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/Select"
-import { Building2, FileText, Trash2, DollarSign } from 'lucide-react'
-
+import { Building2, FileText, Trash2, DollarSign, Search, ChartNoAxesColumnDecreasing } from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [searchTerm, setSearchTerm] = useState('')
@@ -73,7 +73,11 @@ export default function AdminPanel() {
             <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Manage Agreements</h2>
             <AgreementsTable />
           </TabsContent>
-
+          <TabsContent value="area_approval_requests">
+            <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Manage Area Approval Requests</h2>
+            <AreaApprovalRequests />
+          </TabsContent>
+          
           <TabsContent value="missed-pickups">
             <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Missed Pick-Ups</h2>
             <MissedPickupsTable />
@@ -88,6 +92,7 @@ export default function AdminPanel() {
             <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Citizen Complaints</h2>
             <ComplaintsTable searchTerm={searchTerm} setSearchTerm={setSearchTerm} statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
           </TabsContent>
+
         </Tabs>
       </main>
     </div>
@@ -362,3 +367,71 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
     </div>
   )
 }
+const AreaApprovalRequests = () => {
+  const [requests, setRequests] = useState([]);
+
+  // Fetch all area approval requests
+  const fetchRequests = async () => {
+    try {
+      const response = await fetch("/api/admin/get_area_approval_requests");
+      const data = await response.json();
+      console.log(data)
+      if (data.success) {
+        setRequests(data.data);
+      } else {
+        console.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching area approval requests:", error);
+    }
+  };
+
+  // Function to handle approval
+  const handleApprove = async (areaApprovalId) => {
+    try {
+      const response = await fetch("/api/admin/area_approval_requests", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ areaApprovalId }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        alert("Request approved successfully!");
+        fetchRequests(); // Refresh the requests list
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error("Error approving request:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  return (
+    <div>
+      <h1>Area Approval Requests</h1>
+      {requests.length > 0 ? (
+        <ul>
+          {requests.map((request) => (
+            <li key={request.area_approval_id}>
+              <div>
+                <p>Area ID: {request.area_id}</p>
+                <p>Company ID: {request.company_id}</p>
+                <button onClick={() => handleApprove(request.area_approval_id)}>
+                  Approve Request
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No area approval requests found.</p>
+      )}
+    </div>
+  );
+};

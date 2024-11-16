@@ -8,9 +8,9 @@ const ManageAndViewAreas = () => {
   const [isAddingArea, setIsAddingArea] = useState(false);
   const [viewMode, setViewMode] = useState(true); // true for viewing, false for managing
   const userData = useSelector((state) => state.userData.value);
+  const [areaRequests , setAreaRequests] = useState([])
+  const [loading, setLoading] = useState(false) ; 
   let companyId = userData.user_id;
-
-  // Fetch both assigned and non-assigned areas from the API
   const fetchAreas = async () => {
     try {
       const response = await fetch(`/api/area/get_all_assigned_areas/${companyId}`);
@@ -77,7 +77,24 @@ const ManageAndViewAreas = () => {
       }
     }
   };
-
+  const fetchAreaRequests = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch(`/api/area/get_area_for_request_approval/${companyId}`);
+      const data = await response.json();
+      console.log(data)
+      if (data.success) {
+        setAreaRequests(data.data);
+      } else {
+        setError(data.message);
+      }
+    } catch (err) {
+      setError("Failed to fetch area requests.");
+      console.error("Error fetching area requests:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold">Manage and View Areas</h2>
@@ -90,7 +107,22 @@ const ManageAndViewAreas = () => {
       >
         {viewMode ? "Add new area" : "View Assigned Areas"}
       </button>
-
+      <div>
+        {loading ? <p>Loading....</p> : <p>no Requests fetched </p>}
+      <button onClick={fetchAreaRequests}>
+        Fetch Area Requests
+      </button>
+      {areaRequests.length > 0 ? (
+      areaRequests.map((req, index)=> (
+      (
+        <div>
+            <p>Request {index+1}</p>
+            <p>area name: {req.name}</p>
+            <p>status: {req.status}</p>
+        </div>
+      )
+      ))) : null}
+      </div>
       {/* View Assigned Areas */}
       {viewMode && (
         <div className="mt-4">
@@ -109,8 +141,8 @@ const ManageAndViewAreas = () => {
                 areas.map((area, index) => (
                   <tr key={index}>
                     <td className="py-2 px-4 border-b">{area.name}</td>
-                    <td className="py-2 px-4 border-b">{area.truckid}</td>
-                    <td className="py-2 px-4 border-b">{area.licenseplate}</td>
+                    <td className="py-2 px-4 border-b">{area.truckid ? area.truckid: "null"}</td>
+                    <td className="py-2 px-4 border-b">{area.licenseplate ? area.licenseplate: "null"}</td>
                   </tr>
                 ))
               ) : (

@@ -1,27 +1,47 @@
-//import { pool } from "../../../../database/database";
+import { pool } from "../../../../database/database";
 
 export async function POST(req) {
-    const {selectedAreas , company_id} = await req.json();
-    console.log("se : ",selectedAreas);
+    const { selectedAreas, company_id } = await req.json();
+    console.log("Selected Areas: ", selectedAreas);
 
-    //const assigning = await pool.query('update area set company_id = $1 where area_id = any($2)' , [company_id,selectedAreas])
+    try {
+        // Begin a database transaction
+        await pool.query('BEGIN');
 
-    // return res.status(200).json({
-    //     success : true,
-    //     data : selected_areas,
-    //     message: 'selected areas assigned!'
-    //  })
+        // Loop through the selected areas and insert each one into the database
+        for (const area_id of selectedAreas) {
+            await pool.query(
+                `INSERT INTO request_for_area_approval (area_id, company_id, status) 
+                 VALUES ($1, $2, $3)`,
+                [area_id, company_id, 'pending']
+            );
+        }
 
+        // Commit the transaction
+        await pool.query('COMMIT');
 
- return new Response(
-    JSON.stringify({
-        success : true,
-        data : selectedAreas,
-        message: 'Areas assinged to company!',
-    }),
-    {
-        status : 200
+        return new Response(
+            JSON.stringify({
+                success: true,
+                message: 'request has been created for areas approval!',
+            }),
+            {
+                status: 200
+            }
+        );
+    } catch (error) {
+        // Rollback the transaction in case of an error
+        await pool.query('ROLLBACK');
+        console.error("Error creating request for area approval: ", error);
+        return new Response(
+            JSON.stringify({
+                success: false,
+                message: 'Failed to create request for area approval.',
+                error: error.message
+            }),
+            {
+                status: 500
+            }
+        );
     }
- )
-
 }

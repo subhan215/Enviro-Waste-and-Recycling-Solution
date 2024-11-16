@@ -8,7 +8,7 @@ export async function GET(req, { params }) {
   
   try {
     all_areas = await pool.query(
-      'SELECT DISTINCT area.name, area.area_id, trucks.truckid, trucks.licenseplate FROM area JOIN trucks ON area.area_id = trucks.area_id WHERE area.company_id = $1',
+      'SELECT DISTINCT area.name, area.area_id, trucks.truckid, trucks.licenseplate FROM area LEFT JOIN trucks ON area.area_id = trucks.area_id WHERE area.company_id = $1',
       [companyId]
     );
 
