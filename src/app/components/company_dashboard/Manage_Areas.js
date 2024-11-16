@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-
+import { useSelector } from "react-redux";
 const Manage_Areas = () => {
   const [areas, setAreas] = useState(["Area 1", "Area 2", "Area 3"]);
   const [nonAssignedAreas, setNonAssignedAreas] = useState([]);
   const [selectedAreas, setSelectedAreas] = useState([]);
   const [isAddingArea, setIsAddingArea] = useState(false);
+  const userData = useSelector((state) => state.userData.value)
  console.log(selectedAreas)
   // Function to fetch non-assigned areas from the API
   const fetchNonAssignedAreas = async () => {
@@ -40,7 +41,7 @@ const Manage_Areas = () => {
             "Content-Type": "application/json",
           },
           method: "POST",
-          body: JSON.stringify({ selectedAreas }),
+          body: JSON.stringify({ selectedAreas , company_id: userData.user_id }),
         });
 
         const responseData = await response.json();

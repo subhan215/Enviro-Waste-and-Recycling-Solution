@@ -131,13 +131,17 @@
 
 
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const ReportMissedPickups = () => {
     const [allMissedPickups, setAllMissedPickups] = useState([]);
-    const [userId, setUserId] = useState(1); // Assuming user ID is 1
-    const [areaId, setAreaId] = useState(2); // Initial area ID to be used for reporting
+    const userData = useSelector((state) => state.userData.value)
+    //const [userId, setUserId] = useState(userData.user_id); // Assuming user ID is 1
+    //const [areaId, setAreaId] = useState(userData.area_id); // Initial area ID to be used for reporting
     const [selectedImage, setSelectedImage] = useState(null); // State to hold the selected image
-
+    console.log(userData)
+    let userId = userData.user_id ; 
+    let areaId = userData.area_id;
     // Function to handle image selection
     const handleImageChange = (event) => {
         setSelectedImage(event.target.files[0]);

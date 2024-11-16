@@ -1,13 +1,19 @@
+"use client" ; 
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
-const Waste_Schedules = ({ companyId =1}) => {
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrentChat } from '../../../store/slices/currentChatSlice';
+const Waste_Schedules = ({}) => {
   const [schedules, setSchedules] = useState([]);
   const [trucks, setTrucks] = useState([]);
   const [selectedTruck, setSelectedTruck] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [assigning, setAssigning] = useState(false);
-
+  const navigate = useRouter();
+  const dispatch = useDispatch()
+  const userData = useSelector((state) => state.userData.value)
+  let companyId = 1//userData.user_id ; 
   useEffect(() => {
     const fetchCompanySchedules = async () => {
       try {
@@ -47,7 +53,6 @@ const Waste_Schedules = ({ companyId =1}) => {
       return;
     }
     setAssigning(true);
-    console.log(selectedTruck)
     try {
       const response = await fetch('/api/schedule/assign_truck', {
         method: 'POST',
@@ -73,6 +78,30 @@ const Waste_Schedules = ({ companyId =1}) => {
     }
   };
 
+  const handleInitiateChat = async (company_id,  userId) => {
+    try {
+      const response = await fetch('/api/chat/create_chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ company_id , user_id: userId}),
+      });
+      const result = await response.json();
+      if (response.ok) {
+        dispatch(setCurrentChat(result.data.chat_id))
+        alert('Chat initiated successfully!');
+       
+        navigate.push('/chat') ;
+      } else {
+        alert(`Failed to initiate chat: ${result.message}`);
+      }
+    } catch (err) {
+      console.error('Error initiating chat:', err);
+      alert('An error occurred while initiating the chat.');
+    }
+  };
+
   if (loading) return <p>Loading company schedules...</p>;
   if (error) return <p>Error: {error}</p>;
   if (schedules.length === 0) return <p>No schedules found for this company.</p>;
@@ -81,35 +110,27 @@ const Waste_Schedules = ({ companyId =1}) => {
     <div>
       <h2>Company Schedules</h2>
       <ul>
-        {schedules.map(schedule => (
+        {schedules.map((schedule) => (
           <li key={schedule.schedule_id}>
             <p><strong>Date:</strong> {schedule.date}</p>
             <p><strong>Time:</strong> {schedule.time}</p>
             <p><strong>Status:</strong> {schedule.status}</p>
-            {schedule.price && <p><strong>Price:</strong> {schedule.price}</p>}
-            <div>
-               {schedule.truck_id ? <p><strong> Assigned truck: </strong> {schedule.truck_id}</p> :  <>
-              <label htmlFor={`truck-select-${schedule.schedule_id}`}>Assign Truck: </label>
-              <select
-                id={`truck-select-${schedule.schedule_id}`}
-                onChange={(e) => setSelectedTruck(e.target.value)}
-              >
-                <option value="">Select a truck</option>
-                {trucks.map(truck => (
-                  <option key={truck.truckid} value={truck.truckid}>
-                    {truck.licenseplate} - {truck.capacity} capacity
+            <button onClick={() => handleInitiateChat(schedule.company_id  ,schedule.user_id)}>Contact User</button>
+            <br />
+            <label>
+              Select Truck:
+              <select value={selectedTruck} onChange={(e) => setSelectedTruck(e.target.value)}>
+                <option value="">Choose a truck</option>
+                {trucks.map((truck) => (
+                  <option key={truck.truck_id} value={truck.truck_id}>
+                    {truck.truck_name}
                   </option>
                 ))}
               </select>
-              <button
-                onClick={() => handleAssignTruck(schedule.schedule_id)}
-                disabled={assigning}
-              >
-                {assigning ? 'Assigning...' : 'Assign Truck'}
-              </button>
-              </>
-}
-            </div>
+            </label>
+            <button onClick={() => handleAssignTruck(schedule.schedule_id)} disabled={assigning}>
+              {assigning ? 'Assigning...' : 'Assign Truck'}
+            </button>
           </li>
         ))}
       </ul>

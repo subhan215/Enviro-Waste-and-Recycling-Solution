@@ -114,14 +114,15 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
-const Missed_Pickups = ({ companyId = 10 }) => {
+import { useSelector } from 'react-redux';
+const Missed_Pickups = ({}) => {
   const [missedPickups, setMissedPickups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null); // State for the selected image
   const [selectedPickupId, setSelectedPickupId] = useState(null); // State for the selected pickup ID
-
+  const userData = useSelector((state) => state.userData.value)
+  let companyId = userData.user_id
   useEffect(() => {
     const fetchMissedPickups = async () => {
       try {
@@ -152,7 +153,7 @@ const Missed_Pickups = ({ companyId = 10 }) => {
     }
 
     const formData = new FormData();
-    formData.append('userId', 10);
+    formData.append('userId', companyId);
     formData.append('missed_pickup_id', missedPickupId);
     formData.append('clean_or_unclean_image', selectedImage);
 

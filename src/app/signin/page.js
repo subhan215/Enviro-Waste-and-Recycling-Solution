@@ -5,10 +5,11 @@ import { setCookie } from "../../cookies/setCookie";
 import { removeCookie } from "../../cookies/removeCookie";
 import { getCookie } from "../../cookies/getCookie";
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 const SignIn = () => {
   const [accessToken, setAccessToken] = useState(getCookie("access_token"));
   const refreshToken = getCookie("refresh_token");
+  const navigate = useRouter()
   const [userData, setUserData] = useState({
     email: "",
     password: "",
@@ -30,6 +31,12 @@ const SignIn = () => {
         alert(responseData.message);
         setCookie("access_token", responseData.data.access_token, 2);
         setCookie("refresh_token", responseData.data.refresh_token, 2);
+        if(responseData.data.role === "user") {
+          navigate.push('/profiles/userProfile')
+        }
+        else {
+          navigate.push('/profiles/companyProfile')
+        }
         // Redirect or update state to show home or profile page
       } else {
         alert(responseData.message);
@@ -50,8 +57,15 @@ const SignIn = () => {
       });
 
       const responseData = await response.json();
+      console.log(responseData)
       if (responseData.success) {
         alert(responseData.message);
+        if(responseData.role === "user") {
+          navigate.push("/profiles/userProfile") ; 
+        }
+        else {
+          navigate.push("/profiles/companyProfile")
+        }
       } else {
         alert(responseData.message);
         removeCookie("access_token");

@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
@@ -17,6 +18,8 @@ L.Icon.Default.mergeOptions({
 });
 
 function CreateRequestForRecycledWaste() {
+    const userData = useSelector((state) => state.userData.value)
+    console.log(userData)
     const [waste, setWaste] = useState('');
     const [preferredDate, setPreferredDate] = useState('');
     const [preferredTime, setPreferredTime] = useState('');
@@ -39,7 +42,7 @@ function CreateRequestForRecycledWaste() {
                 preferredTime,
                 latitude: requestData.latitude,
                 longitude: requestData.longitude,
-                userId: 2 // Replace with dynamic user ID as needed
+                userId: userData.user_id // Replace with dynamic user ID as needed
             });
 
             if (response.data.success) {
@@ -97,7 +100,7 @@ function CreateRequestForRecycledWaste() {
     useEffect(() => {
         const fetchCurrentRequest = async () => {
             try {
-                const response = await axios.get(`/api/requests/request_for_recycled_waste/2`); // Replace '2' with dynamic user ID as needed
+                const response = await axios.get(`/api/requests/request_for_recycled_waste/${userData.user_id}`); // Replace '2' with dynamic user ID as needed
                 setCurrentRequest(response.data.requests);
                 console.log(response)
             } catch {

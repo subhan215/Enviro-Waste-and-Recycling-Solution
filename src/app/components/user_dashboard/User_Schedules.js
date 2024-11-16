@@ -1,14 +1,44 @@
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-
-const SchedulesList = ({ userId }) => {
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrentChat } from '../../../store/slices/currentChatSlice';
+const SchedulesList = ({}) => {
+  const userData = useSelector((state) => state.userData.value)
+  console.log(userData)
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useRouter()
+  let user_id = 2;//userData.user_id
+  const dispatch = useDispatch()
+  const handleInitiateChat = async (companyId,  userId) => {
+    try {
+      const response = await fetch('/api/chat/create_chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ company_id: companyId  , user_id: userId}),
+      });
+      const result = await response.json();
+      if (response.ok) {
+        dispatch(setCurrentChat(result.data.chat_id))
+        alert('Chat initiated successfully!');
+        navigate.push('/chat') ;
+        
+      } else {
+        alert(`Failed to initiate chat: ${result.message}`);
+      }
+    } catch (err) {
+      console.error('Error initiating chat:', err);
+      alert('An error occurred while initiating the chat.');
+    }
+  };
 
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
-        const response = await fetch(`/api/schedule/get_schedule_for_user/${2}`);
+        const response = await fetch(`/api/schedule/get_schedule_for_user/${user_id}`);
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
@@ -23,7 +53,7 @@ const SchedulesList = ({ userId }) => {
     };
       fetchSchedules();
     
-  }, [userId]);
+  }, [userData]);
 
   if (loading) return <p>Loading schedules...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -39,6 +69,7 @@ const SchedulesList = ({ userId }) => {
             <p><strong>Time:</strong> {schedule.time}</p>
             <p><strong>Status:</strong> {schedule.status}</p>
             {schedule.price && <p><strong>Price:</strong> {schedule.price}</p>}
+            <button onClick={() => handleInitiateChat(schedule.company_id  ,schedule.user_id)}>Contact Company</button>
           </li>
         ))}
       </ul>

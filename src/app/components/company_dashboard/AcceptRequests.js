@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import { useSelector } from "react-redux";
 function AcceptRequests() {
     const [requests, setRequests] = useState([]);
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
     const [newPriceOffered , setNewPriceOffered] = useState("")
+    const userData = useSelector((state) => state.userData.value)
     useEffect(() => {
         // Fetch requests from the database
         const fetchRequests = async () => {
             try {
-                const company_id = 1; // Replace with the actual company_id you want to test
-                const response = await axios.get(`/api/requests/get_requests_near_company/${company_id}`);
+                //const company_id = 1; // Replace with the actual company_id you want to test
+                const response = await axios.get(`/api/requests/get_requests_near_company/${userData.user_id}`);
                 const fetchedRequests = response.data.requests;
 
                 // For each request, fetch the location name based on latitude and longitude
@@ -52,7 +53,7 @@ function AcceptRequests() {
             return  ; 
         }
         try {
-            const response = await axios.put("/api/requests/offer_price", { requestId, newPrice , company_id:3 });
+            const response = await axios.put("/api/requests/offer_price", { requestId, newPrice , company_id:userData.user_id });
             console.log(response)
             if (response.data.success) {
                 setSuccessMessage("Price offered successfully!");

@@ -1,15 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from "../components/ui/Button"
+import {Button} from "../components/ui/Button"
 import { Input } from "../components/ui/Input"
 import { Table, TableBody, TableCell, TableHead, TableRow, TableHeader } from "../components/ui/Table"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs"
-import { Building2, FileText, Trash2, DollarSign } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/Select"
+import { Building2, FileText, Trash2, DollarSign, AlertTriangle, Search } from 'lucide-react'
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
 
   return (
     <div className="flex h-screen bg-white text-[#17cf42]">
@@ -38,6 +41,10 @@ export default function AdminPanel() {
             <TabsTrigger value="transactions" onClick={() => setActiveTab('transactions')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
               <DollarSign className="mr-2 h-4 w-4" />
               Transactions
+            </TabsTrigger>
+            <TabsTrigger value="complaints" onClick={() => setActiveTab('complaints')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
+              <AlertTriangle className="mr-2 h-4 w-4" />
+              Complaints
             </TabsTrigger>
           </TabsList>
         </nav>
@@ -74,6 +81,11 @@ export default function AdminPanel() {
           <TabsContent value="transactions">
             <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Transactions Overview</h2>
             <TransactionsTable />
+          </TabsContent>
+
+          <TabsContent value="complaints">
+            <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Citizen Complaints</h2>
+            <ComplaintsTable searchTerm={searchTerm} setSearchTerm={setSearchTerm} statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
           </TabsContent>
         </Tabs>
       </main>
@@ -259,6 +271,88 @@ function TransactionsTable() {
               <TableCell className="text-[#17cf42]">{transaction.type}</TableCell>
               <TableCell>
                 <Button variant="outline" size="sm" className="border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white">View Details</Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  )
+}
+
+function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFilter }) {
+  const complaints = [
+    { id: 1, citizen: "John Doe", date: "2023-05-15", location: "123 Main St", type: "Missed Pickup", status: "Open" },
+    { id: 2, citizen: "Jane Smith", date: "2023-05-16", location: "456 Elm St", type: "Improper Disposal", status: "In Progress" },
+    { id: 3, citizen: "Bob Johnson", date: "2023-05-17", location: "789 Oak St", type: "Overflowing Bin", status: "Resolved" },
+    { id: 4, citizen: "Alice Brown", date: "2023-05-18", location: "101 Pine St", type: "Missed Pickup", status: "Open" },
+    { id: 5, citizen: "Charlie Davis", date: "2023-05-19", location: "202 Maple St", type: "Improper Disposal", status: "In Progress" },
+  ]
+
+  const filteredComplaints = complaints.filter(complaint => 
+    (complaint.citizen.toLowerCase().includes(searchTerm.toLowerCase()) ||
+     complaint.location.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    (statusFilter === '' || complaint.status === statusFilter)
+  )
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center space-x-2">
+          <Input
+            placeholder="Search by citizen or location"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-64 bg-white text-[#17cf42] border-[#17cf42] focus:border-[#17cf42] focus:ring-[#17cf42]"
+          />
+          <Search className="h-4 w-4 text-[#17cf42]" />
+        </div>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-[180px] border-[#17cf42] text-[#17cf42]">
+            <SelectValue placeholder="Filter by status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">All Statuses</SelectItem>
+            <SelectItem value="Open">Open</SelectItem>
+            <SelectItem value="In Progress">In Progress</SelectItem>
+            <SelectItem value="Resolved">Resolved</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button className="bg-[#17cf42] text-white hover:bg-white hover:text-[#17cf42] hover:border-[#17cf42] hover:border">Add New Complaint</Button>
+      </div>
+      <Table className="border-[#17cf42]">
+        <TableHeader>
+          <TableRow className="border-b border-[#17cf42]">
+            <TableHead className="text-[#17cf42]">ID</TableHead>
+            <TableHead className="text-[#17cf42]">Citizen</TableHead>
+            <TableHead className="text-[#17cf42]">Date</TableHead>
+            <TableHead className="text-[#17cf42]">Location</TableHead>
+            <TableHead className="text-[#17cf42]">Type</TableHead>
+            <TableHead className="text-[#17cf42]">Status</TableHead>
+            <TableHead className="text-[#17cf42]">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {filteredComplaints.map((complaint) => (
+            <TableRow key={complaint.id} className="border-b border-[#17cf42]">
+              <TableCell className="text-[#17cf42]">{complaint.id}</TableCell>
+              <TableCell className="text-[#17cf42]">{complaint.citizen}</TableCell>
+              <TableCell className="text-[#17cf42]">{complaint.date}</TableCell>
+              <TableCell className="text-[#17cf42]">{complaint.location}</TableCell>
+              <TableCell className="text-[#17cf42]">{complaint.type}</TableCell>
+              <TableCell className="text-[#17cf42]">
+                <div className="flex items-center">
+                  <AlertTriangle className={`h-4 w-4 mr-2 ${
+                    complaint.status === 'Open' ? 'text-red-500' :
+                    complaint.status === 'In Progress' ? 'text-yellow-500' :
+                    'text-green-500'
+                  }`} />
+                  {complaint.status}
+                </div>
+              </TableCell>
+              <TableCell>
+                <Button variant="outline" size="sm" className="mr-2 border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white">Update</Button>
+                <Button variant="outline" size="sm" className="border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white">View</Button>
               </TableCell>
             </TableRow>
           ))}

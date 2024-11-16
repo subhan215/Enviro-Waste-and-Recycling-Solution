@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-
+import { useSelector } from "react-redux";
 const Add_Trucks = () => {
     const [data, setData] = useState({
         licensePlate: "", 
@@ -8,11 +8,11 @@ const Add_Trucks = () => {
         area_id: "" , 
     });
     const [allAreas, setAllAreas] = useState([]); // State to store available areas
-
+    const userData = useSelector((state) => state.userData.value)
     const getNonAssignedTruckAreas = async () => {
         try {
             console.log("Fetching non-assigned areas...");
-            let response = await fetch(`/api/area/get_truck_not_assigned_areas/${1}/`, {
+            let response = await fetch(`/api/area/get_truck_not_assigned_areas/${userData.user_id}/`, {
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -41,7 +41,7 @@ const Add_Trucks = () => {
         // Handle form submission logic here (e.g., send truck data to API)
         console.log("Form data:", data);
         try {
-            let response = await fetch(`/api/area/assign_truck_to_area/${2}/`, {
+            let response = await fetch(`/api/area/assign_truck_to_area/${userData.user_id}/`, {
                 headers: {
                     "Content-Type": "application/json",
                 },

@@ -11,19 +11,13 @@ import Waste_Schedules from "../../components/company_dashboard/Waste_Schedules"
 const CompanyProfilePage = () => {
   const [selectedOption, setSelectedOption] = useState("manageAreas");
 
-  // Mock data for demonstration
-  const trucks = [
-    { id: "Truck 101", area: "Area 1", lastService: "2024-09-15", capacity: "80%" },
-    { id: "Truck 102", area: "Area 2", lastService: "2024-09-18", capacity: "60%" },
-  ];
-
   // Rendering based on selected option
   const renderContent = () => {
     switch (selectedOption) {
-      case "manageAreas":
+     /* case "manageAreas":
         return (
          <Manage_Areas />
-        );
+        ); */
       case "assignTrucks":
         return (
           <Add_Trucks />
@@ -63,14 +57,7 @@ const CompanyProfilePage = () => {
       <div className="w-64 bg-white shadow-md p-4">
         <h2 className="text-2xl font-bold mb-6">Company Dashboard</h2>
         <ul>
-          <li
-            className={`py-2 px-4 mb-2 rounded cursor-pointer ${
-              selectedOption === "manageAreas" ? "bg-gray-200" : ""
-            }`}
-            onClick={() => setSelectedOption("manageAreas")}
-          >
-            Manage Areas
-          </li>
+          
           <li
             className={`py-2 px-4 mb-2 rounded cursor-pointer ${
               selectedOption === "assignTrucks" ? "bg-gray-200" : ""

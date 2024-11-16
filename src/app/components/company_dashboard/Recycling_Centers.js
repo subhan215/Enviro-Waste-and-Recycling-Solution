@@ -3,6 +3,7 @@ import axios from 'axios';
 import dynamic from 'next/dynamic';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useSelector } from 'react-redux';
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
@@ -15,7 +16,7 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
-const RecyclingCenters = ({ companyId }) => {
+const RecyclingCenters = ({}) => {
     const [recyclingCenters, setRecyclingCenters] = useState([]);
     const [newCenter, setNewCenter] = useState({ area_id: '', latitude: '', longitude: '' });
     const [loading, setLoading] = useState(true);
@@ -23,11 +24,12 @@ const RecyclingCenters = ({ companyId }) => {
     const [locationName, setLocationName] = useState('');
     const [map, setMap] = useState(null);
     const [areas, setAreas] = useState([]); // State to hold areas
-
+    const userData = useSelector((state) => state.userData.value)
+    let companyId = userData.user_id
     useEffect(() => {
         const fetchRecyclingCenters = async () => {
             try {
-                const response = await axios.get(`/api/company/recycling_center/get_company_recycling_centers/${1}`);
+                const response = await axios.get(`/api/company/recycling_center/get_company_recycling_centers/${companyId}`);
                 console.log(response)
                 setRecyclingCenters(response.data.data);
                 setLoading(false);
@@ -44,7 +46,7 @@ const RecyclingCenters = ({ companyId }) => {
         // Fetch areas from your API when the component mounts
         const fetchAreas = async () => {
             try {
-                const response = await fetch(`/api/company/recycling_center/get_unassigned_areas/${1}`); // Adjust this URL as needed
+                const response = await fetch(`/api/company/recycling_center/get_unassigned_areas/${companyId}`); // Adjust this URL as needed
                 const data = await response.json();
                 if (data.success) {
                     setAreas(data.data); // Assuming the API returns an array of areas
@@ -86,7 +88,7 @@ const RecyclingCenters = ({ companyId }) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    company_id: 1,
+                    company_id: companyId,
                     area_id: newCenter.area_id,
                     latitude: newCenter.latitude,
                     longitude: newCenter.longitude,

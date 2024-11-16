@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-
+import { useSelector } from "react-redux";
 const Truck_Information = () => {
   const [trucksInfo, setTrucksInfo] = useState([]);
-
+  const userData = useSelector((state) => state.userData.value)
+  let companyId = userData.user_id
   const fetchTrucksInfo = async () => {
     try {
-      const response = await fetch(`/api/trucks/get_Trucks_Information/2/`); // Assuming company ID = 2
+      const response = await fetch(`/api/trucks/get_Trucks_Information/${companyId}/`); // Assuming company ID = 2
       const data = await response.json();
       console.log(data);
 
