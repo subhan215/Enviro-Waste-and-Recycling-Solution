@@ -43,6 +43,16 @@ const Waste_Schedules = ({}) => {
       }
     };
 
+    const fetchWastePrices = async () => {
+      try {
+        const response = await axios.get('/api/requests/get_waste_price');
+        setWastePrices(response.data.data);
+      } catch (error) {
+        alert('Error while fetching waste prices: ', error);
+      }
+    };
+
+    fetchWastePrices();
     fetchCompanySchedules();
     fetchCompanyTrucks();
   }, [companyId]);
@@ -103,11 +113,12 @@ const Waste_Schedules = ({}) => {
   };
 
   if (loading) return <p>Loading company schedules...</p>;
-  if (error) return <p>Error: {error}</p>;
+  //if (error) return <p>Error: {error}</p>;
   if (schedules.length === 0) return <p>No schedules found for this company.</p>;
 
   return (
     <div>
+
       <h2>Company Schedules</h2>
       <ul>
         {schedules.map((schedule) => (
@@ -134,6 +145,25 @@ const Waste_Schedules = ({}) => {
           </li>
         ))}
       </ul>
+
+      {showForm && (
+        <form onSubmit={handleFormSubmit}>
+          <h3>Enter received weights</h3>
+          {wastePrices.map((item) => (
+            <div key={item.name}>
+              <label>{item.name} ({item.rate_per_kg} per kg):</label>
+              <input
+                type="number"
+                value={weights[item.name] || ''}
+                onChange={(e) =>
+                  setWeights({ ...weights, [item.name]: e.target.value })
+                }
+              />
+            </div>
+          ))}
+          <button type="submit">Submit</button>
+        </form>
+      )}
     </div>
   );
 };

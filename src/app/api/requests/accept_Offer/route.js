@@ -25,6 +25,12 @@ export async function POST(req, { params }) {
         `;
         await pool.query(insertScheduleQuery, [user_id, company_id,  date, time, 'Scheduled', offered_price]);
 
+        const deleteQuery = 'DELETE FROM request_for_waste WHERE request_id = $1';
+        const result = await pool.query(deleteQuery, [requestId]);
+        console.log("deleting successfully!" , result)
+
+
+
         return new Response(JSON.stringify({ message: `Schedule created successfully for request ID ${requestId}.` }), { status: 201 });
     } catch (error) {
         console.error('Error creating schedule:', error);
