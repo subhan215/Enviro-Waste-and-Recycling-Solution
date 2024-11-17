@@ -318,14 +318,7 @@ const SignUp = () => {
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                                 </select>
-                                <input
-                                    type="text"
-                                    name="gender"
-                                    placeholder="Gender"
-                                    className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#4e975f] text-base font-normal"
-                                    required
-                                    onChange={handleInputChange}
-                                />
+                               
                             </label>
 
                             <label className="flex flex-col min-w-40 flex-1 mb-4">
