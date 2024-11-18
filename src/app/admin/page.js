@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/Tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/Select"
 import { Building2, FileText, Trash2, DollarSign, Search, ChartNoAxesColumnDecreasing } from 'lucide-react'
 import { AlertTriangle } from 'lucide-react'
+import axios from "axios"
 import { useRouter } from 'next/navigation'
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -286,20 +287,144 @@ function TransactionsTable() {
   )
 }
 
-function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFilter }) {
-  const complaints = [
-    { id: 1, citizen: "John Doe", date: "2023-05-15", location: "123 Main St", type: "Missed Pickup", status: "Open" },
-    { id: 2, citizen: "Jane Smith", date: "2023-05-16", location: "456 Elm St", type: "Improper Disposal", status: "In Progress" },
-    { id: 3, citizen: "Bob Johnson", date: "2023-05-17", location: "789 Oak St", type: "Overflowing Bin", status: "Resolved" },
-    { id: 4, citizen: "Alice Brown", date: "2023-05-18", location: "101 Pine St", type: "Missed Pickup", status: "Open" },
-    { id: 5, citizen: "Charlie Davis", date: "2023-05-19", location: "202 Maple St", type: "Improper Disposal", status: "In Progress" },
-  ]
+// function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFilter }) {
+//   const complaints = [
+//     { id: 1, citizen: "John Doe", date: "2023-05-15", location: "123 Main St", type: "Missed Pickup", status: "Open" },
+//     { id: 2, citizen: "Jane Smith", date: "2023-05-16", location: "456 Elm St", type: "Improper Disposal", status: "In Progress" },
+//     { id: 3, citizen: "Bob Johnson", date: "2023-05-17", location: "789 Oak St", type: "Overflowing Bin", status: "Resolved" },
+//     { id: 4, citizen: "Alice Brown", date: "2023-05-18", location: "101 Pine St", type: "Missed Pickup", status: "Open" },
+//     { id: 5, citizen: "Charlie Davis", date: "2023-05-19", location: "202 Maple St", type: "Improper Disposal", status: "In Progress" },
+//   ]
 
-  const filteredComplaints = complaints.filter(complaint => 
-    (complaint.citizen.toLowerCase().includes(searchTerm.toLowerCase()) ||
-     complaint.location.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    (statusFilter === '' || complaint.status === statusFilter)
-  )
+//   const filteredComplaints = complaints.filter(complaint => 
+//     (complaint.citizen.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//      complaint.location.toLowerCase().includes(searchTerm.toLowerCase())) &&
+//     (statusFilter === '' || complaint.status === statusFilter)
+//   )
+
+//   return (
+//     <div>
+//       <div className="flex justify-between items-center mb-4">
+//         <div className="flex items-center space-x-2">
+//           <Input
+//             placeholder="Search by citizen or location"
+//             value={searchTerm}
+//             onChange={(e) => setSearchTerm(e.target.value)}
+//             className="w-64 bg-white text-[#17cf42] border-[#17cf42] focus:border-[#17cf42] focus:ring-[#17cf42]"
+//           />
+//           <Search className="h-4 w-4 text-[#17cf42]" />
+//         </div>
+//         <Select value={statusFilter} onValueChange={setStatusFilter}>
+//           <SelectTrigger className="w-[180px] border-[#17cf42] text-[#17cf42]">
+//             <SelectValue placeholder="Filter by status" />
+//           </SelectTrigger>
+//           <SelectContent>
+//             <SelectItem value="">All Statuses</SelectItem>
+//             <SelectItem value="Open">Open</SelectItem>
+//             <SelectItem value="In Progress">In Progress</SelectItem>
+//             <SelectItem value="Resolved">Resolved</SelectItem>
+//           </SelectContent>
+//         </Select>
+//         <Button className="bg-[#17cf42] text-white hover:bg-white hover:text-[#17cf42] hover:border-[#17cf42] hover:border">Add New Complaint</Button>
+//       </div>
+//       <Table className="border-[#17cf42]">
+//         <TableHeader>
+//           <TableRow className="border-b border-[#17cf42]">
+//             <TableHead className="text-[#17cf42]">ID</TableHead>
+//             <TableHead className="text-[#17cf42]">Citizen</TableHead>
+//             <TableHead className="text-[#17cf42]">Date</TableHead>
+//             <TableHead className="text-[#17cf42]">Location</TableHead>
+//             <TableHead className="text-[#17cf42]">Type</TableHead>
+//             <TableHead className="text-[#17cf42]">Status</TableHead>
+//             <TableHead className="text-[#17cf42]">Actions</TableHead>
+//           </TableRow>
+//         </TableHeader>
+//         <TableBody>
+//           {filteredComplaints.map((complaint) => (
+//             <TableRow key={complaint.id} className="border-b border-[#17cf42]">
+//               <TableCell className="text-[#17cf42]">{complaint.id}</TableCell>
+//               <TableCell className="text-[#17cf42]">{complaint.citizen}</TableCell>
+//               <TableCell className="text-[#17cf42]">{complaint.date}</TableCell>
+//               <TableCell className="text-[#17cf42]">{complaint.location}</TableCell>
+//               <TableCell className="text-[#17cf42]">{complaint.type}</TableCell>
+//               <TableCell className="text-[#17cf42]">
+//                 <div className="flex items-center">
+//                   <AlertTriangle className={`h-4 w-4 mr-2 ${
+//                     complaint.status === 'Open' ? 'text-red-500' :
+//                     complaint.status === 'In Progress' ? 'text-yellow-500' :
+//                     'text-green-500'
+//                   }`} />
+//                   {complaint.status}
+//                 </div>
+//               </TableCell>
+//               <TableCell>
+//                 <Button variant="outline" size="sm" className="mr-2 border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white">Update</Button>
+//                 <Button variant="outline" size="sm" className="border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white">View</Button>
+//               </TableCell>
+//             </TableRow>
+//           ))}
+//         </TableBody>
+//       </Table>
+//     </div>
+//   )
+// }
+
+function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFilter }) {
+  const [complaints, setComplaints] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        const response = await axios.get("/api/report/get_all_reports");
+        console.log("Response by get all reps : " , response.data.data);
+        setComplaints(response.data.data);
+        console.log("Complaints : ", complaints)
+      } catch (error) {
+        console.error("Error fetching reports:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReports();
+  }, []);
+
+  const markAsResolved = async (reportId) => {
+    try {
+      await axios.post("/api/report/mark_as_resolved", { report_id: reportId });
+      // Refresh the list of complaints after marking as resolved
+      setComplaints(complaints.map(complaint => 
+        complaint.id === reportId ? { ...complaint, status: "Resolved" } : complaint
+      ));
+    } catch (error) {
+      console.error("Error marking report as resolved:", error);
+    }
+  };
+
+  const removeCompany = async (company_id) => {
+    try {
+      await axios.post("/api/report/remove_company", { company_id: company_id });
+      // Optionally remove the reports related to the company from the state
+      setComplaints(complaints.filter(complaint => complaint.company_id !== company_id));
+    } catch (error) {
+      console.error("Error removing company:", error);
+    }
+  };
+
+  // const filteredComplaints = complaints.filter(complaint =>
+  //   (complaint.citizen.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //    complaint.location.toLowerCase().includes(searchTerm.toLowerCase())) &&
+  //   (statusFilter === '' || complaint.status === statusFilter)
+  // );
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (complaints.length === 0) {
+    return <div>No reports there.</div>;
+  }
 
   return (
     <div>
@@ -329,23 +454,21 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
       <Table className="border-[#17cf42]">
         <TableHeader>
           <TableRow className="border-b border-[#17cf42]">
-            <TableHead className="text-[#17cf42]">ID</TableHead>
-            <TableHead className="text-[#17cf42]">Citizen</TableHead>
-            <TableHead className="text-[#17cf42]">Date</TableHead>
-            <TableHead className="text-[#17cf42]">Location</TableHead>
-            <TableHead className="text-[#17cf42]">Type</TableHead>
-            <TableHead className="text-[#17cf42]">Status</TableHead>
-            <TableHead className="text-[#17cf42]">Actions</TableHead>
+            <TableHead className="text-[#17cf42]">Report ID</TableHead>
+            <TableHead className="text-[#17cf42]">User Id</TableHead>
+            <TableHead className="text-[#17cf42]">Description</TableHead>
+            <TableHead className="text-[#17cf42]">Sentiment rating</TableHead>
+            <TableHead className="text-[#17cf42]">Company Id</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredComplaints.map((complaint) => (
+          {complaints.map((complaint) => (
             <TableRow key={complaint.id} className="border-b border-[#17cf42]">
-              <TableCell className="text-[#17cf42]">{complaint.id}</TableCell>
-              <TableCell className="text-[#17cf42]">{complaint.citizen}</TableCell>
-              <TableCell className="text-[#17cf42]">{complaint.date}</TableCell>
-              <TableCell className="text-[#17cf42]">{complaint.location}</TableCell>
-              <TableCell className="text-[#17cf42]">{complaint.type}</TableCell>
+              <TableCell className="text-[#17cf42]">{complaint.report_id}</TableCell>
+              <TableCell className="text-[#17cf42]">{complaint.user_id}</TableCell>
+              <TableCell className="text-[#17cf42]">{complaint.description}</TableCell>
+              <TableCell className="text-[#17cf42]">{complaint.sentiment_rating}</TableCell>
+              <TableCell className="text-[#17cf42]">{complaint.company_id}</TableCell>
               <TableCell className="text-[#17cf42]">
                 <div className="flex items-center">
                   <AlertTriangle className={`h-4 w-4 mr-2 ${
@@ -357,8 +480,22 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
                 </div>
               </TableCell>
               <TableCell>
-                <Button variant="outline" size="sm" className="mr-2 border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white">Update</Button>
-                <Button variant="outline" size="sm" className="border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white">View</Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mr-2 border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white"
+                  onClick={() => markAsResolved(complaint.report_id)}
+                >
+                  Mark as Resolved
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white"
+                  onClick={() => removeCompany(complaint.company_id)}
+                >
+                  Remove Company
+                </Button>
               </TableCell>
             </TableRow>
           ))}
@@ -367,6 +504,7 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
     </div>
   )
 }
+
 const AreaApprovalRequests = () => {
   const [requests, setRequests] = useState([]);
 

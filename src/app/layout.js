@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
 // Separate component to ensure use of hooks inside the Provider
 function LayoutContent({ children }) {
   let access_token = getCookie("access_token");
-  access_token = access_token.replace(/"/g, ''); 
+  access_token = access_token?.replace(/"/g, ''); 
   console.log(access_token)
   const dispatch = useDispatch();
   const navigate = useRouter();

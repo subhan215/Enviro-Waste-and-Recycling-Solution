@@ -8,9 +8,10 @@ const SchedulesList = ({}) => {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [rewards , set_rewards] = useState(0);
   const navigate = useRouter()
-  let user_id = 2;//userData.user_id
-  const dispatch = useDispatch()
+  let user_id = 1;//userData.user_id
+  const dispatch = useDispatch();
   const handleInitiateChat = async (companyId,  userId) => {
     try {
       const response = await fetch('/api/chat/create_chat', {
