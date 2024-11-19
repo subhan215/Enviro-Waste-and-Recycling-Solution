@@ -3,6 +3,7 @@ import { useState } from "react";
 import ReportMissedPickups from "../../components/user_dashboard/ReportMissedPickups"; // Component for reporting missed pickups
 import CreateRequestForRecycledWaste from "../../components/user_dashboard/CreateRequestForRecycledWaste" ; 
 import Waste_Pickup_Schedules from "../../components/user_dashboard/User_Schedules"
+import Report_to_admin from "../../components/user_dashboard/Report_to_admin"
 const UserProfilePage = () => {
   const [selectedOption, setSelectedOption] = useState("reportMissedPickups");
 
@@ -20,6 +21,10 @@ const UserProfilePage = () => {
         return(
           <Waste_Pickup_Schedules />
         )
+        case "report_to_admin" : 
+        return(
+          <Report_to_admin />
+        )        
       default:
         return <p>Select an option to get started.</p>;
     }
@@ -55,6 +60,14 @@ const UserProfilePage = () => {
           >
               Waste Pickup Schedules
           </li>
+          <li
+            className={`py-2 px-4 mb-2 rounded cursor-pointer ${
+              selectedOption === "report_to_admin" ? "bg-gray-200" : ""
+            }`}
+            onClick={() => setSelectedOption("report_to_admin")}
+          >
+              Report to Admin
+          </li>        
         </ul>
       </div>
 

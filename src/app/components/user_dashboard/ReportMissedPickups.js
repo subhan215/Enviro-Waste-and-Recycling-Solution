@@ -241,6 +241,7 @@ const ReportMissedPickups = () => {
               allMissedPickups.map((pickup, index) => (
                 <li key={index}>
                   <strong>ID:</strong> {pickup.missed_pickup_id}
+                  <strong>Against Company : </strong> {pickup.company_id}
                   <strong> Date:</strong> {new Date(pickup.created_at).toLocaleDateString()}
                   <strong> Status:</strong> {pickup.status}
                   
