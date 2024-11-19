@@ -23,6 +23,13 @@ export async function middleware(req) {
     if (!data.success) {
       return NextResponse.redirect(new URL('/signin', req.url));
     }
+     // Restrict access if the user role is "user" and the path includes '/profiles/companyProfile'
+     if (data.role === 'user' && req.nextUrl.pathname.startsWith('/profiles/companyProfile')) {
+      return NextResponse.redirect(new URL('/profiles/userProfile', req.url));
+    }
+    if (data.role === 'company' && req.nextUrl.pathname.startsWith('/profiles/userProfile')) {
+      return NextResponse.redirect(new URL('/profiles/companyProfile', req.url));
+    }
     console.log("user verified!") ; 
     return NextResponse.next();
   } catch (error) {
@@ -33,5 +40,5 @@ export async function middleware(req) {
 
 // Matcher configuration: only apply middleware to specific routes
 export const config = {
-  matcher: ['/dashboard/:path*', '/profiles/:path*' , "/asjahjsa"], // Apply middleware to these routes
+  matcher: ['/dashboard/:path*', '/profiles/:path*' , "/chat"], // Apply middleware to these routes
 };

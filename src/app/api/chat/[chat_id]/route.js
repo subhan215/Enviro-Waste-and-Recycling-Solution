@@ -16,9 +16,30 @@ export async function GET(req , {params}) {
     }
   
     try {
-      // Fetch all messages for the given chat_id
       const messagesResult = await pool.query(
-        "SELECT message_id, sender_id, content, is_seen, timestamp , sender FROM public.message WHERE chat_id = $1 ORDER BY timestamp ASC",
+        `
+        SELECT 
+          m.message_id, 
+          m.sender_id, 
+          m.content, 
+          m.is_seen, 
+          m.timestamp, 
+          m.sender, 
+          CASE 
+            WHEN m.sender = 'company' THEN c.name 
+            WHEN m.sender = 'user' THEN u.name
+          END AS sender_name
+        FROM 
+          public.message m
+        LEFT JOIN 
+          public.company c ON m.sender = 'company' AND m.sender_id = c.user_id
+        LEFT JOIN 
+          "User" u ON m.sender = 'user' AND m.sender_id = u.user_id
+        WHERE 
+          m.chat_id = $1 
+        ORDER BY 
+          m.timestamp ASC
+        `,
         [chat_id]
       );
   

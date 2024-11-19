@@ -10,6 +10,7 @@ const SchedulesList = ({}) => {
   const [error, setError] = useState(null);
   const navigate = useRouter()
   let user_id = 2;//userData.user_id
+  let rewards = userData.rewards;
   const dispatch = useDispatch()
   const handleInitiateChat = async (companyId,  userId) => {
     try {

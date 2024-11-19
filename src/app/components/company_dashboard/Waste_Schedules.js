@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentChat } from '../../../store/slices/currentChatSlice';
+import axios from 'axios';
 const Waste_Schedules = ({}) => {
   const [schedules, setSchedules] = useState([]);
   const [trucks, setTrucks] = useState([]);
@@ -13,6 +14,11 @@ const Waste_Schedules = ({}) => {
   const navigate = useRouter();
   const dispatch = useDispatch()
   const userData = useSelector((state) => state.userData.value)
+  const [showForm, setShowForm] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
+  const [weights, setWeights] = useState({});
+  const [wastePrices, setWastePrices] = useState([]);
+
   let companyId = 1//userData.user_id ; 
   useEffect(() => {
     const fetchCompanySchedules = async () => {
@@ -49,6 +55,7 @@ const Waste_Schedules = ({}) => {
         setWastePrices(response.data.data);
       } catch (error) {
         alert('Error while fetching waste prices: ', error);
+        console.log(error)
       }
     };
 
@@ -111,7 +118,32 @@ const Waste_Schedules = ({}) => {
       alert('An error occurred while initiating the chat.');
     }
   };
-
+  const handleMarkAsDone = (scheduleId) => {
+    setSelectedSchedule(scheduleId);
+    setShowForm(true);
+  };
+  const handleFormSubmit = async (event) => {
+    event.preventDefault();
+    const weightsData = wastePrices.map((item) => ({
+      name: item.name,
+      rate_per_kg: item.rate_per_kg,
+      weight: weights[item.name] || 0,
+    }));
+    try {
+      const response = await axios.post('/api/schedule/mark_as_done', {
+        schedule_id: selectedSchedule,
+        weights: weightsData,
+      });
+      if (response.status === 200) {
+        alert('Schedule marked as done successfully!');
+        setShowForm(false);
+        setSelectedSchedule(null);
+      }
+    } catch (error) {
+      console.error('Error marking schedule as done:', error);
+      alert('An error occurred while marking the schedule as done.');
+    }
+  };
   if (loading) return <p>Loading company schedules...</p>;
   //if (error) return <p>Error: {error}</p>;
   if (schedules.length === 0) return <p>No schedules found for this company.</p>;
@@ -128,6 +160,7 @@ const Waste_Schedules = ({}) => {
             <p><strong>Status:</strong> {schedule.status}</p>
             <button onClick={() => handleInitiateChat(schedule.company_id  ,schedule.user_id)}>Contact User</button>
             <br />
+            
             <label>
               Select Truck:
               <select value={selectedTruck} onChange={(e) => setSelectedTruck(e.target.value)}>
@@ -142,10 +175,11 @@ const Waste_Schedules = ({}) => {
             <button onClick={() => handleAssignTruck(schedule.schedule_id)} disabled={assigning}>
               {assigning ? 'Assigning...' : 'Assign Truck'}
             </button>
+            <button onClick={() => handleMarkAsDone(schedule.schedule_id)}>Mark as Done</button>
           </li>
         ))}
       </ul>
-
+      {!showForm  ? <button onClick={()=> setShowForm(true)}>Enter Weights</button> : null }
       {showForm && (
         <form onSubmit={handleFormSubmit}>
           <h3>Enter received weights</h3>

@@ -11,7 +11,7 @@ export async function GET (req) {
             FROM recycling_categories
         `;
         const { rows } = await pool.query(requestQuery);
-
+        console.log(rows)
 
         return NextResponse.json({"message" : "Waste prices feteched!" , data : rows , success : true})
         

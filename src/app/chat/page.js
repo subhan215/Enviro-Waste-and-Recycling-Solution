@@ -1,18 +1,25 @@
 "use client";
+import { getCookie } from "@/cookies/getCookie";
 import pubnub from "@/pubnub/pubnub";
+import { setUserData } from "@/store/slices/userDataSlice";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-const Chat = ({ user_id = 2 }) => {
+import { useDispatch, useSelector } from "react-redux";
+const Chat = () => {
   const [chats, setChats] = useState([]);
   const [messages, setMessages] = useState([]);
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   let chatId = useSelector((state)=> state.currentChatId.value) || null;
+  const userData = useSelector((state) => state.userData.value)
+  console.log(userData)
+  let user_or_company_id = 2//userData.user_id ; 
+  let role = userData.role;
   useEffect(() => {
     // Function to fetch all chats for the user
     const fetchChats = async () => {
       try {
-        const response = await fetch(`/api/chat/get_chats?role=user&id=${user_id}`);
+        const response = await fetch(`/api/chat/get_chats?role=user&id=${user_or_company_id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch chats");
         }
@@ -24,7 +31,7 @@ const Chat = ({ user_id = 2 }) => {
     };
 
     fetchChats();
-  }, [user_id]);
+  }, [user_or_company_id]);
 
   useEffect(() => {
     if (!selectedChatId && !chatId) return;
@@ -90,7 +97,8 @@ const Chat = ({ user_id = 2 }) => {
           chat_id: selectedChatId,
           content: newMessage,
           sender: "user", // or company depending on your logic
-          sender_id: user_id, // assuming user_id is the current user's ID
+          sender_id: user_or_company_id, // assuming user_id is the current user's ID , 
+          sender_name: userData.name
         }),
       });
 
@@ -105,10 +113,11 @@ const Chat = ({ user_id = 2 }) => {
         channel: "chat-channel",
         message: {
           sender: "user",
-          sender_id: user_id,
+          sender_id: user_or_company_id,
           content: newMessage,
           chat_id: selectedChatId,
           timestamp: new Date().toISOString(),
+          sender_name: userData.name
         },
       });
 
@@ -131,7 +140,8 @@ const Chat = ({ user_id = 2 }) => {
               className="chat-item"
               onClick={() => handleChatSelect(chat.chat_id)}
             >
-              <strong>Chat with {chat.company_id}</strong>
+              {console.log(chat)}
+              <strong>Chat with {chat.name}</strong>
             </div>
           ))
         )}
@@ -139,17 +149,24 @@ const Chat = ({ user_id = 2 }) => {
 
       {(selectedChatId || chatId) && (
         <>
-          <div className="chat-header">
-            <h2>Chat {selectedChatId ? selectedChatId : chatId}</h2>
-          </div>
+         
 
-          <div className="messages-container" style={{ height: "400px", overflowY: "scroll" }}>
-            {messages.map((msg, index) => (
-              <div key={index} className="message-item">
-                <strong>{msg.sender_id}:</strong> {msg.content}
-              </div>
-            ))}
-          </div>
+          <div className="messages-container h-96 overflow-y-scroll">
+  {messages.map((msg, index) => (
+    <div
+      key={index}
+      className={
+        msg.sender === role && msg.sender_id === user_or_company_id
+          ? "message-item bg-green-100" // Tailwind color for matching role and ID
+          : "message-item bg-red-100" // Tailwind color for other messages
+      }
+    >
+      {console.log(msg)}
+      <strong>{msg.sender_name}:</strong> {msg.content}
+    </div>
+  ))}
+</div>
+
 
           <div className="message-input-container">
             <input

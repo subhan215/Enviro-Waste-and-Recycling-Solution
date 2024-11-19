@@ -58,7 +58,7 @@ function LayoutContent({ children }) {
     }
 
     fetchUserData();
-  }, [access_token, dispatch, navigate]);
+  }, [navigate, dispatch , access_token]);
 
   return <>{children}</>;
 }

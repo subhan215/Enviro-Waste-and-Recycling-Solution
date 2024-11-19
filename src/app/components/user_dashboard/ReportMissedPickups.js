@@ -140,8 +140,8 @@ const ReportMissedPickups = () => {
     //const [areaId, setAreaId] = useState(userData.area_id); // Initial area ID to be used for reporting
     const [selectedImage, setSelectedImage] = useState(null); // State to hold the selected image
     console.log(userData)
-    let userId = userData.user_id ; 
-    let areaId = userData.area_id;
+    let userId = 1//userData.user_id ; 
+    let areaId = 2//userData.area_id;
     // Function to handle image selection
     const handleImageChange = (event) => {
         setSelectedImage(event.target.files[0]);
@@ -230,7 +230,7 @@ const ReportMissedPickups = () => {
 
     useEffect(() => {
         getAllMissedPickups();
-    }, []);
+    }, [userId]);
 
     return (
         <div>

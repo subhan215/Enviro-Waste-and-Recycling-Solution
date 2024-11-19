@@ -26,11 +26,11 @@ export async function GET(req, { params, query }) {
     // Query for user or company chats
     if (role === 'user') {
       // If role is user, filter by user_id
-      const res = await pool.query('SELECT * FROM chat WHERE user_id = $1 ORDER BY created_at DESC', [id]);
+      const res = await pool.query('SELECT * FROM chat ch join company c on c.user_id = ch.user_id WHERE ch.user_id = $1 ORDER BY created_at DESC', [id]);
       chats = res.rows;
     } else if (role === 'company') {
       // If role is company, filter by company_id
-      const res = await pool.query('SELECT * FROM chat WHERE company_id = $1 ORDER BY created_at DESC', [id]);
+      const res = await pool.query('SELECT * FROM chat ch join "User" u on u.user_id = ch.user_id  WHERE company_id = $1 ORDER BY created_at DESC', [id]);
       chats = res.rows;
     } else {
       return new Response(JSON.stringify({ message: 'Invalid role' }), { status: 400 });
