@@ -18,9 +18,19 @@ const Waste_Schedules = ({}) => {
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [weights, setWeights] = useState({});
   const [wastePrices, setWastePrices] = useState([]);
+  const [Rating, setRating] = useState()
 
   let companyId = 1//userData.user_id ; 
   useEffect(() => {
+    const fetchCompanyRating = async () => {
+      try {
+        const response = await axios.get(`/api/schedule/get_company_rating/${companyId}`);
+        console.log("Company rating : ", response);
+        setRating(response.data.data)
+      } catch (error) {
+        console.log("Error fetcing company rating  :" , error);
+      }
+    }
     const fetchCompanySchedules = async () => {
       try {
         const response = await fetch(`/api/schedule/get_schedules_for_company/${companyId}`);
@@ -58,7 +68,7 @@ const Waste_Schedules = ({}) => {
         console.log(error)
       }
     };
-
+    fetchCompanyRating();
     fetchWastePrices();
     fetchCompanySchedules();
     fetchCompanyTrucks();
@@ -146,11 +156,12 @@ const Waste_Schedules = ({}) => {
   };
   if (loading) return <p>Loading company schedules...</p>;
   //if (error) return <p>Error: {error}</p>;
-  if (schedules.length === 0) return <p>No schedules found for this company.</p>;
+  if (schedules.length === 0) return <><p>Current rating : {Rating} </p><p>No schedules found for this company.</p></>;
 
   return (
     <div>
-
+ 
+      <p>Current rating : {Rating} </p>
       <h2>Company Schedules</h2>
       <ul>
         {schedules.map((schedule) => (
@@ -160,7 +171,7 @@ const Waste_Schedules = ({}) => {
             <p><strong>Status:</strong> {schedule.status}</p>
             <button onClick={() => handleInitiateChat(schedule.company_id  ,schedule.user_id)}>Contact User</button>
             <br />
-            
+            {schedule.status == 'Scheduled' ?
             <label>
               Select Truck:
               <select value={selectedTruck} onChange={(e) => setSelectedTruck(e.target.value)}>
@@ -172,11 +183,16 @@ const Waste_Schedules = ({}) => {
                 ))}
               </select>
             </label>
+              : null}
+              { schedule.status == 'Scheduled' ? 
             <button onClick={() => handleAssignTruck(schedule.schedule_id)} disabled={assigning}>
               {assigning ? 'Assigning...' : 'Assign Truck'}
             </button>
+             : null}
+             { schedule.status == 'Scheduled' ? 
             <button onClick={() => handleMarkAsDone(schedule.schedule_id)}>Mark as Done</button>
-          </li>
+            : null}
+          </li> 
         ))}
       </ul>
       {!showForm  ? <button onClick={()=> setShowForm(true)}>Enter Weights</button> : null }

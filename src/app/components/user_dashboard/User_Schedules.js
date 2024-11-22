@@ -2,6 +2,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentChat } from '../../../store/slices/currentChatSlice';
+import { Axios } from 'axios';
+
 const SchedulesList = ({}) => {
   const userData = useSelector((state) => state.userData.value)
   console.log(userData)
@@ -9,9 +11,38 @@ const SchedulesList = ({}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [rewards , set_rewards] = useState(0);
+  const [rating, setRating] = useState()
+
+
+
   const navigate = useRouter()
   let user_id = 1;//userData.user_id
   const dispatch = useDispatch();
+  const handleFormSubmit = async(e , schedule_id) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/schedule/rating_given_by_user' , {
+        method : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({rating , schedule_id}),
+      })
+      const result = await response.json();
+      if (response.ok) {
+        alert('Schedule completed!');
+        navigate.push('/profiles/userProfile') ;
+      } else {
+        alert(`Failed to provide Rating`);
+      }      
+    } catch (error) {
+      console.error('Error initiating chat:', error);
+      alert('An error occurred while Marking schedule as done');      
+    }
+    
+    
+
+  }
   const handleInitiateChat = async (companyId,  userId) => {
     try {
       const response = await fetch('/api/chat/create_chat', {
@@ -72,6 +103,10 @@ const SchedulesList = ({}) => {
     
   }, [userData]);
 
+
+
+
+
   if (loading) return <p>Loading schedules...</p>;
   //if (error) return <p>Error: {error}</p>;
   if (schedules.length === 0) return <>
@@ -79,23 +114,34 @@ const SchedulesList = ({}) => {
   <p>No schedules found.</p>
   </>;
 
-  return (
-    <div>
-      <h2>Rewards Earned : {rewards}</h2>
-      <h2>Schedules</h2>
-      <ul>
-        {schedules.map(schedule => (
-          <li key={schedule.schedule_id}>
-            <p><strong>Date:</strong> {schedule.date}</p>
-            <p><strong>Time:</strong> {schedule.time}</p>
-            <p><strong>Status:</strong> {schedule.status}</p>
-            {schedule.price && <p><strong>Price:</strong> {schedule.price}</p>}
-            <button onClick={() => handleInitiateChat(schedule.company_id  ,schedule.user_id)}>Contact Company</button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+return (
+  <div>
+    <h2>Rewards Earned: {rewards}</h2>
+    <h2>Schedules</h2>
+    <ul>
+      {schedules.map(schedule => (
+        <li key={schedule.schedule_id}>
+          <p><strong>Date:</strong> {schedule.date}</p>
+          <p><strong>Time:</strong> {schedule.time}</p>
+          <p><strong>Status:</strong> {schedule.status}</p>
+          {schedule.price && <p><strong>Price:</strong> {schedule.price}</p>}
+          {schedule.status === 'RatingRequired' && (
+            <form onSubmit={(e) => handleFormSubmit(e, schedule.schedule_id)}>
+              <input
+                type="number"
+                step="0.1"
+                value={rating}
+                onChange={(e) => setRating(e.target.value)}
+              />
+              <button type="submit">Submit Rating</button>
+            </form>
+          )}
+          <button onClick={() => handleInitiateChat(schedule.company_id, schedule.user_id)}>Contact Company</button>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
 };
 
 export default SchedulesList;

@@ -469,7 +469,7 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
               <TableCell className="text-[#17cf42]">{complaint.description}</TableCell>
               <TableCell className="text-[#17cf42]">{complaint.sentiment_rating}</TableCell>
               <TableCell className="text-[#17cf42]">{complaint.company_id}</TableCell>
-              <TableCell className="text-[#17cf42]">
+             <TableCell className="text-[#17cf42]">
                 <div className="flex items-center">
                   <AlertTriangle className={`h-4 w-4 mr-2 ${
                     complaint.status === 'Open' ? 'text-red-500' :

@@ -3,10 +3,10 @@ import { NextResponse } from 'next/server';
 //import { pool } from './database/database';
 export async function middleware(req) {
   console.log("entering middleware!");
-  const accessToken = req.cookies.get('access_token').value?.replace(/^["']|["']$/g, ''); // Get token from cookies
+  const accessToken = req.cookies.get('access_token')?.value?.replace(/^["']|["']$/g, ''); // Get token from cookies
   console.log("accessToken: " , accessToken);
   if (!accessToken) {
-    return NextResponse.redirect(new URL('/login', req.url));
+    return NextResponse.redirect(new URL('/signin', req.url));
   }
   try {
     // Fetch user data from the API route

@@ -33,9 +33,9 @@ export async function  POST(req) {
 
       console.log("Insert : " , insert_rewards);
 
-      //Delete the schedule
-      const del_sch = await pool.query('delete from schedule where schedule_id = $1' , [schedule_id]);
-
+      //Delete the schedule - yahan status ko done by company kar kay kuch karedeingay
+      //const del_sch = await pool.query('delete from schedule where schedule_id = $1' , [schedule_id]);
+      const updated_sch_status = await pool.query('update schedule set status = $1 where schedule_id = $2' , ['RatingRequired',schedule_id]);
       
 
 

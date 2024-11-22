@@ -5,6 +5,8 @@ export async function POST(req) {
         // Parse the request body
         let { waste, preferredDate, preferredTime, latitude, longitude, userId } = await req.json();
 
+        console.log("USer id : ", userId);
+
         // Validate the input data
         if (!waste || !preferredDate || !preferredTime || !latitude || !longitude || !userId) {
             return new Response(JSON.stringify({ error: "All fields are required" }), {
