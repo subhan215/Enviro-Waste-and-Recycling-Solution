@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentChat } from '../../../store/slices/currentChatSlice';
 
-const SchedulesList = ({}) => {
+const SchedulesList = () => {
   const userData = useSelector((state) => state.userData.value);
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,47 +13,24 @@ const SchedulesList = ({}) => {
     accountType: '',
     accountDetails: '',
     rewardAmount: '',
-    wallet_Bank_name: ''
+    wallet_Bank_name: '',
   });
   const [activeRequest, setActiveRequest] = useState(null);
+  const [rating, setRating] = useState(0);
   const navigate = useRouter();
   const dispatch = useDispatch();
 
-  const user_id = userData.user_id
+  const user_id = userData.user_id;
   const rewards = userData.rewards;
   const conversionRate = 0.5; // 1 reward = 0.5 PKR
   const equivalentPKR = rewards * conversionRate;
-
-  const handleInitiateChat = async (companyId, userId) => {
-    try {
-      const response = await fetch('/api/chat/create_chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ company_id: companyId, user_id: userId }),
-      });
-      const result = await response.json();
-      console.log(result)
-      if (response.ok) {
-        dispatch(setCurrentChat(result.data.chat_id));
-        alert('Chat initiated successfully!');
-        navigate.push('/chat');
-      } else {
-        alert(`Failed to initiate chat: ${result.message}`);
-      }
-    } catch (err) {
-      console.error('Error initiating chat:', err);
-      alert('An error occurred while initiating the chat.');
-    }
-  };
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFormSubmit = async (e) => {
+  const handleFormSubmit = async (e, schedule_id) => {
     e.preventDefault();
     const { accountType, accountDetails, rewardAmount, wallet_Bank_name } = formData;
     if (!accountType || !accountDetails || !rewardAmount) {
@@ -76,7 +53,7 @@ const SchedulesList = ({}) => {
           account_type: accountType,
           account_details: accountDetails,
           conversion_amount: rewardAmount,
-          wallet_Bank_name
+          wallet_Bank_name,
         }),
       });
 
@@ -87,16 +64,37 @@ const SchedulesList = ({}) => {
           accountType: '',
           accountDetails: '',
           rewardAmount: '',
-          wallet_Bank_name : ''
+          wallet_Bank_name: '',
         });
-        // Optionally, update rewards locally
-        // userData.rewards -= rewardAmount; // Adjust if needed
       } else {
         alert(`Failed to create transaction request: ${result.message}`);
       }
     } catch (err) {
       console.error('Error creating transaction request:', err);
       alert('An error occurred while creating the transaction request.');
+    }
+  };
+
+  const handleInitiateChat = async (companyId, userId) => {
+    try {
+      const response = await fetch('/api/chat/create_chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ company_id: companyId, user_id: userId }),
+      });
+      const result = await response.json();
+      if (response.ok) {
+        dispatch(setCurrentChat(result.data.chat_id));
+        alert('Chat initiated successfully!');
+        navigate.push('/chat');
+      } else {
+        alert(`Failed to initiate chat: ${result.message}`);
+      }
+    } catch (err) {
+      console.error('Error initiating chat:', err);
+      alert('An error occurred while initiating the chat.');
     }
   };
 
@@ -108,7 +106,7 @@ const SchedulesList = ({}) => {
 
       const result = await response.json();
       if (response.ok) {
-        setActiveRequest(null); // Clear active request in the state
+        setActiveRequest(null);
         alert('Your request has been canceled successfully!');
       } else {
         alert(`Failed to cancel the request: ${result.message}`);
@@ -116,6 +114,28 @@ const SchedulesList = ({}) => {
     } catch (err) {
       console.error('Error canceling the request:', err);
       alert('An error occurred while canceling the request.');
+    }
+  };
+
+  const handleMarkAsSeen = async () => {
+    try {
+      const response = await fetch(`/api/rewards/mark_as_seen/${activeRequest.conversion_id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert('Request marked as seen.');
+        setActiveRequest((prev) => ({ ...prev, isseen: true }));
+      } else {
+        alert(`Failed to mark request as seen: ${result.message}`);
+      }
+    } catch (err) {
+      console.error('Error marking request as seen:', err);
+      alert('An error occurred while marking the request as seen.');
     }
   };
 
@@ -134,6 +154,7 @@ const SchedulesList = ({}) => {
         setLoading(false);
       }
     };
+
     const fetchActiveRequest = async () => {
       try {
         const response = await fetch(`/api/rewards/get_current_request/${user_id}`);
@@ -142,49 +163,31 @@ const SchedulesList = ({}) => {
         }
         const data = await response.json();
         if (data.success) {
-          setActiveRequest(data.data); // Assume only one active request per user
+          setActiveRequest(data.data);
         }
       } catch (err) {
         console.error('Error fetching active request:', err);
       }
     };
+
     fetchSchedules();
     fetchActiveRequest();
-  }, [userData]);
-  const handleMarkAsSeen = async () => {
-    try {
-      const response = await fetch(`/api/rewards/mark_as_seen/${activeRequest.conversion_id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      const result = await response.json();
-      if (response.ok) {
-        alert('Request marked as seen.');
-        setActiveRequest((prev) => ({ ...prev, isseen: true})); // Update state
-      } else {
-        alert(`Failed to mark request as seen: ${result.message}`);
-      }
-    } catch (err) {
-      console.error('Error marking request as seen:', err);
-      alert('An error occurred while marking the request as seen.');
-    }
-  };
+  }, [user_id, userData]);
+
   if (loading) return <p>Loading schedules...</p>;
 
   return (
     <div>
       <h2>Rewards Earned: {rewards}</h2>
       <h3>Equivalent in PKR: {equivalentPKR} PKR</h3>
-      {activeRequest && (activeRequest.status!= 'Rejected' && activeRequest.status!= 'Approved')  ? (
+
+      {activeRequest && (activeRequest.status !== 'Rejected' && activeRequest.status !== 'Approved') ? (
         <div>
           <p>You already have a pending transaction request. Please wait for it to be processed before creating another.</p>
           <div>
             <p>Active request details</p>
             <p>Account Type: {activeRequest.account_type}</p>
-            <p>{activeRequest.account_type === "wallet" ? "Wallet" : "Bank"} : {activeRequest.wallet_bank_name}</p>
+            <p>{activeRequest.account_type === 'wallet' ? 'Wallet' : 'Bank'} : {activeRequest.wallet_bank_name}</p>
             <p>Account details: {activeRequest.account_details}</p>
             <p>Rewards to convert: {activeRequest.conversion_amount}</p>
             <p>Equivalent PKR: {activeRequest.equivalent_pkr}</p>
@@ -194,29 +197,24 @@ const SchedulesList = ({}) => {
       ) : (
         <>
           {activeRequest && (activeRequest.status === 'Approved' || activeRequest.status === 'Rejected') && (
-  <div>
-    <p>
-      Your request has been {activeRequest.status}.{' '}
-      {!activeRequest.is_seen && (
-        <button onClick={handleMarkAsSeen}>
-          Mark as Seen
-        </button>
-      )}
-    </p>
-  </div> )}
+            <div>
+              <p>
+                Your request has been {activeRequest.status}.{' '}
+                {!activeRequest.is_seen && <button onClick={handleMarkAsSeen}>Mark as Seen</button>}
+              </p>
+            </div>
+          )}
+
           <button onClick={() => setShowForm(!showForm)}>
             {showForm ? 'Cancel Conversion' : 'Convert Rewards into Account'}
           </button>
+
           {showForm && (
             <form onSubmit={handleFormSubmit}>
               <div>
                 <label>
                   Account Type:
-                  <select
-                    name="accountType"
-                    value={formData.accountType}
-                    onChange={handleFormChange}
-                  >
+                  <select name="accountType" value={formData.accountType} onChange={handleFormChange}>
                     <option value="">Select</option>
                     <option value="bank">Bank</option>
                     <option value="wallet">Wallet</option>
@@ -278,9 +276,8 @@ const SchedulesList = ({}) => {
                 <p><strong>Time:</strong> {schedule.time}</p>
                 <p><strong>Status:</strong> {schedule.status}</p>
                 {schedule.truckid && <p>Truck Assigned by Company: {schedule.licenseplate}</p>}
-                {schedule.price && <p><strong>Price:</strong> {schedule.price}</p>}
-                <button onClick={() => handleInitiateChat(schedule.company_id, schedule.user_id)}>
-                  Contact Company
+                <button onClick={() => handleInitiateChat(schedule.company_id, user_id)}>
+                  Initiate Chat with Company
                 </button>
               </li>
             ))}
