@@ -3,6 +3,7 @@ export async function GET(req , {params}) {
   try {
     const {user_id} = params ; 
     let userId = user_id
+    console.log(userId)
     // Validation: Ensure user_id is provided
     if (!userId) {
       return new Response(
@@ -13,7 +14,7 @@ export async function GET(req , {params}) {
 
     // Query the database for current transaction requests
     const result = await pool.query(
-      `SELECT * FROM RewardConversions WHERE user_id = $1 and (isseen = false or isseen = null)`,
+      `SELECT * FROM RewardConversions WHERE user_id = $1 and (isseen = false or isseen is null)`,
       [userId]
     );
 

@@ -28,7 +28,7 @@ const SchedulesList = () => {
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  }; 
 
   const handleFormSubmit = async (e, schedule_id) => {
     e.preventDefault();
@@ -66,6 +66,7 @@ const SchedulesList = () => {
           rewardAmount: '',
           wallet_Bank_name: '',
         });
+        fetchActiveRequest()
       } else {
         alert(`Failed to create transaction request: ${result.message}`);
       }
@@ -74,6 +75,34 @@ const SchedulesList = () => {
       alert('An error occurred while creating the transaction request.');
     }
   };
+  const handleRating = async(e , schedule_id) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/schedule/rating_given_by_user' , {
+        method : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({rating , schedule_id}),
+      })
+      const result = await response.json();
+      if (response.ok) {
+        alert('Schedule completed!');
+        setSchedules(schedules.filter(schedule => schedule.schedule_id != schedule_id))
+        
+        //navigate.push('/profiles/userProfile') ;
+        
+      } else {
+        alert("Failed to provide Rating");
+      }      
+    } catch (error) {
+      console.error('Error initiating chat:', error);
+      alert('An error occurred while Marking schedule as done');      
+    }
+    
+    
+
+  }
 
   const handleInitiateChat = async (companyId, userId) => {
     try {
@@ -129,7 +158,7 @@ const SchedulesList = () => {
       const result = await response.json();
       if (response.ok) {
         alert('Request marked as seen.');
-        setActiveRequest((prev) => ({ ...prev, isseen: true }));
+        fetchActiveRequest()
       } else {
         alert(`Failed to mark request as seen: ${result.message}`);
       }
@@ -138,42 +167,47 @@ const SchedulesList = () => {
       alert('An error occurred while marking the request as seen.');
     }
   };
-
+  const fetchActiveRequest = async () => {
+    try {
+      const response = await fetch(`/api/rewards/get_current_request/${userData.user_id}`);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Active Request Data:', data); // Log the response to check structure
+      if (data.success) {
+        setActiveRequest(data.data); // Only set if success
+      } else {
+        console.log('No active request found.');
+      }
+    } catch (err) {
+      console.error('Error fetching active request:', err);
+    }
+  };
+  const fetchSchedules = async () => {
+    try {
+      const response = await fetch(`/api/schedule/get_schedule_for_user/${userData.user_id}`);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      setSchedules(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchSchedules = async () => {
-      try {
-        const response = await fetch(`/api/schedule/get_schedule_for_user/${user_id}`);
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-        const data = await response.json();
-        setSchedules(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchActiveRequest = async () => {
-      try {
-        const response = await fetch(`/api/rewards/get_current_request/${user_id}`);
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status}`);
-        }
-        const data = await response.json();
-        if (data.success) {
-          setActiveRequest(data.data);
-        }
-      } catch (err) {
-        console.error('Error fetching active request:', err);
-      }
-    };
-
-    fetchSchedules();
-    fetchActiveRequest();
-  }, [user_id, userData]);
-
+    
+  
+   
+  
+     fetchSchedules();
+     fetchActiveRequest();
+  }, [userData]);
+  
+  console.log(activeRequest)
   if (loading) return <p>Loading schedules...</p>;
 
   return (
@@ -181,10 +215,11 @@ const SchedulesList = () => {
       <h2>Rewards Earned: {rewards}</h2>
       <h3>Equivalent in PKR: {equivalentPKR} PKR</h3>
 
-      {activeRequest && (activeRequest.status !== 'Rejected' && activeRequest.status !== 'Approved') ? (
+      {activeRequest && (activeRequest.status != 'Rejected' && activeRequest.status != 'Approved' && activeRequest.isseen!= true) ? (
         <div>
           <p>You already have a pending transaction request. Please wait for it to be processed before creating another.</p>
           <div>
+            {console.log(activeRequest)}
             <p>Active request details</p>
             <p>Account Type: {activeRequest.account_type}</p>
             <p>{activeRequest.account_type === 'wallet' ? 'Wallet' : 'Bank'} : {activeRequest.wallet_bank_name}</p>
@@ -275,6 +310,19 @@ const SchedulesList = () => {
                 <p><strong>Date:</strong> {schedule.date}</p>
                 <p><strong>Time:</strong> {schedule.time}</p>
                 <p><strong>Status:</strong> {schedule.status}</p>
+                {schedule.price && <p><strong>Price:</strong> {schedule.price}</p>}
+          {schedule.status === 'RatingRequired' && (
+            <form onSubmit={(e) => handleRating(e, schedule.schedule_id)}>
+              <input
+                type="number"
+                step="0.1"
+                value={rating}
+                onChange={(e) => setRating(e.target.value)}
+              />
+              <button type="submit">Submit Rating</button>
+            </form>
+          )}
+
                 {schedule.truckid && <p>Truck Assigned by Company: {schedule.licenseplate}</p>}
                 <button onClick={() => handleInitiateChat(schedule.company_id, user_id)}>
                   Initiate Chat with Company

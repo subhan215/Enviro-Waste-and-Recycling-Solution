@@ -161,8 +161,10 @@ function CreateRequestForRecycledWaste() {
             // Handle response
             if (response.status === 201) {
                 alert(response.data.message); // Success message
-                currentRequest(null)
+                //currentRequest(null)
                 alert("See schedule tab.A new schedule has been created!")
+                setCurrentRequest(null)
+                await fetchCurrentRequest()
                 // Optionally update the UI state, e.g., reset the current request or show the schedule
             } else {
                 alert(response.data.message); // Error message if status is not 201

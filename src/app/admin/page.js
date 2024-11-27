@@ -706,6 +706,7 @@ const RewardConversionRequests = () => {
       try {
         const response = await fetch("/api/admin/get_reward_conversion_requests");
         const data = await response.json();
+        console.log(data)
         setRewardConversions(data.data);
       } catch (error) {
         console.error("Error fetching reward conversions:", error);

@@ -190,9 +190,10 @@ const Waste_Schedules = ({}) => {
               <p><strong>Date:</strong> {schedule.date}</p>
               <p><strong>Time:</strong> {schedule.time}</p>
               <p><strong>Status:</strong> {schedule.status}</p>
+              <p><strong>Truck Assigned:</strong> {schedule.licenseplate}</p>
               <button onClick={() => handleInitiateChat(schedule.company_id, schedule.user_id)}>Contact User</button>
               <br />
-              {schedule.status === 'Scheduled' && (
+              {(schedule.status === 'Scheduled' && !schedule.truckid) && (
                 <div>
                   <label>
                     Select Truck:
@@ -210,9 +211,12 @@ const Waste_Schedules = ({}) => {
                   </button>
                 </div>
               )}
-              {schedule.status === 'Scheduled' && (
-                <button onClick={() => handleMarkAsDone(schedule.schedule_id)}>Mark as Done</button>
-              )}
+          {schedule.truckid ? (
+              <button onClick={() => handleMarkAsDone(schedule.schedule_id)}>Mark as Done</button>
+            ) : (
+              <p>Truck not assigned yet. Cannot mark as done.</p>
+            )}
+
             </li>
           )
         ))}
