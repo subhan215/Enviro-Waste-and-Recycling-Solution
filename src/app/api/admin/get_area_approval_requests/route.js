@@ -4,7 +4,7 @@ export async function GET(req) {
   try {
     // Query to get all area approval requests
     console.log("hello")
-    const query = `SELECT area_approval_id, area_id, company_id, status FROM request_for_area_approval`;
+    const query = `SELECT area_approval_id, area_id, company_id, status  , name FROM request_for_area_approval join company on company.user_id = request_for_Area_approval.company_id`;
     const { rows } = await pool.query(query);
 
     return new Response(JSON.stringify({ success: true, data: rows }), {

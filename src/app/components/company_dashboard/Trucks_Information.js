@@ -35,7 +35,6 @@ const Truck_Information = () => {
           >
             <p className="font-semibold">ID: {truck.truckid}</p>
             <p>Assigned Area: {truck.name}</p>
-            <p>Last Service Date: {/* You may want to add this field if available */}</p>
             <p>Capacity Status: {truck.capacity}</p>
             <button className="mt-auto px-4 py-2 bg-blue-500 text-white rounded">
               Edit Truck Info

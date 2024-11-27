@@ -36,7 +36,17 @@ export async function POST(req) {
     // Assign the company_id to the area
     const assignCompanyQuery = `UPDATE area SET company_id = $1 WHERE area_id = $2`;
     await pool.query(assignCompanyQuery, [company_id, area_id]);
-
+    const notificationMessage = "Your selected area has been approved!";
+    const notificationIdResult = await pool.query(
+        'INSERT INTO notification(content) VALUES ($1) RETURNING notification_id',
+        [notificationMessage]
+    );
+    console.log(notificationIdResult.rows)
+    const notificationId = notificationIdResult.rows[0].notification_id;
+    await pool.query(
+        'INSERT INTO notification_company(notification_id, company_id) VALUES ($1, $2)',
+        [notificationId, company_id]
+    );
     // Commit transaction
     await pool.query('COMMIT');
 

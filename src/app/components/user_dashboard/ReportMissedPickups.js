@@ -140,46 +140,62 @@ const ReportMissedPickups = () => {
     //const [areaId, setAreaId] = useState(userData.area_id); // Initial area ID to be used for reporting
     const [selectedImage, setSelectedImage] = useState(null); // State to hold the selected image
     console.log(userData)
-    let userId = 1//userData.user_id ; 
-    let areaId = 2//userData.area_id;
+    let userId = userData.user_id ; 
+    let areaId = userData.area_id;
     // Function to handle image selection
     const handleImageChange = (event) => {
         setSelectedImage(event.target.files[0]);
     };
 
-    // Function to report a missed pickup
     const reportMissedPickup = async (event) => {
-        event.preventDefault();
-        try {
-            console.log("Report missed pickup");
-
-            // Use FormData to include the image file in the request
-            const formData = new FormData();
-            formData.append("userId", userId);
-            formData.append("areaId", areaId);
-            if (selectedImage) {
-                formData.append("clean_or_unclean_image", selectedImage);
-            }
-
-            let response = await fetch(`/api/pickup/report_missed_pickup/`, {
-                method: "POST",
-                body: formData,
-            });
-
-            const responseData = await response.json();
-            console.log("Response Data : ", responseData);
-            if (responseData.success) {     //All conditions, constraints, checks etc passed
-                getAllMissedPickups();
-                console.log("Message : ", responseData.message);
-                alert("Missed pickup reported successfully.");
-            } else {
-                alert(responseData.message);
-            }
-        } catch (error) {
-            alert(error.message);
-        }
-    };
-
+      event.preventDefault();
+  
+      // Check if the last missed pickup was reported less than 24 hours ago
+      if (allMissedPickups.length > 0) {
+          const lastMissedPickup = allMissedPickups[0]; // Assuming the latest pickup is the first in the array
+          const lastReportedTime = new Date(lastMissedPickup.created_at).getTime();
+          const currentTime = new Date().getTime();
+          const timeDifference = currentTime - lastReportedTime;
+  
+          // 24 hours in milliseconds
+          const twentyFourHours = 24 * 60 * 60 * 1000;
+  
+          if (timeDifference < twentyFourHours) {
+              alert("You cannot report another missed pickup within 24 hours of the previous report.");
+              return;
+          }
+      }
+  
+      try {
+          console.log("Report missed pickup");
+  
+          // Use FormData to include the image file in the request
+          const formData = new FormData();
+          formData.append("userId", userId);
+          formData.append("areaId", areaId);
+          if (selectedImage) {
+              formData.append("clean_or_unclean_image", selectedImage);
+          }
+  
+          let response = await fetch(`/api/pickup/report_missed_pickup/`, {
+              method: "POST",
+              body: formData,
+          });
+  
+          const responseData = await response.json();
+          console.log("Response Data : ", responseData);
+          if (responseData.success) {
+              getAllMissedPickups();
+              console.log("Message : ", responseData.message);
+              alert("Missed pickup reported successfully.");
+          } else {
+              alert(responseData.message);
+          }
+      } catch (error) {
+          alert(error.message);
+      }
+  };
+  
     // Function to get all missed pickups
     const getAllMissedPickups = async () => {
         try {
@@ -196,10 +212,12 @@ const ReportMissedPickups = () => {
             if (responseData.success) {
                 setAllMissedPickups(responseData.data);
             } else {
-                alert(responseData.message);
+                //alert(responseData.message);
+                console.log(responseData)
             }
         } catch (error) {
-            alert(error.message);
+            //alert(error.message);
+            console.log(error.message)
         }
     };
 

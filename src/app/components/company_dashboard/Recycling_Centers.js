@@ -26,19 +26,19 @@ const RecyclingCenters = ({}) => {
     const [areas, setAreas] = useState([]); // State to hold areas
     const userData = useSelector((state) => state.userData.value)
     let companyId = userData.user_id
+    const fetchRecyclingCenters = async () => {
+        try {
+            const response = await axios.get(`/api/company/recycling_center/get_company_recycling_centers/${companyId}`);
+            console.log(response)
+            setRecyclingCenters(response.data.data);
+            setLoading(false);
+        } catch (err) {
+            setError('Error fetching recycling centers');
+            setLoading(false);
+        }
+    };
+   
     useEffect(() => {
-        const fetchRecyclingCenters = async () => {
-            try {
-                const response = await axios.get(`/api/company/recycling_center/get_company_recycling_centers/${companyId}`);
-                console.log(response)
-                setRecyclingCenters(response.data.data);
-                setLoading(false);
-            } catch (err) {
-                setError('Error fetching recycling centers');
-                setLoading(false);
-            }
-        };
-
         fetchRecyclingCenters();
 
     }, []); 
@@ -81,6 +81,7 @@ const RecyclingCenters = ({}) => {
 
     const handleCreateCenter = async (e) => {
         e.preventDefault();
+        setError('') ; 
         try {
             const response = await fetch('/api/company/recycling_center/create/', {
                 method: 'POST',
@@ -98,7 +99,8 @@ const RecyclingCenters = ({}) => {
             const data = await response.json();
             console.log(data)
             alert(data.message)
-            setRecyclingCenters([...recyclingCenters, data.data]);
+            setRecyclingCenters([...recyclingCenters , data.data])
+            //fetchRecyclingCenters()
             setNewCenter({ area_id: '', latitude: '', longitude: '' });
         } catch (err) {
             console.error(err);
@@ -128,7 +130,8 @@ const RecyclingCenters = ({}) => {
                 setError('Location not found');
             }
         } catch (err) {
-            setError('Error searching for location');
+            //setError('Error searching for location');
+            console.log(err)
         }
     };
 

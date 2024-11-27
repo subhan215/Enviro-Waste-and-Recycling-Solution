@@ -52,6 +52,8 @@ const Add_Trucks = () => {
             const responseData = await response.json();
             console.log(responseData)
             if (responseData.success) {
+                setData({licensePlate: "" , capacity: "" , area_id: ""})
+                alert("Assigned truck to area successfully!");
                 setAllAreas(responseData.data); // Set the fetched areas into state
             } else {
                 alert(responseData.message);

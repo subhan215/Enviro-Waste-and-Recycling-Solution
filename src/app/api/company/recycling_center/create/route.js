@@ -55,7 +55,7 @@ export async function POST(req) {
         );
 
         const newCenter = insertResult.rows[0];
-
+        console.log(newCenter) ; 
         // Return the newly created recycling center
         return new Response(
             JSON.stringify({ success: true, data: newCenter, message: "Recycling center created successfully." }), 

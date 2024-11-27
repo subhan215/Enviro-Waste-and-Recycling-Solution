@@ -2,7 +2,7 @@ import { pool } from "../../../../database/database";
 
 export async function POST(req) {
   const { user_id, company_id } = await req.json();
-
+  console.log(user_id , company_id) ; 
   // Input validation
   if (!user_id || !company_id) {
     return new Response(

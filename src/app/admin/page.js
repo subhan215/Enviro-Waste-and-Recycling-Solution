@@ -1,5 +1,4 @@
 'use client'
-
 import { useEffect, useState } from 'react'
 import {Button} from "../components/ui/Button"
 import { Input } from "../components/ui/Input"
@@ -15,6 +14,103 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [companiesCount, setCompaniesCount] = useState(0);
+  const [agreementsCount, setAgreementsCount] = useState(0);
+  const [transactionsCount, setTransactionsCount] = useState(0);
+  const [totalEquivalentPkr, setTotalEquivalentPkr] = useState(0);
+  const [complaintsCount, setComplaintsCount] = useState(0);
+  // Function to fetch total number of companies
+ const fetchCompaniesCount = async () => {
+  try {
+      const response = await fetch('/api/admin/get_total_companies/');  // Replace with the actual API endpoint
+      const data = await response.json();
+
+      if (data.success) {
+          return data.data.length;  // Total number of companies
+      } else {
+          console.error('Failed to fetch companies:', data.message);
+          return 0;
+      }
+  } catch (error) {
+      console.error('Error fetching companies:', error);
+      return 0;
+  }
+};
+// Function to fetch total number of agreements
+const fetchAgreementsCount = async () => {
+  try {
+      const response = await fetch('/api/admin/get_all_agreements/');  // Replace with the actual API endpoint
+      const data = await response.json();
+
+      if (data.success) {
+          return data.data.length;  // Total number of agreements
+      } else {
+          console.error('Failed to fetch agreements:', data.message);
+          return 0;
+      }
+  } catch (error) {
+      console.error('Error fetching agreements:', error);
+      return 0;
+  }
+};// Function to fetch total amount of approved transactions this month
+// Function to fetch total approved transactions and total equivalent_pkr this month
+const fetchApprovedTransactionsWithTotal = async () => {
+  try {
+      const response = await fetch('/api/admin/get_current_month_transactions/');  // Replace with the actual API endpoint
+      const data = await response.json();
+
+      if (data.success) {
+          const transactionsCount = data.data.length;  // Total number of approved transactions this month
+          let totalEquivalentPkr = data.data.reduce((total, transaction) => {
+            const equivalentPkrValue = parseFloat(transaction.equivalent_pkr); // Convert to number
+            return !isNaN(equivalentPkrValue) ? total + equivalentPkrValue : total; // Add to total if valid
+        }, 0); // Initial total is 0
+        
+
+          return { transactionsCount, totalEquivalentPkr };
+      } else {
+          console.error('Failed to fetch transactions:', data.message);
+          return { transactionsCount: 0, totalEquivalentPkr: 0 };
+      }
+  } catch (error) {
+      console.error('Error fetching approved transactions:', error);
+      return { transactionsCount: 0, totalEquivalentPkr: 0 };
+  }
+};
+// Function to fetch total number of complaints this month
+const fetchComplaintsCount = async () => {
+  try {
+      const response = await fetch('/api/admin/get_current_month_complaints/');  // Replace with the actual API endpoint
+      const data = await response.json();
+
+      if (data.success) {
+          console.log(data.data)
+          return data.data.length;  // Total number of complaints this month
+      } else {
+          console.error('Failed to fetch complaints:', data.message);
+          return 0;
+      }
+  } catch (error) {
+      console.error('Error fetching complaints:', error);
+      return 0;
+  }
+};
+useEffect(() => {
+  const fetchData = async () => {
+      const companies = await fetchCompaniesCount();
+      const agreements = await fetchAgreementsCount();
+      const { transactionsCount, totalEquivalentPkr } = await fetchApprovedTransactionsWithTotal();
+      const complaints = await fetchComplaintsCount();
+
+      setCompaniesCount(companies);
+      setAgreementsCount(agreements);
+      setTransactionsCount(transactionsCount);
+      setTotalEquivalentPkr(totalEquivalentPkr);
+      setComplaintsCount(complaints);
+  };
+
+  fetchData();
+}, []);  // Empty depe
 
   return (
     <div className="flex h-screen bg-white text-[#17cf42]">
@@ -28,25 +124,33 @@ export default function AdminPanel() {
             <TabsTrigger value="dashboard" onClick={() => setActiveTab('dashboard')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
               Dashboard
             </TabsTrigger>
-            <TabsTrigger value="companies" onClick={() => setActiveTab('companies')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
+            {/*<TabsTrigger value="companies" onClick={() => setActiveTab('companies')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
               <Building2 className="mr-2 h-4 w-4" />
               Companies
-            </TabsTrigger>
-            <TabsTrigger value="agreements" onClick={() => setActiveTab('agreements')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
+            </TabsTrigger> */}
+            {/*<TabsTrigger value="agreements" onClick={() => setActiveTab('agreements')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
               <FileText className="mr-2 h-4 w-4" />
               Agreements
-            </TabsTrigger>
-            <TabsTrigger value="missed-pickups" onClick={() => setActiveTab('missed-pickups')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
+            </TabsTrigger> */}
+           {/* <TabsTrigger value="missed-pickups" onClick={() => setActiveTab('missed-pickups')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
               <Trash2 className="mr-2 h-4 w-4" />
               Missed Pick-Ups
-            </TabsTrigger>
-            <TabsTrigger value="transactions" onClick={() => setActiveTab('transactions')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
+            </TabsTrigger> */}
+            {/*<TabsTrigger value="transactions" onClick={() => setActiveTab('transactions')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
               <DollarSign className="mr-2 h-4 w-4" />
               Transactions
-            </TabsTrigger>
+            </TabsTrigger> */}
             <TabsTrigger value="complaints" onClick={() => setActiveTab('complaints')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
               <AlertTriangle className="mr-2 h-4 w-4" />
               Complaints
+            </TabsTrigger>
+            <TabsTrigger value="reward_conversion_requests" onClick={() => setActiveTab('reward_conversion_requests')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
+              <AlertTriangle className="mr-2 h-4 w-4" />
+              Reward Conversion Requests
+            </TabsTrigger>
+            <TabsTrigger value="resign_agreements" onClick={() => setActiveTab('resign_agreements')} className="justify-start p-3 text-left text-[#17cf42] hover:bg-[#17cf42] hover:text-white data-[state=active]:bg-[#17cf42] data-[state=active]:text-white">
+              <AlertTriangle className="mr-2 h-4 w-4" />
+              Resign Agreement Requests
             </TabsTrigger>
           </TabsList>
         </nav>
@@ -58,40 +162,49 @@ export default function AdminPanel() {
           <TabsContent value="dashboard">
             <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Dashboard Overview</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <DashboardCard title="Total Companies" value="24" icon={<Building2 className="h-4 w-4" />} />
-              <DashboardCard title="Active Agreements" value="18" icon={<FileText className="h-4 w-4" />} />
-              <DashboardCard title="Missed Pick-Ups (This Month)" value="37" icon={<Trash2 className="h-4 w-4" />} />
-              <DashboardCard title="Total Transactions" value="$12,450" icon={<DollarSign className="h-4 w-4" />} />
+              <DashboardCard title="Total Companies" value={companiesCount} icon={<Building2 className="h-4 w-4" />} />
+              <DashboardCard title="Active Agreements" value={agreementsCount} icon={<FileText className="h-4 w-4" />} />
+              <DashboardCard title="Complaints (This Month)" value={complaintsCount} icon={<Trash2 className="h-4 w-4" />} />
+              <DashboardCard title="Total Transactions (This Month)" value={transactionsCount} icon={<DollarSign className="h-4 w-4" />} />
+              <DashboardCard title="Transactions Amount (This Month)" value={totalEquivalentPkr} icon={<DollarSign className="h-4 w-4" />} />
             </div>
           </TabsContent>
-
+{/*
           <TabsContent value="companies">
             <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Manage Companies</h2>
             <CompaniesTable />
           </TabsContent>
-
-          <TabsContent value="agreements">
+*/}
+         {/* <TabsContent value="agreements">
             <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Manage Agreements</h2>
             <AgreementsTable />
-          </TabsContent>
+          </TabsContent> */}
           <TabsContent value="area_approval_requests">
             <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Manage Area Approval Requests</h2>
             <AreaApprovalRequests />
           </TabsContent>
-          
+          {/*
           <TabsContent value="missed-pickups">
             <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Missed Pick-Ups</h2>
             <MissedPickupsTable />
           </TabsContent>
-
-          <TabsContent value="transactions">
+*/}
+          {/*<TabsContent value="transactions">
             <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Transactions Overview</h2>
             <TransactionsTable />
+          </TabsContent> */}
+          <TabsContent value="reward_conversion_requests">
+            <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Reward Conversion Requests</h2>
+            <RewardConversionRequests />
           </TabsContent>
 
           <TabsContent value="complaints">
             <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Citizen Complaints</h2>
             <ComplaintsTable searchTerm={searchTerm} setSearchTerm={setSearchTerm} statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
+          </TabsContent>
+          <TabsContent value="resign_agreements">
+            <h2 className="text-2xl font-bold mb-4 text-[#17cf42]">Resign Agreements Requests</h2>
+            <ResignAgreements searchTerm={searchTerm} setSearchTerm={setSearchTerm} statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
           </TabsContent>
 
         </Tabs>
@@ -377,11 +490,12 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
     const fetchReports = async () => {
       try {
         const response = await axios.get("/api/report/get_all_reports");
-        console.log("Response by get all reps : " , response.data.data);
+        console.log("Response by get all reps : ", response.data.data);
         setComplaints(response.data.data);
-        console.log("Complaints : ", complaints)
+        alert(response.data.message || "Reports fetched successfully!");
       } catch (error) {
         console.error("Error fetching reports:", error);
+        alert(error.response?.data?.message || "Failed to fetch reports.");
       } finally {
         setLoading(false);
       }
@@ -392,43 +506,46 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
 
   const markAsResolved = async (reportId) => {
     try {
-      await axios.post("/api/report/mark_as_resolved", { report_id: reportId });
-      // Refresh the list of complaints after marking as resolved
-      setComplaints(complaints.map(complaint => 
-        complaint.id === reportId ? { ...complaint, status: "Resolved" } : complaint
-      ));
+      const response = await axios.post("/api/report/mark_as_resolved", { report_id: reportId });
+      if (response.data.success) {
+        setComplaints(complaints.map(complaint =>
+          complaint.report_id === reportId ? { ...complaint, status: true } : complaint
+        ));
+        alert("Report marked as resolved successfully!");
+      }
     } catch (error) {
       console.error("Error marking report as resolved:", error);
+      alert(error.response?.data?.message || "Failed to mark report as resolved.");
     }
   };
 
   const removeCompany = async (company_id) => {
     try {
-      await axios.post("/api/report/remove_company", { company_id: company_id });
-      // Optionally remove the reports related to the company from the state
+      const response = await axios.post("/api/report/remove_company_agreement", { company_id });
       setComplaints(complaints.filter(complaint => complaint.company_id !== company_id));
+      alert(response.data.message || "Company agreement removed successfully!");
     } catch (error) {
       console.error("Error removing company:", error);
+      alert(error.response?.data?.message || "Failed to remove company agreement.");
     }
   };
 
-  // const filteredComplaints = complaints.filter(complaint =>
-  //   (complaint.citizen.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //    complaint.location.toLowerCase().includes(searchTerm.toLowerCase())) &&
-  //   (statusFilter === '' || complaint.status === statusFilter)
-  // );
+  // Filter complaints to exclude resolved ones
+  const filteredComplaints = complaints.filter(
+    (complaint) => complaint.status !== true
+  );
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (complaints.length === 0) {
-    return <div>No reports there.</div>;
+  if (filteredComplaints?.length === 0) {
+    return <div>No reports available.</div>;
   }
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
+      {/*<div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
           <Input
             placeholder="Search by citizen or location"
@@ -437,7 +554,7 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
             className="w-64 bg-white text-[#17cf42] border-[#17cf42] focus:border-[#17cf42] focus:ring-[#17cf42]"
           />
           <Search className="h-4 w-4 text-[#17cf42]" />
-        </div>
+        </div> 
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-[180px] border-[#17cf42] text-[#17cf42]">
             <SelectValue placeholder="Filter by status" />
@@ -449,33 +566,40 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
             <SelectItem value="Resolved">Resolved</SelectItem>
           </SelectContent>
         </Select>
-        <Button className="bg-[#17cf42] text-white hover:bg-white hover:text-[#17cf42] hover:border-[#17cf42] hover:border">Add New Complaint</Button>
-      </div>
+        <Button className="bg-[#17cf42] text-white hover:bg-white hover:text-[#17cf42] hover:border-[#17cf42] hover:border">
+          Add New Complaint
+        </Button>
+      </div> */}
       <Table className="border-[#17cf42]">
         <TableHeader>
           <TableRow className="border-b border-[#17cf42]">
             <TableHead className="text-[#17cf42]">Report ID</TableHead>
-            <TableHead className="text-[#17cf42]">User Id</TableHead>
+            <TableHead className="text-[#17cf42]">User ID</TableHead>
             <TableHead className="text-[#17cf42]">Description</TableHead>
-            <TableHead className="text-[#17cf42]">Sentiment rating</TableHead>
-            <TableHead className="text-[#17cf42]">Company Id</TableHead>
+            <TableHead className="text-[#17cf42]">Sentiment Rating</TableHead>
+            <TableHead className="text-[#17cf42]">Company Name</TableHead>
+            <TableHead className="text-[#17cf42]">Status</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {complaints.map((complaint) => (
+          {filteredComplaints?.map((complaint) => (
             <TableRow key={complaint.id} className="border-b border-[#17cf42]">
               <TableCell className="text-[#17cf42]">{complaint.report_id}</TableCell>
               <TableCell className="text-[#17cf42]">{complaint.user_id}</TableCell>
               <TableCell className="text-[#17cf42]">{complaint.description}</TableCell>
               <TableCell className="text-[#17cf42]">{complaint.sentiment_rating}</TableCell>
-              <TableCell className="text-[#17cf42]">{complaint.company_id}</TableCell>
+              <TableCell className="text-[#17cf42]">{complaint.name}</TableCell>
               <TableCell className="text-[#17cf42]">
                 <div className="flex items-center">
-                  <AlertTriangle className={`h-4 w-4 mr-2 ${
-                    complaint.status === 'Open' ? 'text-red-500' :
-                    complaint.status === 'In Progress' ? 'text-yellow-500' :
-                    'text-green-500'
-                  }`} />
+                  <AlertTriangle
+                    className={`h-4 w-4 mr-2 ${
+                      complaint.status === 'Open'
+                        ? 'text-red-500'
+                        : complaint.status === 'In Progress'
+                        ? 'text-yellow-500'
+                        : 'text-green-500'
+                    }`}
+                  />
                   {complaint.status}
                 </div>
               </TableCell>
@@ -494,7 +618,7 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
                   className="border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white"
                   onClick={() => removeCompany(complaint.company_id)}
                 >
-                  Remove Company
+                  Terminate Company Agreement
                 </Button>
               </TableCell>
             </TableRow>
@@ -502,7 +626,7 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }
 
 const AreaApprovalRequests = () => {
@@ -553,13 +677,13 @@ const AreaApprovalRequests = () => {
   return (
     <div>
       <h1>Area Approval Requests</h1>
-      {requests.length > 0 ? (
+      {requests?.length > 0 ? (
         <ul>
           {requests.map((request) => (
             <li key={request.area_approval_id}>
               <div>
                 <p>Area ID: {request.area_id}</p>
-                <p>Company ID: {request.company_id}</p>
+                <p>Company Name: {request.name}</p>
                 <button onClick={() => handleApprove(request.area_approval_id)}>
                   Approve Request
                 </button>
@@ -570,6 +694,223 @@ const AreaApprovalRequests = () => {
       ) : (
         <p>No area approval requests found.</p>
       )}
+    </div>
+  );
+};
+
+const RewardConversionRequests = () => {
+  const [rewardConversions, setRewardConversions] = useState([]);
+
+  useEffect(() => {
+    async function fetchRewardConversions() {
+      try {
+        const response = await fetch("/api/admin/get_reward_conversion_requests");
+        const data = await response.json();
+        setRewardConversions(data.data);
+      } catch (error) {
+        console.error("Error fetching reward conversions:", error);
+      }
+    }
+
+    fetchRewardConversions();
+  }, []);
+
+  // Handler for updating reward conversion status
+  const handleAction = async (conversionId, status) => {
+    try {
+      const response = await fetch("/api/admin/reward_conversion_action", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ conversionId, status }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setRewardConversions((prev) =>
+          prev.map((conversion) =>
+            conversion.conversion_id === conversionId
+              ? { ...conversion, status }
+              : conversion
+          )
+        );
+      } else {
+        console.error(result.message);
+      }
+    } catch (error) {
+      console.error("Error updating reward conversion status:", error);
+    }
+  };
+
+  return (
+    <div>
+      {/*<div className="flex justify-between items-center mb-4">
+        <Input
+          placeholder="Search reward conversions..."
+          className="max-w-sm bg-white text-[#17cf42] border-[#17cf42] focus:border-[#17cf42] focus:ring-[#17cf42]"
+        />
+        <Button className="bg-[#17cf42] text-white hover:bg-white hover:text-[#17cf42] hover:border-[#17cf42] hover:border">
+          Add New Conversion
+        </Button>
+      </div> */}
+      <Table className="border-[#17cf42]">
+        <TableHeader>
+          <TableRow className="border-b border-[#17cf42]">
+            <TableHead className="text-[#17cf42]">User Name</TableHead>
+            <TableHead className="text-[#17cf42]">User Email</TableHead>
+            <TableHead className="text-[#17cf42]">Reward Amount</TableHead>
+            <TableHead className="text-[#17cf42]">Equivalent PKR</TableHead>
+            <TableHead className="text-[#17cf42]">Status</TableHead>
+            <TableHead className="text-[#17cf42]">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {rewardConversions?.map((conversion) => (
+            <TableRow
+              key={conversion.conversion_id}
+              className="border-b border-[#17cf42]"
+            >
+              <TableCell className="text-[#17cf42]">{conversion.name}</TableCell>
+              <TableCell className="text-[#17cf42]">
+                {conversion.email_id}
+              </TableCell>
+              <TableCell className="text-[#17cf42]">
+                {conversion.conversion_amount}
+              </TableCell>
+              <TableCell className="text-[#17cf42]">
+                {conversion.equivalent_pkr}
+              </TableCell>
+              <TableCell className="text-[#17cf42]">
+                {conversion.status}
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mr-2 border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white"
+                  onClick={() => handleAction(conversion.conversion_id, "Approved")}
+                >
+                  Approve
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-[#17cf42] text-[#17cf42] hover:bg-[#17cf42] hover:text-white"
+                  onClick={() => handleAction(conversion.conversion_id, "Rejected")}
+                >
+                  Reject
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
+
+const ResignAgreements = () => {
+  const [pendingAgreements, setPendingAgreements] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch the pending resignation agreements on component mount
+  useEffect(() => {
+    const fetchPendingAgreements = async () => {
+      try {
+        const response = await fetch("/api/admin/get_resign_agreements", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          setPendingAgreements(data.data || []);
+        } else {
+          setPendingAgreements([]);
+        }
+      } catch (error) {
+        console.error("Error fetching pending resignation agreements:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPendingAgreements();
+  }, []);
+
+  // Function to handle action on an agreement (approve or reject)
+  const handleAction = async (agreementId, action) => {
+    try {
+      const response = await fetch("/api/admin/approve_reject_resign_agreement", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          resign_id: agreementId,
+          status: action, // either 'approve' or 'reject'
+        }),
+      });
+  
+      const data = await response.json();
+      console.log(data)
+      if (data.success) {
+        // Remove the agreement from the list once it's successfully approved or rejected
+        setPendingAgreements((prevAgreements) =>
+          prevAgreements.filter((agreement) => agreement.resign_id !== agreementId)
+        );
+      } else {
+        alert("Failed to update agreement status");
+      }
+    } catch (error) {
+      console.error("Error updating agreement status:", error);
+    }
+  };
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex bg-gray-100 p-6">
+      <div className="flex-grow bg-white shadow-md p-6">
+        <h2 className="text-2xl font-bold mb-6">Admin Panel - Pending Resign Agreements</h2>
+        {pendingAgreements.length === 0 ? (
+          <p>No pending resignation agreements found.</p>
+        ) : (
+          <div>
+            <ul>
+              {pendingAgreements.map((agreement) => (
+                <li key={agreement.agreement_id} className="mb-4 p-4 border-b">
+                  <h3 className="font-bold">{agreement.name}</h3>
+                  <p>{agreement.text}</p>
+                  <p className="text-sm text-gray-500">Requested on: {new Date(agreement.created_at).toLocaleString()}</p>
+                  <div className="mt-4">
+                    <button
+                      onClick={() => handleAction(agreement.resign_id, "approved")}
+                      className="bg-green-500 text-white py-2 px-4 rounded mr-2"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => handleAction(agreement.resign_id, "rejected")}
+                      className="bg-red-500 text-white py-2 px-4 rounded"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

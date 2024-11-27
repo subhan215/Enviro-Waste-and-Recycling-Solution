@@ -11,15 +11,16 @@ const Chat = () => {
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [newMessage, setNewMessage] = useState("");
   let chatId = useSelector((state)=> state.currentChatId.value) || null;
+  console.log(chatId)
   const userData = useSelector((state) => state.userData.value)
   console.log(userData)
-  let user_or_company_id = 2//userData.user_id ; 
+  let user_or_company_id = userData.user_id ; 
   let role = userData.role;
   useEffect(() => {
     // Function to fetch all chats for the user
     const fetchChats = async () => {
       try {
-        const response = await fetch(`/api/chat/get_chats?role=user&id=${user_or_company_id}`);
+        const response = await fetch(`/api/chat/get_chats?role=${role}&id=${user_or_company_id}`);
         if (!response.ok) {
           throw new Error("Failed to fetch chats");
         }
@@ -56,7 +57,7 @@ const Chat = () => {
   useEffect(() => {
     const listener = {
       message: (event) => {
-        if (event.message.chat_id === selectedChatId) {
+        if (event.message.chat_id === (chatId ? chatId : selectedChatId)) {
           setMessages((prevMessages) => {
             const messageExists = prevMessages.some(
               (msg) => msg.timestamp === event.message.timestamp
@@ -77,7 +78,7 @@ const Chat = () => {
       pubnub.removeListener(listener);
       pubnub.unsubscribe({ channels: ["chat-channel"] });
     };
-  }, [selectedChatId]);
+  }, []);
 
   const handleChatSelect = (chat_id) => {
     setSelectedChatId(chat_id);
@@ -94,9 +95,9 @@ const Chat = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          chat_id: selectedChatId,
+          chat_id: selectedChatId ? selectedChatId : chatId,
           content: newMessage,
-          sender: "user", // or company depending on your logic
+          sender: role, // or company depending on your logic
           sender_id: user_or_company_id, // assuming user_id is the current user's ID , 
           sender_name: userData.name
         }),
@@ -112,10 +113,10 @@ const Chat = () => {
       pubnub.publish({
         channel: "chat-channel",
         message: {
-          sender: "user",
+          sender: role,
           sender_id: user_or_company_id,
           content: newMessage,
-          chat_id: selectedChatId,
+          chat_id: selectedChatId ? selectedChatId: chatId,
           timestamp: new Date().toISOString(),
           sender_name: userData.name
         },

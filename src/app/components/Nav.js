@@ -1,10 +1,21 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FiMenu, FiX } from "react-icons/fi"; // Icons for the hamburger menu
+import Notifications from "./Notifications";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBell } from "@fortawesome/free-solid-svg-icons"; // Import the bell icon
+import { useSelector } from "react-redux";
 
 const ModernNavbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false); // State for mobile menu
+  const [isLargeScreen, setIsLargeScreen] = useState(false); // State to track screen size
+  const [showNotifications, setShowNotifications] = useState(false); // State to control notifications visibility
+  const userData = useSelector((state) => state.userData.value) || null;
+
+  // Function to turn notifications off (memoized)
+  const turnNotificationsToOff = useCallback(() => {
+    setShowNotifications(false);
+  }, []);
 
   // Function to toggle the mobile menu
   const toggleMenu = () => {
@@ -15,9 +26,9 @@ const ModernNavbar = () => {
   const handleResize = () => {
     if (window.innerWidth >= 768) {
       setIsOpen(false); // Close the mobile menu when the screen is large
-      setIsLargeScreen(true); // Update to indicate a large screen
+      setIsLargeScreen(true); // Update to indicate large screen
     } else {
-      setIsLargeScreen(false); // It's a mobile screen now
+      setIsLargeScreen(false); // Indicate mobile screen
     }
   };
 
@@ -56,6 +67,20 @@ const ModernNavbar = () => {
           <a href="#" className="text-gray-700 hover:text-green-600 transition">
             Contact
           </a>
+
+          {/* Notifications */}
+          {userData && (
+            <>
+              <FontAwesomeIcon
+                icon={faBell}
+                size="2x"
+                className="text-black hover:cursor-pointer"
+                onClick={() => setShowNotifications(true)}
+                title="View Notifications"
+              />
+              {showNotifications && <Notifications turnNotificationsToOff={turnNotificationsToOff} />}
+            </>
+          )}
           <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
             Get Started
           </button>
@@ -63,7 +88,7 @@ const ModernNavbar = () => {
 
         {/* Hamburger Menu for mobile screens */}
         <div className="md:hidden flex items-center">
-          <button onClick={toggleMenu}>
+          <button onClick={toggleMenu} aria-label="Toggle Navigation">
             {isOpen ? (
               <FiX className="text-3xl text-green-600" />
             ) : (

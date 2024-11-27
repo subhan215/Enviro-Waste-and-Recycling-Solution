@@ -112,11 +112,6 @@
 //     );
 // }
 
-
-
-
-
-
 import { pool } from "../../../../database/database";
 import { writeFile } from "fs/promises";
 import { upload_to_cloundiary } from "@/utils/cloudinary";
@@ -238,7 +233,16 @@ export async function POST(req) {
             [userId, areaId, "pending", companyId , new Date(), upload_clean_or_unclean_image_to_cloud.url ]
         );
         console.log(missed_pickup.rows[0]);
-
+        const notificationMessage = "A new missed pickup is reported";
+        const notificationIdResult = await pool.query(
+            'INSERT INTO notification(content) VALUES ($1) RETURNING notification_id',
+            [notificationMessage]
+        );
+        const notificationId = notificationIdResult.rows[0].notification_id;
+        await pool.query(
+            'INSERT INTO notification_company(notification_id, company_id) VALUES ($1, $2)',
+            [notificationId, companyId]
+        );
 
 
         // if (currentHour >= 13) { // 13:00 is 1 PM in 24-hour format

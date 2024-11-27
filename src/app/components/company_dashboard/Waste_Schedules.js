@@ -19,7 +19,7 @@ const Waste_Schedules = ({}) => {
   const [weights, setWeights] = useState({});
   const [wastePrices, setWastePrices] = useState([]);
 
-  let companyId = 1//userData.user_id ; 
+  let companyId = userData.user_id ; 
   useEffect(() => {
     const fetchCompanySchedules = async () => {
       try {
@@ -43,6 +43,7 @@ const Waste_Schedules = ({}) => {
           throw new Error(`Error: ${response.status}`);
         }
         const data = await response.json();
+        console.log(data)
         setTrucks(data.data);
       } catch (err) {
         setError(err.message);
@@ -69,7 +70,9 @@ const Waste_Schedules = ({}) => {
       alert('Please select a truck to assign.');
       return;
     }
+  
     setAssigning(true);
+  
     try {
       const response = await fetch('/api/schedule/assign_truck', {
         method: 'POST',
@@ -81,9 +84,19 @@ const Waste_Schedules = ({}) => {
           truck_id: selectedTruck,
         }),
       });
+  
       const result = await response.json();
+  
       if (response.ok) {
         alert('Truck assigned successfully!');
+  
+        // Assuming `result.schedule` contains the new schedule received from the backend
+        setSchedules((prevSchedules) => {
+          // Replace the existing schedule with the same `schedule_id`, or add the new one if not found
+          return prevSchedules.map(schedule =>
+            schedule.schedule_id == result.schedule.schedule_id ? result.schedule : schedule
+          );
+        });
       } else {
         alert(`Failed to assign truck: ${result.message}`);
       }
@@ -94,7 +107,7 @@ const Waste_Schedules = ({}) => {
       setAssigning(false);
     }
   };
-
+  
   const handleInitiateChat = async (company_id,  userId) => {
     try {
       const response = await fetch('/api/chat/create_chat', {
@@ -138,6 +151,14 @@ const Waste_Schedules = ({}) => {
         alert('Schedule marked as done successfully!');
         setShowForm(false);
         setSelectedSchedule(null);
+        const {updatedSchedule} = response.data
+        setSchedules((prevSchedules) => {
+          // Replace the existing schedule with the same `schedule_id`, or add the new one if not found
+          return prevSchedules.map(schedule =>
+            schedule.schedule_id == updatedSchedule.schedule_id ? updatedSchedule : schedule
+          );
+        });
+
       }
     } catch (error) {
       console.error('Error marking schedule as done:', error);
@@ -154,32 +175,36 @@ const Waste_Schedules = ({}) => {
       <h2>Company Schedules</h2>
       <ul>
         {schedules.map((schedule) => (
+          schedule.status !== 'done' &&
           <li key={schedule.schedule_id}>
             <p><strong>Date:</strong> {schedule.date}</p>
             <p><strong>Time:</strong> {schedule.time}</p>
             <p><strong>Status:</strong> {schedule.status}</p>
             <button onClick={() => handleInitiateChat(schedule.company_id  ,schedule.user_id)}>Contact User</button>
             <br />
-            
-            <label>
+            {schedule.truckid ? <p>Assigned truck: {schedule.licenseplate}</p> : <div><label>
               Select Truck:
               <select value={selectedTruck} onChange={(e) => setSelectedTruck(e.target.value)}>
                 <option value="">Choose a truck</option>
                 {trucks.map((truck) => (
-                  <option key={truck.truck_id} value={truck.truck_id}>
-                    {truck.truck_name}
+                  <option key={truck.truckid} value={truck.truckid}>
+                    {truck.licenseplate}
                   </option>
                 ))}
               </select>
             </label>
             <button onClick={() => handleAssignTruck(schedule.schedule_id)} disabled={assigning}>
               {assigning ? 'Assigning...' : 'Assign Truck'}
-            </button>
-            <button onClick={() => handleMarkAsDone(schedule.schedule_id)}>Mark as Done</button>
+            </button> </div> }
+            {schedule.truckid ? (
+              <button onClick={() => handleMarkAsDone(schedule.schedule_id)}>Mark as Done</button>
+            ) : (
+              <p>Truck not assigned yet. Cannot mark as done.</p>
+            )}
           </li>
         ))}
       </ul>
-      {!showForm  ? <button onClick={()=> setShowForm(true)}>Enter Weights</button> : null }
+      {/*!showForm  ? <button onClick={()=> setShowForm(true)}>Enter Weights</button> : null */}
       {showForm && (
         <form onSubmit={handleFormSubmit}>
           <h3>Enter received weights</h3>

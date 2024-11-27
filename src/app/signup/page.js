@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 // Company Registration Form Component
 const CompanyRegistrationForm = () => {
+    const router = useRouter();
     const [data, setData] = useState({
         name: "",
         email: "",
@@ -12,23 +13,29 @@ const CompanyRegistrationForm = () => {
         password: "",
         confirmPassword: ""
     });
+    const [agreementChecked, setAgreementChecked] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!agreementChecked) {
+            alert("You must agree to the terms and conditions to register.");
+            return;
+        }
+
         if (data.password === data.confirmPassword) {
             try {
-                console.log("Sending data:", data);
                 let response = await fetch("api/company/signup", {
                     headers: {
                         "Content-Type": "application/json",
                     },
                     method: "POST",
-                    body: JSON.stringify({ ...data }),
+                    body: JSON.stringify({ ...data , agreementChecked }),
                 });
 
                 const responseData = await response.json();
-                if (response.success) {
+                if (responseData.success) {
                     alert("Account has been created");
+                    router.push("/signin");
                 } else {
                     alert(responseData.message);
                 }
@@ -121,7 +128,19 @@ const CompanyRegistrationForm = () => {
                                     onChange={(e) => setData({ ...data, phone: e.target.value })}
                                 />
                             </label>
-
+                            {/* Agreement Checkbox */}
+                            <label className="flex items-center gap-2 mb-4">
+                                <input
+                                    type="checkbox"
+                                    name="agreement"
+                                    className="form-checkbox h-5 w-5 text-[#0e1b11] bg-[#e7f3ea] border-[#4e975f] rounded"
+                                    required
+                                    onChange={(e) => setAgreementChecked(e.target.checked)}
+                                />
+                                <span className="text-[#0e1b11] text-base font-normal">
+                                    I agree to the terms and conditions of Trash Solutions.
+                                </span>
+                            </label>
                             <button
                                 type="submit"
                                 className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#17cf42] text-[#0e1b11] text-sm font-bold leading-normal"
@@ -173,7 +192,7 @@ const SignUp = () => {
                 console.log(responseData)
                 if (responseData.success) {
                     alert("Account has been created");
-                    router.push("/");
+                    router.push("/signin");
                 }
                 else {
                     alert(responseData.message)

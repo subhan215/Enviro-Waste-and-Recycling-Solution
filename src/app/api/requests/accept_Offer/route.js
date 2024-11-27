@@ -28,7 +28,16 @@ export async function POST(req, { params }) {
         const deleteQuery = 'DELETE FROM request_for_waste WHERE request_id = $1';
         const result = await pool.query(deleteQuery, [requestId]);
         console.log("deleting successfully!" , result)
-
+        const notificationMessage = "Your offer has been accepted by user and a schedule has been created.Check schedules tab";
+        const notificationIdResult = await pool.query(
+        'INSERT INTO notification(content) VALUES ($1) RETURNING notification_id',
+        [notificationMessage]
+        );
+       const notificationId = notificationIdResult.rows[0].notification_id;
+       await pool.query(
+        'INSERT INTO notification_company(notification_id, company_id) VALUES ($1, $2)',
+        [notificationId, company_id]
+    );
 
 
         return new Response(JSON.stringify({ message: `Schedule created successfully for request ID ${requestId}.` }), { status: 201 });

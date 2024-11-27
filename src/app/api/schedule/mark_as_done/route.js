@@ -1,46 +1,61 @@
 import { pool } from "../../../../database/database";
 import { NextResponse } from "next/server";
 
-export async function  POST(req) {
-    const {schedule_id , weights } = await req.json();
-    console.log("Schdule id : " , schedule_id);
-    console.log("Weight : ", weights);
-    let rewards = 0;
-    for (let i = 0; i < weights.length; i++) {
-        rewards += weights[i].rate_per_kg * weights[i].weight;
-      }
+export async function POST(req) {
+    try {
+        const { schedule_id, weights } = await req.json();
+        console.log("Schedule ID:", schedule_id);
+        console.log("Weights:", weights);
 
-       console.log("Total rewareds : " , rewards);
+        let rewards = 0;
+        for (let i = 0; i < weights.length; i++) {
+            rewards += weights[i].rate_per_kg * weights[i].weight;
+        }
+        console.log("Total Rewards:", rewards);
 
-    //   all_areas = await pool.query(
-    //     `SELECT area_id, name 
-    //      FROM area 
-    //      WHERE area_id NOT IN (
-    //          SELECT area_id 
-    //          FROM recycling_center 
-    //          WHERE company_id = $1
-    //      )`, 
-    //     [company_id] // Pass company_id as a parameter
-    // );
+        // Fetch the user_id for the current schedule
+        const current_schedule = await pool.query(
+            `SELECT user_id, * FROM schedule WHERE schedule_id = $1`, // Get the full schedule
+            [schedule_id]
+        );
 
-    // console.log(all_areas.rows); // Log all areas fetched
-      const current_schdule = await pool.query(`SELECT user_id from schedule where schedule_id = $1`,[schedule_id])
-      console.log("CSUO : ", current_schdule.rows[0].user_id);
-      const current_schdule_user_id = current_schdule.rows[0].user_id;
+        if (current_schedule.rows.length === 0) {
+            return NextResponse.json(
+                { error: "Schedule not found", success: false },
+                { status: 404 }
+            );
+        }
 
-      //inserting rewards
-      const insert_rewards = await pool.query(`update "User" set rewards = rewards + $1 where user_id = $2` , [rewards , current_schdule_user_id]);
+        const current_schedule_user_id = current_schedule.rows[0].user_id;
+        console.log("Current Schedule User ID:", current_schedule_user_id);
 
-      console.log("Insert : " , insert_rewards);
+        // Update user rewards
+        const update_rewards = await pool.query(
+            `UPDATE "User" SET rewards = rewards + $1 WHERE user_id = $2`,
+            [rewards, current_schedule_user_id]
+        );
 
-      //Delete the schedule
-      const del_sch = await pool.query('delete from schedule where schedule_id = $1' , [schedule_id]);
+        console.log("Updated Rewards:", update_rewards.rowCount);
 
-      
-
-
-
-
-
-    return NextResponse.json({"message" : "try" , success : true});
+        // Update the schedule status
+        const update_schedule = await pool.query(
+            `UPDATE schedule SET status = $2 WHERE schedule_id = $1 RETURNING *`,
+            [schedule_id, "done"]
+        );
+        console.log("Updated Schedule:", update_schedule.rows[0]);
+        const {rows} = await pool.query('SELECT * from schedule join trucks on trucks.truckid = schedule.truck_id')
+        console.log(rows[0]) ; 
+        // Return the updated schedule and success message to the frontend
+        return NextResponse.json({
+            message: "Schedule updated successfully",
+            success: true,
+            updatedSchedule: rows[0], // Send the updated schedule
+        });
+    } catch (error) {
+        console.error("Error updating schedule:", error);
+        return NextResponse.json(
+            { error: "Internal server error", success: false },
+            { status: 500 }
+        );
+    }
 }

@@ -47,11 +47,13 @@ function CreateRequestForRecycledWaste() {
 
             if (response.data.success) {
                 setSuccessMessage('Request submitted successfully!');
+                alert("Request submitted successfully!") ; 
                 setWaste('');
                 setPreferredDate('');
                 setPreferredTime('');
                 setLocationName('');
                 setRequestData({ latitude: '', longitude: '' });
+                fetchCurrentRequest() ; 
             }
         } catch (err) {
             setError(err.response?.data?.message || 'An unexpected error occurred.');
@@ -96,17 +98,18 @@ function CreateRequestForRecycledWaste() {
             setError('Error searching for location');
         }
     };
-
+    const fetchCurrentRequest = async () => {
+        try {
+            const response = await axios.get(`/api/requests/request_for_recycled_waste/${userData.user_id}`); // Replace '2' with dynamic user ID as needed
+            setCurrentRequest(response.data.requests);
+            console.log(response)
+        } catch(err) {
+            //setError('Failed to fetch current request');
+            console.log(err)
+        }
+    };
     useEffect(() => {
-        const fetchCurrentRequest = async () => {
-            try {
-                const response = await axios.get(`/api/requests/request_for_recycled_waste/${userData.user_id}`); // Replace '2' with dynamic user ID as needed
-                setCurrentRequest(response.data.requests);
-                console.log(response)
-            } catch {
-                setError('Failed to fetch current request');
-            }
-        };
+       
 
         fetchCurrentRequest();
     }, []);
@@ -158,6 +161,8 @@ function CreateRequestForRecycledWaste() {
             // Handle response
             if (response.status === 201) {
                 alert(response.data.message); // Success message
+                currentRequest(null)
+                alert("See schedule tab.A new schedule has been created!")
                 // Optionally update the UI state, e.g., reset the current request or show the schedule
             } else {
                 alert(response.data.message); // Error message if status is not 201

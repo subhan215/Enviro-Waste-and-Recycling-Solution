@@ -69,6 +69,8 @@ const ManageAndViewAreas = () => {
           fetchAreas(); // Re-fetch areas after assignment
           setIsAddingArea(false);
           setSelectedAreas([]); // Clear the selected areas after assigning
+          setViewMode(true) ; 
+          setNonAssignedAreas([])
         } else {
           alert(responseData.message);
         }
