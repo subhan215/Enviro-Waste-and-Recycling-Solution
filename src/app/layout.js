@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
 
 // Separate component to ensure use of hooks inside the Provider
 function LayoutContent({ children }) {
-  let access_token = getCookie("access_token");
+  let access_token = getCookie(`access_token`);
   access_token = access_token?.replace(/"/g, ''); 
   console.log(access_token)
   const dispatch = useDispatch();
@@ -50,7 +50,7 @@ function LayoutContent({ children }) {
           dispatch(setUserData({ ...data.user, role: data.role }));
         } else {
           console.log("Data not found!");
-          navigate.push('/login'); // Redirect if user data is not found
+          navigate.push('/signin'); // Redirect if user data is not found
         }
       } catch (error) {
         console.error('Error fetching user data:', error);

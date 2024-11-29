@@ -1,17 +1,24 @@
-const { pool } = require("../../../../../database/database");
+import { NextResponse } from "next/server";
+import { pool } from "../../../../../database/database";
 
 export async function GET(req, { params }) {
     const { user_id } = params;
     console.log(user_id);
 
     if (!user_id) {
-        return new Response(JSON.stringify({ error: 'User ID is required' }), { 
-            status: 400, 
-            headers: { 'Content-Type': 'application/json' } 
+        return NextResponse.json({ 
+            error: 'User ID is required' 
+        }, { 
+            status: 400 
         });
     }
 
+    const client = await pool.connect();
+
     try {
+        // Begin the transaction
+        await client.query('BEGIN');
+
         // Query to fetch distinct schedules based on user_id and join with trucks
         const query = `
           SELECT DISTINCT 
@@ -21,27 +28,39 @@ export async function GET(req, { params }) {
                 t.capacity
           FROM schedule s
           LEFT JOIN trucks t ON s.truck_id = t.truckid
-          WHERE s.user_id = $1 and s.status!='done';
+          WHERE s.user_id = $1 and s.status != 'done';
         `;
 
-        const { rows } = await pool.query(query, [user_id]);
+        const { rows } = await client.query(query, [user_id]);
 
         if (rows.length === 0) {
-            return new Response(JSON.stringify({ message: 'No schedules found for this user' }), { 
-                status: 404, 
-                headers: { 'Content-Type': 'application/json' } 
-            });
+            // Commit the transaction
+            await client.query('COMMIT');
+            return NextResponse.json({
+                message: 'No schedules found for this user'
+            }, { status: 404 });
         }
 
-        return new Response(JSON.stringify(rows), { 
-            status: 200, 
-            headers: { 'Content-Type': 'application/json' } 
+        // Commit the transaction
+        await client.query('COMMIT');
+
+        // Return the fetched schedules
+        return NextResponse.json(rows, { 
+            status: 200 
         });
+
     } catch (error) {
+        // Rollback the transaction in case of error
+        await client.query('ROLLBACK');
         console.error('Error fetching schedules:', error);
-        return new Response(JSON.stringify({ error: 'Internal server error' }), { 
-            status: 500, 
-            headers: { 'Content-Type': 'application/json' } 
+
+        return NextResponse.json({
+            error: 'Internal server error'
+        }, { 
+            status: 500 
         });
+    } finally {
+        // Release the client back to the pool
+        client.release();
     }
 }

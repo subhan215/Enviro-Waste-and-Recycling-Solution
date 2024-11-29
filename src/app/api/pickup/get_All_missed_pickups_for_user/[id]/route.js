@@ -1,4 +1,5 @@
-import {pool} from "../../../../../database/database"
+import { pool } from "../../../../../database/database";
+import { NextResponse } from "next/server"; // Import NextResponse
 
 export async function GET(req, { params }) {
     let { id } = params;
@@ -6,48 +7,51 @@ export async function GET(req, { params }) {
 
     // Ensure the id is a valid number
     if (isNaN(id)) {
-        return new Response(
-            JSON.stringify({
-                success: false,
-                message: 'Invalid user ID',
-            }),
-            { status: 400 }
-        );
+        return NextResponse.json({
+            success: false,
+            message: 'Invalid user ID',
+        }, { status: 400 });
     }
 
     let all_missed_pickups = null;
 
+    // Begin transaction
+    const client = await pool.connect();
     try {
+        await client.query('BEGIN'); // Begin transaction
+
         // Fetch all missed pickups that are not completed for the given user id
-        all_missed_pickups = await pool.query(
-            'SELECT status, missed_pickup_id , company_id ,created_at, clean_img FROM missed_pickup WHERE user_id = $1 AND status != $2',
+        all_missed_pickups = await client.query(
+            'SELECT status, missed_pickup_id, company_id, created_at, clean_img FROM missed_pickup WHERE user_id = $1 AND status != $2',
             [id, "completed"]
         );
 
         // Log all returned rows
         console.log(all_missed_pickups.rows);
 
+        // Commit the transaction
+        await client.query('COMMIT');
+        
     } catch (error) {
+        // Rollback the transaction in case of an error
+        await client.query('ROLLBACK');
         console.error("Error: ", error);
 
         // Return error response
-        return new Response(
-            JSON.stringify({
-                success: false,
-                message: 'Failed to fetch missed pickups',
-                error: error.message,
-            }),
-            { status: 500 }
-        );
+        return NextResponse.json({
+            success: false,
+            message: 'Failed to fetch missed pickups',
+            error: error.message,
+        }, { status: 500 });
+    } finally {
+        // Release the client back to the pool
+        client.release();
     }
 
     // Return success response with the fetched data
-    return new Response(
-        JSON.stringify({
-            success: true,
-            data: all_missed_pickups.rows,
-            message: 'All missed pickups fetched!',
-        }),
-        { status: 200 }
-    );
+    return NextResponse.json({
+        success: true,
+        data: all_missed_pickups.rows,
+        message: 'All missed pickups fetched!',
+    }, { status: 200 });
 }

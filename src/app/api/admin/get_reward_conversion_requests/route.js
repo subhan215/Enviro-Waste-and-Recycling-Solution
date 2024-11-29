@@ -1,33 +1,49 @@
+import { NextResponse } from "next/server";
 import { pool } from "../../../../database/database";
 
 export async function GET(req) {
   try {
+    // Begin transaction
+    await pool.query("BEGIN");
+
     // Basic query to fetch reward conversion data
-    let query = 'SELECT * FROM RewardConversions rC join "User" u on u.user_id = rC.user_id where status = $1 ORDER BY created_at DESC ';
-    const result = await pool.query(query , ['Pending']);
+    const query = `
+      SELECT * 
+      FROM RewardConversions rC 
+      JOIN "User" u ON u.user_id = rC.user_id 
+      WHERE status = $1 
+      ORDER BY created_at DESC;
+    `;
+    const result = await pool.query(query, ['Pending']);
+
+    // Commit transaction
+    await pool.query("COMMIT");
 
     // Return the response with the fetched data
-    return new Response(JSON.stringify({
-      success: true,
-      data: result.rows,
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
+    return NextResponse.json(
+      {
+        success: true,
+        data: result.rows,
       },
-    });
+      {
+        status: 200,
+      }
+    );
   } catch (err) {
-    console.error('Error fetching reward conversion requests:', err);
+    // Rollback transaction in case of an error
+    await pool.query("ROLLBACK");
+
+    console.error("Error fetching reward conversion requests:", err);
 
     // Return an error response
-    return new Response(JSON.stringify({
-      success: false,
-      message: 'Failed to fetch reward conversion requests',
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Failed to fetch reward conversion requests",
       },
-    });
+      {
+        status: 500,
+      }
+    );
   }
 }

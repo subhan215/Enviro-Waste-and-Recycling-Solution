@@ -1,55 +1,57 @@
-import { pool } from "../../../../../../database/database"; 
+import { pool } from "../../../../../../database/database";
+import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
   let companyId = parseInt(params.company_id);
   let all_centers;
-
-  console.log("company id: " , companyId);
   
+  console.log("company id:", companyId);
+
+  // Create a client for transaction handling
+  const client = await pool.connect();
+
   try {
-    all_centers = await pool.query(
+    // Begin transaction
+    await client.query('BEGIN');
+    
+    all_centers = await client.query(
       'SELECT * from recycling_center where company_id = $1',
       [companyId]
     );
 
     if (all_centers.rows.length === 0) {
-      return new Response(
-        JSON.stringify({
-          success: true,
-          data: [],
-          message: 'No recycling center found for the company.',
-        }),
-        {
-          status: 200,
-        }
-      );
+      // Rollback transaction if no centers are found
+      await client.query('ROLLBACK');
+      return NextResponse.json({
+        success: true,
+        data: [],
+        message: 'No recycling center found for the company.',
+      }, { status: 200 });
     }
 
     console.log(all_centers.rows); // Log all the fetched areas
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        data: all_centers.rows,
-        message: 'All recycling centers fetched successfully!',
-      }),
-      {
-        status: 200,
-      }
-    );
+    // Commit transaction after successful fetch
+    await client.query('COMMIT');
+
+    return NextResponse.json({
+      success: true,
+      data: all_centers.rows,
+      message: 'All recycling centers fetched successfully!',
+    }, { status: 200 });
 
   } catch (error) {
-    console.error("Error fetch recycling centers: ", error);
+    // Rollback transaction in case of error
+    await client.query('ROLLBACK');
+    console.error("Error fetching recycling centers:", error);
 
-    return new Response(
-      JSON.stringify({
-        success: false,
-        message: 'Failed to fetch recycling centers.',
-        error: error.message,
-      }),
-      {
-        status: 500, // Internal Server Error
-      }
-    );
+    return NextResponse.json({
+      success: false,
+      message: 'Failed to fetch recycling centers.',
+      error: error.message,
+    }, { status: 500 });
+  } finally {
+    // Release the client back to the pool
+    client.release();
   }
 }

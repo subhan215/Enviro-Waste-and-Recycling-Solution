@@ -1,30 +1,35 @@
 import { NextResponse } from 'next/server';
-import {pool} from "../../../../database/database"
+import { pool } from '../../../../database/database';
 
 export async function GET() {
     try {
+        // Begin transaction
+        await pool.query('BEGIN');
+
         // Get the current date and the first day of the current month
         const currentDate = new Date();
         const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
 
-        // Query to get all complaints from the current month where status is 't'
-        const result = await pool.query(
-            `SELECT * 
-             FROM reports 
-             where created_at >= $1`, 
-            [firstDayOfMonth]
-        );
+        // Query to get all reports created in the current month
+        const query = `SELECT * FROM reports WHERE created_at >= $1`;
+        const { rows } = await pool.query(query, [firstDayOfMonth]);
 
-        // Return the result in a response
+        // Commit transaction
+        await pool.query('COMMIT');
+
         return NextResponse.json({
             success: true,
-            data: result.rows,  // Return the current month complaints
+            data: rows,
         });
     } catch (error) {
-        console.error('Error fetching current month complaints:', error);
+        // Rollback transaction in case of an error
+        await pool.query('ROLLBACK');
+        console.error('Error fetching current month reports:', error);
         return NextResponse.json({
             success: false,
-            message: 'Failed to fetch current month complaints',
+            message: 'Failed to fetch current month reports',
+        }, {
+            status: 500,
         });
     }
 }

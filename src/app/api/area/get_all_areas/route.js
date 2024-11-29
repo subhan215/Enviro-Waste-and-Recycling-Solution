@@ -1,25 +1,43 @@
 import { pool } from "../../../../database/database";
+import { NextResponse } from "next/server";
 
 export async function GET(req) {
     let all_areas;
+    const client = await pool.connect(); // Connect to the database to handle the transaction
     try {
-    all_areas = await pool.query('select * from area');
-    console.log(all_areas.rows[0]);
-    
- } catch (error) {
-    console.log("Err:  ",error);
- }
- 
+        // Begin the transaction
+        await client.query('BEGIN');
+        
+        // Fetch all areas from the database
+        all_areas = await client.query('SELECT * FROM area');
+        console.log(all_areas.rows);
 
- return new Response(
-    JSON.stringify({
-        success : true,
-        data : all_areas.rows,
-        message: 'all areas feteched!',
-    }),
-    {
-        status : 200
+        // Commit the transaction after fetching the data
+        await client.query('COMMIT');
+
+        // Return success response
+        return NextResponse.json({
+            success: true,
+            data: all_areas.rows,
+            message: 'All areas fetched successfully!',
+        }, {
+            status: 200
+        });
+
+    } catch (error) {
+        // Rollback the transaction in case of an error
+        await client.query('ROLLBACK');
+        console.error("Error during transaction:", error);
+
+        // Return error response with specific error details
+        return NextResponse.json({
+            success: false,
+            message: 'Failed to fetch areas.',
+            error: error.message,
+        }, {
+            status: 500
+        });
+    } finally {
+        client.release(); // Release the client back to the pool
     }
- )
-
 }

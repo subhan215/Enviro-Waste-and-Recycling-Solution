@@ -3,6 +3,9 @@ import { pool } from "../../../../database/database";
 
 export async function GET() {
   try {
+    // Begin transaction
+    await pool.query("BEGIN");
+
     // Query to fetch all agreements
     const query = `
       SELECT * FROM resign_agreements r join company c on r.company_id = c.user_id
@@ -10,6 +13,9 @@ export async function GET() {
     `;
 
     const result = await pool.query(query);
+
+    // Commit transaction
+    await pool.query("COMMIT");
 
     // Return the agreements as a JSON response
     return NextResponse.json(
@@ -21,6 +27,8 @@ export async function GET() {
       { status: 200 }
     );
   } catch (error) {
+    // Rollback transaction in case of an error
+    await pool.query("ROLLBACK");
     console.error("Error fetching agreements:", error);
     // Error response
     return NextResponse.json(

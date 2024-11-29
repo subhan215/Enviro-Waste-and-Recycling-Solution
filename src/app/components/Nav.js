@@ -68,19 +68,22 @@ const ModernNavbar = () => {
             Contact
           </a>
 
-          {/* Notifications */}
+          {/* Notifications - only show if userData exists */}
           {userData && (
             <>
               <FontAwesomeIcon
                 icon={faBell}
                 size="2x"
                 className="text-black hover:cursor-pointer"
-                onClick={() => setShowNotifications(true)}
+                onClick={() => setShowNotifications((prev) => !prev)}
                 title="View Notifications"
               />
-              {showNotifications && <Notifications turnNotificationsToOff={turnNotificationsToOff} />}
+              {showNotifications && (
+                <Notifications turnNotificationsToOff={turnNotificationsToOff} />
+              )}
             </>
           )}
+
           <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
             Get Started
           </button>
@@ -88,6 +91,15 @@ const ModernNavbar = () => {
 
         {/* Hamburger Menu for mobile screens */}
         <div className="md:hidden flex items-center">
+          {userData && (
+            <FontAwesomeIcon
+              icon={faBell}
+              size="2x"
+              className="text-black hover:cursor-pointer mr-4"
+              onClick={() => setShowNotifications((prev) => !prev)}
+              title="View Notifications"
+            />
+          )}
           <button onClick={toggleMenu} aria-label="Toggle Navigation">
             {isOpen ? (
               <FiX className="text-3xl text-green-600" />
@@ -122,6 +134,13 @@ const ModernNavbar = () => {
           </button>
         </div>
       </div>
+
+      {/* Notifications for mobile view */}
+      {showNotifications && !isLargeScreen && (
+        <div className="absolute top-16 right-4 w-64">
+          <Notifications turnNotificationsToOff={turnNotificationsToOff} />
+        </div>
+      )}
     </header>
   );
 };

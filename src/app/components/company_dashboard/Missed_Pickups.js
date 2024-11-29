@@ -1,134 +1,22 @@
-// import React, { useEffect, useState } from 'react';
-// import axios from 'axios';
-
-// const Missed_Pickups = ({ companyId = 10 }) => {
-//   const [missedPickups, setMissedPickups] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-
-
-//   useEffect(() => {
-//     const fetchMissedPickups = async () => {
-//       try {
-//         setLoading(true);
-//         const response = await axios.get(`/api/pickup/get_All_missed_pickups_for_company/${companyId}`);
-//         console.log(response);
-//         setMissedPickups(response.data.data);
-//       } catch (err) {
-//         setError('Failed to load missed pickups.');
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchMissedPickups();
-//   }, [companyId]);
-
-//   const markAsCompleted = async (missedPickupId) => {
-//     const formData = new FormData()
-//     formData.append("userId", 10)
-//     formData.append("missed_pickup_id" , missedPickupId )
-//     formData.append("clean_or_unclean_image", selectedImage);
-//     try {
-//         const response = await axios.put(
-//             `/api/pickup/completed_by_company/`,
-//             {
-//               userId: 10,
-//               missed_pickup_id: missedPickupId,
-//             },
-//             {
-//               headers: {
-//                 'Content-Type': 'application/json',
-//               },
-//             }
-//           );
-//       console.log(response);
-//       // Update the status of the missed pickup locally after a successful update
-//       setMissedPickups((prevPickups) =>
-//         prevPickups.map((pickup) =>
-//           pickup.missed_pickup_id === missedPickupId ? { ...pickup, status: 'Completed by company' } : pickup
-//         )
-//       );
-//     } catch (error) {
-//       console.error('Failed to update the status of the missed pickup.');
-//     }
-//   };
-
-//   if (loading) return <p>Loading missed pickups...</p>;
-//   if (error) return <p>{error}</p>;
-
-//   return (
-//     <div>
-//       <h2>Missed Pickups</h2>
-//       {missedPickups.length === 0 ? (
-//         <p>No missed pickups found for this company.</p>
-//       ) : (
-//         <table>
-//           <thead>
-//             <tr>
-//               <th>Missed Pickup ID</th>
-//               <th>User ID</th>
-//               <th>Area ID</th>
-//               <th>Status</th>
-//               <th>Date</th>
-//               <th>Time</th>
-//               <th>Action</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {missedPickups.map((pickup) => {
-//               const date = new Date(pickup.created_at);
-//               const formattedDate = date.toLocaleDateString();
-//               const formattedTime = date.toLocaleTimeString();
-
-//               return (
-//                 <tr key={pickup.missed_pickup_id}>
-//                   <td>{pickup.missed_pickup_id}</td>
-//                   <td>{pickup.user_id}</td>
-//                   <td>{pickup.area_id}</td>
-//                   <td>
-//                     {pickup.status === 'marked completed by company' ? 'Waiting for user response' : pickup.status}
-//                   </td>
-//                   <td>{formattedDate}</td>
-//                   <td>{formattedTime}</td>
-//                   <td>
-//                     {(pickup.status === 'pending' || pickup.status === 'marked completed by user') && (
-//                       <button onClick={() => markAsCompleted(pickup.missed_pickup_id)}>
-//                         Mark as Completed
-//                       </button>
-//                     )}
-//                   </td>
-//                 </tr>
-//               );
-//             })}
-//           </tbody>
-//         </table>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default Missed_Pickups;
-
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-const Missed_Pickups = ({}) => {
+
+const Missed_Pickups = () => {
   const [missedPickups, setMissedPickups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null); // State for the selected image
-  const [selectedPickupId, setSelectedPickupId] = useState(null); // State for the selected pickup ID
-  const userData = useSelector((state) => state.userData.value)
-  let companyId = userData.user_id
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImagePreview, setSelectedImagePreview] = useState(null); // New state for image preview
+  const [selectedPickupId, setSelectedPickupId] = useState(null);
+  const userData = useSelector((state) => state.userData.value);
+  const companyId = userData.user_id;
+
   useEffect(() => {
     const fetchMissedPickups = async () => {
       try {
         setLoading(true);
         const response = await axios.get(`/api/pickup/get_All_missed_pickups_for_company/${companyId}`);
-        console.log(response);
         setMissedPickups(response.data.data);
       } catch (err) {
         setError('Failed to load missed pickups.');
@@ -143,7 +31,16 @@ const Missed_Pickups = ({}) => {
   const handleImageChange = (e, missedPickupId) => {
     const file = e.target.files[0];
     setSelectedImage(file);
-    setSelectedPickupId(missedPickupId); // Set the selected pickup ID
+    setSelectedPickupId(missedPickupId);
+
+    // Generate and set image preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setSelectedImagePreview(reader.result); // Set the image preview
+    };
+    if (file) {
+      reader.readAsDataURL(file); // Read the file as a data URL
+    }
   };
 
   const markAsCompleted = async (missedPickupId) => {
@@ -158,105 +55,137 @@ const Missed_Pickups = ({}) => {
     formData.append('clean_or_unclean_image', selectedImage);
 
     try {
-      const response = await axios.put(
-        `/api/pickup/completed_by_company/`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-      console.log("Response by Axios : ", response);
-      if(response.data.success){
-      // Update the status of the missed pickup locally after a successful update
-      setMissedPickups((prevPickups) =>
-        prevPickups.map((pickup) =>
-          pickup.missed_pickup_id === missedPickupId ? { ...pickup, status: 'Completed by company' } : pickup
-        )
-      );
-      alert('Missed pickup marked as completed.');
-    }
-    else{
-      alert('Cant mark pickup completed cuz u uploaded unclean image!!- Ja sahi say safai kar');
-    }
+      const response = await axios.put(`/api/pickup/completed_by_company/`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data.success) {
+        setMissedPickups((prevPickups) =>
+          prevPickups.map((pickup) =>
+            pickup.missed_pickup_id === missedPickupId ? { ...pickup, status: 'Completed by company' } : pickup
+          )
+        );
+        alert('Missed pickup marked as completed.');
+      } else {
+        alert('Upload failed. Please try again.');
+      }
     } catch (error) {
-      console.error('Error : ', error);
+      console.error(error);
       alert('Failed to update the status of the missed pickup.');
     }
   };
 
-  if (loading) return <p>Loading missed pickups...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p className="text-center text-lg">Loading missed pickups...</p>;
+  if (error) return <p className="text-center text-lg text-red-600">{error}</p>;
+
   return (
-    <div>
-      <h2>Missed Pickups</h2>
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <h2 className="text-2xl font-semibold text-[#00ED64] mb-4">Missed Pickups</h2>
       {missedPickups.length === 0 ? (
-        <p>No missed pickups found for this company.</p>
+        <p className="text-gray-600 text-center">No missed pickups found for this company.</p>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Missed Pickup ID</th>
-              <th>User ID</th>
-              <th>Area ID</th>
-              <th>Status</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Action</th>
-              <th>Unclean Image</th> {/* Add column for the image */}
-            </tr>
-          </thead>
-          <tbody>
-            {missedPickups.map((pickup) => {
-              const date = new Date(pickup.created_at);
-              const formattedDate = date.toLocaleDateString();
-              const formattedTime = date.toLocaleTimeString();
-  
-              return (
-                <tr key={pickup.missed_pickup_id}>
-                  <td>{pickup.missed_pickup_id}</td>
-                  <td>{pickup.user_id}</td>
-                  <td>{pickup.area_id}</td>
-                  <td>
-                    {pickup.status === 'marked completed by company' ? 'Waiting for user response' : pickup.status}
-                  </td>
-                  <td>{formattedDate}</td>
-                  <td>{formattedTime}</td>
-                  <td>
-                    {(pickup.status === 'pending' || pickup.status === 'marked completed by user') && (
-                      <>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => handleImageChange(e, pickup.missed_pickup_id)}
+        <div className="grid grid-cols-1 gap-4">
+          {missedPickups.map((pickup) => {
+            const date = new Date(pickup.created_at);
+            const formattedDate = date.toLocaleDateString();
+            const formattedTime = date.toLocaleTimeString();
+
+            return (
+              <div
+                key={pickup.missed_pickup_id}
+                className="bg-white border-l-4 border-[#00ED64] p-4 rounded-lg shadow-md transition-all hover:shadow-lg"
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    Area: {pickup.name}
+                  </h3>
+                  <span
+                    className={`px-3 py-1 text-sm font-semibold rounded-full ${
+                      pickup.status === 'pending'
+                        ? 'bg-yellow-200 text-yellow-800'
+                        : 'bg-gray-200 text-gray-800'
+                    }`}
+                  >
+                    {pickup.status === 'marked completed by company'
+                      ? 'Awaiting user response'
+                      : pickup.status}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700 mb-1">
+                  <strong>Date:</strong> {formattedDate}
+                </p>
+                <p className="text-sm text-gray-700 mb-2">
+                  <strong>Time:</strong> {formattedTime}
+                </p>
+
+                {(pickup.status === 'pending' || pickup.status === 'marked completed by user') && (
+                  <div className="mt-4">
+                    <label
+                      htmlFor={`file-input-${pickup.missed_pickup_id}`}
+                      className="flex items-center justify-center bg-gradient-to-r from-[#00ED64] to-[#00D257] text-white py-2 px-4 rounded-lg cursor-pointer hover:scale-105 transform transition-all shadow-md"
+                    >
+                      <span className="mr-2">Choose File</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        strokeWidth="2"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 4v16m8-8H4"
                         />
-                        <button onClick={() => markAsCompleted(pickup.missed_pickup_id)}>
-                          Mark as Completed
-                        </button>
-                      </>
-                    )}
-                  </td>
-                  <td>
-                    {/* Display the image if the URL exists */}
-                    {pickup.unclean_img && (
-                      <img
-                        src={pickup.unclean_img}
-                        alt="Unclean Pickup"
-                        style={{ width: '100px', height: '100px', objectFit: 'cover' }} // Adjust the style as needed
+                      </svg>
+                      <input
+                        id={`file-input-${pickup.missed_pickup_id}`}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageChange(e, pickup.missed_pickup_id)}
+                        className="hidden"
                       />
+                    </label>
+
+                    {/* Display the selected image preview */}
+                    {selectedImagePreview && (
+                      <div className="mt-4 flex justify-center">
+                        <img
+                          src={selectedImagePreview}
+                          alt="Selected Preview"
+                          className="w-32 h-32 object-cover rounded-lg border border-gray-300 shadow-sm"
+                        />
+                      </div>
                     )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+
+                    <button
+                      onClick={() => markAsCompleted(pickup.missed_pickup_id)}
+                      className="bg-[#00ED64] hover:bg-[#00D257] text-white py-2 px-4 rounded-lg font-semibold mt-3 w-full transform transition-all hover:scale-105"
+                    >
+                      Mark as Completed
+                    </button>
+                  </div>
+                )}
+
+                {pickup.unclean_img && (
+                  <div className="mt-3 flex justify-center">
+                    <img
+                      src={pickup.unclean_img}
+                      alt="Unclean Pickup"
+                      className="w-32 h-32 object-cover rounded-lg border border-gray-300 shadow-sm"
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       )}
     </div>
   );
-  
 };
 
 export default Missed_Pickups;
-

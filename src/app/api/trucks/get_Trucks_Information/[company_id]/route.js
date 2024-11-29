@@ -1,54 +1,62 @@
- import { pool } from "@/database/database"; 
+import { pool } from "@/database/database";
+import { NextResponse } from "next/server";
+
 export async function GET(req, { params }) {
   let companyId = parseInt(params.company_id);
   let all_trucks;
 
   console.log(companyId);
-  
+
+  const client = await pool.connect(); // Get a client for transaction management
+
   try {
-    all_trucks = await pool.query(
+    // Begin the transaction
+    await client.query("BEGIN");
+
+    all_trucks = await client.query(
       'SELECT trucks.truckid, trucks.licenseplate , trucks.capacity FROM trucks WHERE trucks.companyid = $1',
       [companyId]
     );
 
     if (all_trucks.rows.length === 0) {
-      return new Response(
-        JSON.stringify({
-          success: true,
-          data: [],
-          message: 'No trucks found for this company.',
-        }),
-        {
-          status: 200,
-        }
-      );
+      // If no trucks found, commit the transaction and return response
+      await client.query("COMMIT");
+      return NextResponse.json({
+        success: true,
+        data: [],
+        message: 'No trucks found for this company.',
+      }, {
+        status: 200,
+      });
     }
 
-    console.log(all_trucks.rows); // Log all the fetched areas
+    console.log(all_trucks.rows); // Log all the fetched trucks
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        data: all_trucks.rows,
-        message: 'All trucks fetched successfully!',
-      }),
-      {
-        status: 200,
-      }
-    );
+    // Commit the transaction after fetching trucks
+    await client.query("COMMIT");
+
+    return NextResponse.json({
+      success: true,
+      data: all_trucks.rows,
+      message: 'All trucks fetched successfully!',
+    }, {
+      status: 200,
+    });
 
   } catch (error) {
-    console.error("Error fetching assigned areas: ", error);
+    // In case of any error, rollback the transaction and log the error
+    await client.query("ROLLBACK");
+    console.error("Error fetching assigned trucks: ", error);
 
-    return new Response(
-      JSON.stringify({
-        success: false,
-        message: 'Failed to fetch trucks.',
-        error: error.message,
-      }),
-      {
-        status: 500, // Internal Server Error
-      }
-    );
+    return NextResponse.json({
+      success: false,
+      message: 'Failed to fetch trucks.',
+      error: error.message,
+    }, {
+      status: 500, // Internal Server Error
+    });
+  } finally {
+    // Always release the client back to the pool
+    client.release();
   }
 }

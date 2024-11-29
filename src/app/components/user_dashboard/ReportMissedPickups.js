@@ -1,312 +1,233 @@
-// import React, { useEffect, useState } from "react";
-
-// const ReportMissedPickups = () => {
-//     const [allMissedPickups, setAllMissedPickups] = useState([]);
-//     const [userId, setUserId] = useState(1); // Assuming user ID is 1
-//     const [areaId, setAreaId] = useState(2); // Initial area ID to be used for reporting
-
-//     // Function to report a missed pickup
-//     const reportMissedPickup = async () => {
-//         try {
-//             console.log("Report missed pickup");
-//             let response = await fetch(`/api/pickup/report_missed_pickup/`, {
-//                 headers: {
-//                     "Content-Type": "application/json",
-//                 },
-//                 method: "POST",
-//                 body: JSON.stringify({ userId, areaId }),
-//             });
-
-//             const responseData = await response.json();
-//             console.log(responseData);
-//             if (responseData.success) {
-//                 getAllMissedPickups();
-//                 alert("Missed pickup reported successfully.");
-//             } else {
-//                 alert(responseData.message);
-//             }
-//         } catch (error) {
-//             alert(error.message);
-//         }
-//     };
-
-//     // Function to get all missed pickups
-//     const getAllMissedPickups = async () => {
-//         try {
-//             console.log("Get missed pickups");
-//             let response = await fetch(`/api/pickup/get_All_missed_pickups_for_user/${userId}/`, {
-//                 headers: {
-//                     "Content-Type": "application/json",
-//                 },
-//                 method: "GET",
-//             });
-
-//             const responseData = await response.json();
-//             console.log(responseData);
-//             if (responseData.success) {
-//                 setAllMissedPickups(responseData.data);
-//             } else {
-//                 alert(responseData.message);
-//             }
-//         } catch (error) {
-//             alert(error.message);
-//         }
-//     };
-
-//     // Function to update the status of a missed pickup
-//     const updateMissedPickupStatus = async (missedPickupId, newStatus = "") => {
-//         try {
-//             console.log("Updating missed pickup status");
-//             const response = await fetch(`/api/pickup/confirmed_from_user/`, {
-//                 headers: {
-//                     "Content-Type": "application/json",
-//                 },
-//                 method: "PUT",
-//                 body: JSON.stringify({ missed_pickup_id: missedPickupId, userId , newStatus }),
-//             });
-
-//             const responseData = await response.json();
-//             console.log(responseData);
-//             if (responseData.success) {
-//                 getAllMissedPickups();
-//                 alert("Missed pickup status updated successfully.");
-//             } else {
-//                 alert(responseData.message);
-//             }
-//         } catch (error) {
-//             alert(error.message);
-//         }
-//     };
-
-//     useEffect(() => {
-//         getAllMissedPickups();
-//     }, []);
-
-//     return (
-//         <div>
-//             <h2>Missed Pickups</h2>
-//             {/* List of missed pickups */}
-//             <ul>
-//                 {allMissedPickups.length > 0 ? (
-//                     allMissedPickups.map((pickup, index) => (
-//                         <li key={index}>
-//                             <strong>Date:</strong> {new Date(pickup.created_at).toLocaleDateString()}
-//                             | <strong>Status:</strong> {pickup.status}
-//                             {pickup.status === "marked completed by company" && (
-//                                 <>
-//                                     <button onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "completed")}>
-//                                         Mark as Completed
-//                                     </button>
-//                                     <button onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "pending")}>
-//                                         Mark as Pending
-//                                     </button>
-//                                 </>
-//                             )}
-//                             {
-//                                 pickup.status === "pending" && (
-//                                     <>
-//                                         <button onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "marked completed by user")}>
-//                                             Mark as Completed From Your Side
-//                                         </button>
-//                                     </>
-//                                 )
-//                             }
-//                         </li>
-//                     ))
-//                 ) : (
-//                     <p>No missed pickups reported yet.</p>
-//                 )}
-//             </ul>
-
-//             <form onSubmit={(e) => { e.preventDefault(); reportMissedPickup(); }}>
-//                 <button type="submit">Report Missed Pickup</button>
-//             </form>
-//         </div>
-//     );
-// };
-
-// export default ReportMissedPickups;
-
-
-
-
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 const ReportMissedPickups = () => {
-    const [allMissedPickups, setAllMissedPickups] = useState([]);
-    const userData = useSelector((state) => state.userData.value)
-    //const [userId, setUserId] = useState(userData.user_id); // Assuming user ID is 1
-    //const [areaId, setAreaId] = useState(userData.area_id); // Initial area ID to be used for reporting
-    const [selectedImage, setSelectedImage] = useState(null); // State to hold the selected image
-    console.log(userData)
-    let userId = userData.user_id ; 
-    let areaId = userData.area_id;
-    // Function to handle image selection
-    const handleImageChange = (event) => {
-        setSelectedImage(event.target.files[0]);
-    };
+  const [allMissedPickups, setAllMissedPickups] = useState([]);
+  const userData = useSelector((state) => state.userData.value);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImagePreview, setSelectedImagePreview] = useState(null);
 
-    const reportMissedPickup = async (event) => {
-      event.preventDefault();
-  
-      // Check if the last missed pickup was reported less than 24 hours ago
-      if (allMissedPickups.length > 0) {
-          const lastMissedPickup = allMissedPickups[0]; // Assuming the latest pickup is the first in the array
-          const lastReportedTime = new Date(lastMissedPickup.created_at).getTime();
-          const currentTime = new Date().getTime();
-          const timeDifference = currentTime - lastReportedTime;
-  
-          // 24 hours in milliseconds
-          const twentyFourHours = 24 * 60 * 60 * 1000;
-  
-          if (timeDifference < twentyFourHours) {
-              alert("You cannot report another missed pickup within 24 hours of the previous report.");
-              return;
-          }
-      }
-  
-      try {
-          console.log("Report missed pickup");
-  
-          // Use FormData to include the image file in the request
-          const formData = new FormData();
-          formData.append("userId", userId);
-          formData.append("areaId", areaId);
-          if (selectedImage) {
-              formData.append("clean_or_unclean_image", selectedImage);
-          }
-  
-          let response = await fetch(`/api/pickup/report_missed_pickup/`, {
-              method: "POST",
-              body: formData,
-          });
-  
-          const responseData = await response.json();
-          console.log("Response Data : ", responseData);
-          if (responseData.success) {
-              getAllMissedPickups();
-              console.log("Message : ", responseData.message);
-              alert("Missed pickup reported successfully.");
-          } else {
-              alert(responseData.message);
-          }
-      } catch (error) {
-          alert(error.message);
-      }
+  let userId = userData?.user_id;
+  let areaId = userData?.area_id;
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    setSelectedImage(file);
+    // Create a URL for the selected image to display as a preview
+    if (file) {
+      setSelectedImagePreview(URL.createObjectURL(file));
+    }
   };
-  
-    // Function to get all missed pickups
-    const getAllMissedPickups = async () => {
-        try {
-            console.log("Get missed pickups");
-            let response = await fetch(`/api/pickup/get_All_missed_pickups_for_user/${userId}/`, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                method: "GET",
-            });
 
-            const responseData = await response.json();
-            console.log(responseData);
-            if (responseData.success) {
-                setAllMissedPickups(responseData.data);
-            } else {
-                //alert(responseData.message);
-                console.log(responseData)
-            }
-        } catch (error) {
-            //alert(error.message);
-            console.log(error.message)
-        }
-    };
+  const reportMissedPickup = async (event) => {
+    event.preventDefault();
 
-    // Function to update the status of a missed pickup
-    const updateMissedPickupStatus = async (missedPickupId, newStatus = "") => {
-        try {
-            console.log("Updating missed pickup status");
-            const response = await fetch(`/api/pickup/confirmed_from_user/`, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                method: "PUT",
-                body: JSON.stringify({ missed_pickup_id: missedPickupId, userId, newStatus }),
-            });
+    if (allMissedPickups.length > 0) {
+      const lastMissedPickup = allMissedPickups[0];
+      const lastReportedTime = new Date(lastMissedPickup.created_at).getTime();
+      const currentTime = new Date().getTime();
+      const timeDifference = currentTime - lastReportedTime;
 
-            const responseData = await response.json();
-            console.log(responseData);
-            if (responseData.success) {
-                getAllMissedPickups();
-                alert("Missed pickup status updated successfully.");
-            } else {
-                alert(responseData.message);
-            }
-        } catch (error) {
-            alert(error.message);
-        }
-    };
+      const twentyFourHours = 24 * 60 * 60 * 1000;
 
-    useEffect(() => {
+      if (timeDifference < twentyFourHours) {
+        alert("You cannot report another missed pickup within 24 hours of the previous report.");
+        return;
+      }
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("userId", userId);
+      formData.append("areaId", areaId);
+      if (selectedImage) {
+        formData.append("clean_or_unclean_image", selectedImage);
+      }
+
+      let response = await fetch(`/api/pickup/report_missed_pickup/`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const responseData = await response.json();
+      if (responseData.success) {
         getAllMissedPickups();
-    }, [userId]);
+        alert("Missed pickup reported successfully.");
+      } else {
+        alert(responseData.message);
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
-    return (
-        <div>
-          <h2>Missed Pickups</h2>
-          {/* List of missed pickups */}
-          <ul>
-            {allMissedPickups.length > 0 ? (
-              allMissedPickups.map((pickup, index) => (
-                <li key={index}>
-                  <strong>ID:</strong> {pickup.missed_pickup_id}
-                  <strong>Against Company : </strong> {pickup.company_id}
-                  <strong> Date:</strong> {new Date(pickup.created_at).toLocaleDateString()}
-                  <strong> Status:</strong> {pickup.status}
-                  
-                  {/* Display Clean Image */}
-                  {pickup.clean_img && (
-                    <div>
-                      <strong>Clean Image:</strong>
-                      <img
-                        src={pickup.clean_img}
-                        alt="Clean Pickup"
-                        style={{ width: '100px', height: '100px', objectFit: 'cover' }} // Adjust as necessary
-                      />
-                    </div>
-                  )}
-                  
-                  {/* Conditional buttons based on status */}
-                  {pickup.status === "marked completed by company" && (
-                    <>
-                      <button onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "completed")}>
-                        Mark as Completed
-                      </button>
-                      <button onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "pending")}>
-                        Mark as Pending
-                      </button>
-                    </>
-                  )}
-                  {pickup.status === "pending" && (
-                    <button onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "marked completed by user")}>
-                      Mark as Completed From Your Side
-                    </button>
-                  )}
-                </li>
-              ))
-            ) : (
-              <p>No missed pickups reported yet.</p>
-            )}
-          </ul>
-      
-          {/* Form for Reporting Missed Pickup */}
-          <form onSubmit={reportMissedPickup}>
-            <input type="file" accept="image/*" onChange={handleImageChange} />
-            <button type="submit">Report Missed Pickup</button>
-          </form>
+  const getAllMissedPickups = async () => {
+    try {
+      let response = await fetch(`/api/pickup/get_All_missed_pickups_for_user/${userId}/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const responseData = await response.json();
+      if (responseData.success) {
+        setAllMissedPickups(responseData.data);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const updateMissedPickupStatus = async (missedPickupId, newStatus = "") => {
+    try {
+      const response = await fetch(`/api/pickup/confirmed_from_user/`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "PUT",
+        body: JSON.stringify({ missed_pickup_id: missedPickupId, userId, newStatus }),
+      });
+
+      const responseData = await response.json();
+      if (responseData.success) {
+        getAllMissedPickups();
+        alert("Missed pickup status updated successfully.");
+      } else {
+        alert(responseData.message);
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  useEffect(() => {
+    getAllMissedPickups();
+  }, [userId]);
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+      <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">Report Missed Pickups</h2>
+
+      {/* List of missed pickups */}
+      <ul className="space-y-4">
+        {allMissedPickups.length > 0 ? (
+          allMissedPickups.map((pickup, index) => (
+            <li key={index} className="bg-gray-100 p-4 rounded-lg shadow-sm hover:shadow-lg transition duration-200">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
+                <div>
+                  <strong className="block text-gray-700">ID:</strong> {pickup.missed_pickup_id}
+                </div>
+                <div>
+                  <strong className="block text-gray-700">Against Company:</strong> {pickup.company_id}
+                </div>
+                <div>
+                  <strong className="block text-gray-700">Date:</strong> {new Date(pickup.created_at).toLocaleDateString()}
+                </div>
+                <div>
+                  <strong className="block text-gray-700">Status:</strong> {pickup.status}
+                </div>
+              </div>
+
+              {/* Display Clean Image */}
+              {pickup.clean_img && (
+                <div className="my-2">
+                  <strong className="block text-gray-700">Clean Image:</strong>
+                  <img
+                    src={pickup.clean_img}
+                    alt="Clean Pickup"
+                    className="w-32 h-32 object-cover rounded-lg mx-auto mt-2"
+                  />
+                </div>
+              )}
+
+              {/* Conditional buttons based on status */}
+              {pickup.status === "marked completed by company" && (
+                <div className="flex space-x-2 mt-2">
+                  <button
+                    onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "completed")}
+                    className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300"
+                  >
+                    Mark as Completed
+                  </button>
+                  <button
+                    onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "pending")}
+                    className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300"
+                  >
+                    Mark as Pending
+                  </button>
+                </div>
+              )}
+
+              {pickup.status === "pending" && (
+                <div className="mt-2">
+                  <button
+                    onClick={() => updateMissedPickupStatus(pickup.missed_pickup_id, "marked completed by user")}
+                    className="bg-[#00ED64] text-white py-2 px-4 rounded-lg hover:bg-green-600 transition duration-300"
+                  >
+                    Mark as Completed From Your Side
+                  </button>
+                </div>
+              )}
+            </li>
+          ))
+        ) : (
+          <p className="text-gray-500 text-center">No missed pickups reported yet.</p>
+        )}
+      </ul>
+
+      {/* Form for Reporting Missed Pickup */}
+      <form onSubmit={reportMissedPickup} className="mt-6">
+        <div className="mb-4">
+          <label
+            htmlFor="file-input"
+            className="flex items-center justify-center bg-gradient-to-r from-[#00ED64] to-[#00D257] text-white py-2 px-4 rounded-lg cursor-pointer hover:scale-105 transform transition-all shadow-md"
+          >
+            <span className="mr-2">Choose File</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            <input
+              id="file-input"
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleImageChange(e)}
+              className="hidden"
+            />
+          </label>
         </div>
-      );
-      
+
+        {/* Display the selected image preview */}
+        {selectedImagePreview && (
+          <div className="mt-4 flex justify-center">
+            <img
+              src={selectedImagePreview}
+              alt="Selected Preview"
+              className="w-32 mb-4 h-32 object-cover rounded-lg border border-gray-300 shadow-sm"
+            />
+          </div>
+        )}
+
+        <button
+          type="submit"
+          className="w-full py-3 bg-[#00ED64] text-white rounded-lg hover:bg-green-600 transition duration-300 ease-in-out"
+        >
+          Report Missed Pickup
+        </button>
+      </form>
+    </div>
+  );
 };
 
 export default ReportMissedPickups;
-

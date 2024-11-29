@@ -1,18 +1,24 @@
 import { pool } from "@/database/database";
+import { NextResponse } from "next/server";
 
 export async function PUT(req) {
-    console.log("hey")
+    const client = await pool.connect(); // Get a client for transaction management
+
     try {
         const { requestId, newPrice, company_id } = await req.json();
-        const price = newPrice
-        console.log(price , requestId , company_id) ; 
+        const price = newPrice;
+        console.log(price, requestId, company_id); 
+        
         // Input validation
         if (!requestId || !price || !company_id) {
-            return new Response(
-                JSON.stringify({ message: "All fields are required" }),
+            return NextResponse.json(
+                { message: "All fields are required" },
                 { status: 400 }
             );
         }
+
+        // Begin a transaction to ensure atomicity
+        await client.query("BEGIN");
 
         // Update the offered price in the database
         const updateQuery = `
@@ -22,24 +28,38 @@ export async function PUT(req) {
             RETURNING request_id, offered_price, offered_by;
         `;
 
-        const result = await pool.query(updateQuery, [price, company_id, requestId]);
+        const result = await client.query(updateQuery, [price, company_id, requestId]);
 
         if (result.rowCount === 0) {
-            return new Response(
-                JSON.stringify({ message: "Request not found or update failed" , success:false}),
+            // Rollback if no rows were updated
+            await client.query("ROLLBACK");
+            return NextResponse.json(
+                { message: "Request not found or update failed", success: false },
                 { status: 404 }
             );
         }
 
-        return new Response(
-            JSON.stringify({ success: true, data: result.rows[0] }),
+        // Commit the transaction
+        await client.query("COMMIT");
+
+        // Return success response
+        return NextResponse.json(
+            { success: true, data: result.rows[0] },
             { status: 200 }
         );
+
     } catch (error) {
+        // Rollback in case of an error
+        await client.query("ROLLBACK");
         console.error("Error updating offered price:", error);
-        return new Response(
-            JSON.stringify({ message: "Internal Server Error" , success: false }),
+
+        // Return error response
+        return NextResponse.json(
+            { message: "Internal Server Error", success: false },
             { status: 500 }
         );
+    } finally {
+        // Release the client back to the pool
+        client.release();
     }
 }

@@ -1,7 +1,10 @@
 import { pool } from "../../../../../database/database";
+import { NextResponse } from "next/server";
 
 export async function POST(req) {
     console.log("Create Recycling Center request received");
+
+    const client = await pool.connect(); // Create a client for transaction handling
 
     try {
         const { company_id, area_id, latitude, longitude } = await req.json();
@@ -22,56 +25,58 @@ export async function POST(req) {
             isNaN(parsedData.latitude) ||
             isNaN(parsedData.longitude)
         ) {
-            return new Response(
-                JSON.stringify({ success: false, message: 'All fields are required and must be of correct type.' }), 
-                {
-                    status: 400,
-                    headers: { 'Content-Type': 'application/json' },
-                }
+            return NextResponse.json(
+                { success: false, message: 'All fields are required and must be of correct type.' }, 
+                { status: 400 }
             );
         }
 
+        // Begin transaction
+        await client.query('BEGIN');
+
         // Check if the recycling center already exists
-        const existingCenterResult = await pool.query(
+        const existingCenterResult = await client.query(
             `SELECT * FROM recycling_center WHERE company_id = $1 AND area_id = $2`,
             [parsedData.company_id, parsedData.area_id]
         );
 
         if (existingCenterResult.rows.length > 0) {
-            return new Response(
-                JSON.stringify({ success: false, message: 'Recycling center already exists!' }), 
-                {
-                    status: 409,
-                    headers: { 'Content-Type': 'application/json' },
-                } 
+            // Rollback transaction if the center already exists
+            await client.query('ROLLBACK');
+            return NextResponse.json(
+                { success: false, message: 'Recycling center already exists!' }, 
+                { status: 409 }
             );
         }
 
         // Insert the new recycling center into the database
-        const insertResult = await pool.query(
+        const insertResult = await client.query(
             `INSERT INTO recycling_center (company_id, area_id, latitude, longitude)
              VALUES ($1, $2, $3, $4) RETURNING recycling_center_id, company_id, area_id, latitude, longitude`,
             [parsedData.company_id, parsedData.area_id, parsedData.latitude, parsedData.longitude]
         );
 
         const newCenter = insertResult.rows[0];
-        console.log(newCenter) ; 
+        console.log(newCenter); 
+
+        // Commit the transaction after successfully creating the center
+        await client.query('COMMIT');
+
         // Return the newly created recycling center
-        return new Response(
-            JSON.stringify({ success: true, data: newCenter, message: "Recycling center created successfully." }), 
-            {
-                status: 201,
-                headers: { 'Content-Type': 'application/json' },
-            }
+        return NextResponse.json(
+            { success: true, data: newCenter, message: "Recycling center created successfully." }, 
+            { status: 201 }
         );
     } catch (error) {
+        // Rollback the transaction in case of any error
+        await client.query('ROLLBACK');
         console.error('Error creating recycling center:', error);
-        return new Response(
-            JSON.stringify({ success: false, message: 'Error creating recycling center.' }), 
-            {
-                status: 500,
-                headers: { 'Content-Type': 'application/json' },
-            }
+        return NextResponse.json(
+            { success: false, message: 'Error creating recycling center.' }, 
+            { status: 500 }
         );
+    } finally {
+        // Release the client back to the pool
+        client.release();
     }
 }
