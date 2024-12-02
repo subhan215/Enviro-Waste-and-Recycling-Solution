@@ -11,7 +11,6 @@ import Waste_Schedules from "../../components/company_dashboard/Waste_Schedules"
 import { setUserData } from "@/store/slices/userDataSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { setAgreementStatus } from "@/store/slices/agreementStatusSlice";
-
 const CompanyProfilePage = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.userData.value);
@@ -33,15 +32,10 @@ const CompanyProfilePage = () => {
           },
           body: JSON.stringify({ company_id: companyId }),
         });
-
         const data = await response.json();
-
-        if (data.success) {
-          if (data.agreementExists) {
-            dispatch(setAgreementStatus("active"));
-          } else {
-            dispatch(setAgreementStatus("terminated"));
-          }
+        console.log(data)
+        if (data.success && data.agreementExists) {
+          dispatch(setAgreementStatus("active"));
         } else {
           dispatch(setAgreementStatus("terminated"));
         }
@@ -49,30 +43,39 @@ const CompanyProfilePage = () => {
         console.error("Error fetching agreement status:", error);
         dispatch(setAgreementStatus("terminated"));
       } finally {
-        setAgreementChecked(true); // Mark agreement check as complete
+        setAgreementChecked(true);
       }
     };
-    checkAgreement();
+  
+    if (companyId) {
+      checkAgreement();
+    }
   }, [companyId, dispatch]);
-
+  
   useEffect(() => {
     const fetchPendingAgreement = async () => {
       try {
-        const response = await fetch(`/api/company/get_pending_resign_agreement/${companyId}`);
+        const response = await fetchWithTimeout(
+          `/api/company/get_pending_resign_agreement/${companyId}`
+        );
         const data = await response.json();
-        if (data.success) {
-          setPendingAgreement(data.data);
-        } else {
-          setPendingAgreement(null); // No pending agreement found
-        }
+        setPendingAgreement(data.data.length > 0 ? data.data : null);
       } catch (error) {
         console.error("Error fetching pending agreement:", error);
       }
     };
+  
     if (companyId) {
       fetchPendingAgreement();
     }
   }, [companyId]);
+  
+  useEffect(() => {
+    if (agreementChecked) {
+      setLoading(false);
+    }
+  }, [agreementChecked]);
+  
 
   useEffect(() => {
     // Set loading to false when both the agreement check and pending agreement fetch are complete

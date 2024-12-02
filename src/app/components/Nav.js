@@ -1,16 +1,19 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { FiMenu, FiX } from "react-icons/fi"; // Icons for the hamburger menu
+import { FaComments } from "react-icons/fa"; // Chat icon
 import Notifications from "./Notifications";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons"; // Import the bell icon
 import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation"; // For navigation
 
 const ModernNavbar = () => {
   const [isOpen, setIsOpen] = useState(false); // State for mobile menu
   const [isLargeScreen, setIsLargeScreen] = useState(false); // State to track screen size
   const [showNotifications, setShowNotifications] = useState(false); // State to control notifications visibility
   const userData = useSelector((state) => state.userData.value) || null;
+  const router = useRouter(); // Hook for navigation
 
   // Function to turn notifications off (memoized)
   const turnNotificationsToOff = useCallback(() => {
@@ -84,6 +87,14 @@ const ModernNavbar = () => {
             </>
           )}
 
+          {/* Chat Icon */}
+          <FaComments
+            size="24"
+            className="text-black hover:cursor-pointer"
+            title="Chat"
+            onClick={() => router.push("/chat")}
+          />
+
           <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
             Get Started
           </button>
@@ -100,6 +111,12 @@ const ModernNavbar = () => {
               title="View Notifications"
             />
           )}
+          <FaComments
+            size="24"
+            className="text-black hover:cursor-pointer mr-4"
+            title="Chat"
+            onClick={() => router.push("/chat")}
+          />
           <button onClick={toggleMenu} aria-label="Toggle Navigation">
             {isOpen ? (
               <FiX className="text-3xl text-green-600" />

@@ -53,7 +53,7 @@ function CreateRequestForRecycledWaste() {
                 setPreferredTime('');
                 setLocationName('');
                 setRequestData({ latitude: '', longitude: '' });
-                fetchCurrentRequest() ; 
+                await fetchCurrentRequest() ; 
             }
         } catch (err) {
             setError(err.response?.data?.message || 'An unexpected error occurred.');
@@ -101,7 +101,8 @@ function CreateRequestForRecycledWaste() {
     const fetchCurrentRequest = async () => {
         try {
             const response = await axios.get(`/api/requests/request_for_recycled_waste/${userData.user_id}`); // Replace '2' with dynamic user ID as needed
-            setCurrentRequest(response.data.requests);
+
+            setCurrentRequest(response.data.requests[0]);
             console.log(response)
         } catch(err) {
             //setError('Failed to fetch current request');
