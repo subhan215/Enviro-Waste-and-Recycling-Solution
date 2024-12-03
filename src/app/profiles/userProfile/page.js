@@ -26,13 +26,13 @@ const UserProfilePage = () => {
   return (
     <div className="min-h-screen flex bg-slate-200">
       {/* Sidebar */}
-      <div className="w-64 bg-custom-green shadow-md p-4 border-2 border-black rounded-md mt-2">
+      <div className="w-64 bg-white shadow-md p-4 border-2 border-black rounded-md mt-1">
         <h2 className="text-2xl font-bold mb-6 ">User Dashboard</h2>
         <ul>
           <li
             className={`py-2 px-4 mb-2 rounded-lg cursor-pointer ${
               selectedOption === "reportMissedPickups"
-                ? "bg-white text-black border-2 border-black hover:rounded-2xl"
+                ? "bg-custom-green text-black border-2 border-black hover:rounded-2xl"
                 : "hover:rounded-2xl"
             }`}
             onClick={() => setSelectedOption("reportMissedPickups")}
@@ -43,7 +43,7 @@ const UserProfilePage = () => {
           <li
             className={`py-2 px-4 mb-2 rounded cursor-pointer ${
               selectedOption === "createRequestForRecycledWaste"
-                ? "bg-white text-black border-2 border-black hover:rounded-2xl"
+                ? "bg-custom-green text-black border-2 border-black hover:rounded-2xl"
                 : "hover:rounded-2xl"
             }`}
             onClick={() => setSelectedOption("createRequestForRecycledWaste")}
@@ -53,7 +53,7 @@ const UserProfilePage = () => {
           <li
             className={`py-2 px-4 mb-2 rounded cursor-pointer ${
               selectedOption === "waste_pickup_schedules"
-                ? "bg-white text-black border-2 border-black hover:rounded-2xl"
+                ? "bg-custom-green text-black border-2 border-black hover:rounded-2xl"
                 : "hover:rounded-2xl"
             }`}
             onClick={() => setSelectedOption("waste_pickup_schedules")}
@@ -63,7 +63,7 @@ const UserProfilePage = () => {
           <li
             className={`py-2 px-4 mb-2 rounded cursor-pointer ${
               selectedOption === "report_to_admin"
-                ? "bg-white text-black border-2 border-black hover:rounded-2xl"
+                ? "bg-custom-green text-black border-2 border-black hover:rounded-2xl"
                 : "hover:rounded-2xl"
             }`}
             onClick={() => setSelectedOption("report_to_admin")}

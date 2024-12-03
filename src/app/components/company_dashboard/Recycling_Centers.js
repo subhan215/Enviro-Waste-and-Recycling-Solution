@@ -4,6 +4,8 @@ import dynamic from 'next/dynamic';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useSelector } from 'react-redux';
+import Loader from "../ui/Loader";
+
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
@@ -31,17 +33,23 @@ const RecyclingCenters = ({}) => {
             const response = await axios.get(`/api/company/recycling_center/get_company_recycling_centers/${companyId}`);
             console.log(response)
             setRecyclingCenters(response.data.data);
-            setLoading(false);
+            //setLoading(false);
         } catch (err) {
             setError('Error fetching recycling centers');
-            setLoading(false);
+            //setLoading(false);
         }
     };
    
     useEffect(() => {
-        fetchRecyclingCenters();
+        const fetchData = async () => {
+          setTimeout(async () => {
+            await fetchRecyclingCenters();
+            setLoading(false);
+          }, 1000);
+        };
+        fetchData();
+      }, []);
 
-    }, []); 
     useEffect(() => {
         // Fetch areas from your API when the component mounts
         const fetchAreas = async () => {
@@ -57,7 +65,6 @@ const RecyclingCenters = ({}) => {
                 console.error('Error fetching areas:', error);
             }
         };
-
         fetchAreas();
     }, []);
 
@@ -141,94 +148,123 @@ const RecyclingCenters = ({}) => {
             setMap(mapInstance);
         }
     });
-
+    
+    if (loading) return<><Loader></Loader></>;
     return (
-        <div>
-            <h2>Recycling Centers</h2>
-            {loading ? (
-                <p>Loading...</p>
-            ) : error ? (
-                <p>{error}</p>
-            ) : (
-                <ul>
-                    {recyclingCenters.map((center) => (
-                        <li key={center.recycling_center_id}>
-                            <strong>Area ID:</strong> {center.area_id}, 
-                            <strong> Latitude:</strong> {center.latitude}, 
-                            <strong> Longitude:</strong> {center.longitude}
-                        </li>
-                    ))}
-                </ul>
-            )}
+<div className="p-6 text-custom-black bg-white shadow-lg rounded-lg ">
+  <h2 className="text-2xl font-bold text-custom-black mb-6">Recycling Centers</h2>
 
-            <h3>Create a New Recycling Center</h3>
-            <form onSubmit={handleCreateCenter}>
-                <div>
-                <label>
-                Area:
-                <select
-                    name="area_id"
-                    value={newCenter.area_id}
-                    onChange={handleInputChange}
-                    required
-                >
-                    <option value="">Select an area</option>
-                    {areas.map((area) => (
-                        <option key={area.area_id} value={area.area_id}>
-                            {area.name} {/* Assuming each area has a name */}
-                        </option>
-                    ))}
-                </select>
-            </label>
-                </div>
-                <div>
-                    <label>
-                        Latitude:
-                        <input
-                            type="text"
-                            name="latitude"
-                            value={newCenter.latitude}
-                            onChange={handleInputChange}
-                            readOnly
-                            required
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Longitude:
-                        <input
-                            type="text"
-                            name="longitude"
-                            value={newCenter.longitude}
-                            onChange={handleInputChange}
-                            readOnly
-                            required
-                        />
-                    </label>
-                </div>
-                <button type="submit">Create Center</button>
-            </form>
+  {loading ? (
+    <><Loader></Loader></>
+  ) : error ? (
+    <p className="text-lg text-red-500 text-center">{error}</p>
+  ) : (
+    <div>
+      <h3 className="text-xl font-semibold text-custom-black mb-4">Existing Centers</h3>
+      <ul className="space-y-4">
+  {recyclingCenters.map((center) => (
+    <li
+      key={center.recycling_center_id}
+      className="p-4 bg-white rounded-lg shadow-md hover:scale-105 transition-transform duration-200 border-2 border-custom-green"
+    >
+      <div className="text-lg font-semibold text-custom-black">
+        <strong>Area ID:</strong> {center.area_id}
+      </div>
+      <div className="text-lg text-custom-black">
+        <strong>Latitude:</strong> {center.latitude}
+      </div>
+      <div className="text-lg text-custom-black">
+        <strong>Longitude:</strong> {center.longitude}
+      </div>
+    </li>
+  ))}
+</ul>
 
-            <h3>Search Location</h3>
-            <input
-                type="text"
-                value={locationName}
-                onChange={(e) => setLocationName(e.target.value)}
-                placeholder="Enter location name"
-            />
-            <button onClick={handleSearchLocation}>Search</button>
+    </div>
+  )}
 
-            <h3>Select Location on Map</h3>
-            
-            <MapContainer center={[24.8607, 67.0011]} zoom={12} style={{ height: '400px', width: '100%' }}>
-                <TileLayer
-                    url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                />
-                <LocationMarker />
-            </MapContainer>
-        </div>
+  <div className="mt-8">
+    <h3 className="text-xl font-semibold text-custom-black mb-4">Create a New Recycling Center</h3>
+    <form onSubmit={handleCreateCenter} className="space-y-4">
+      <div>
+        <label className="text-lg text-custom-black font-semibold">Area:</label>
+        <select
+          name="area_id"
+          value={newCenter.area_id}
+          onChange={handleInputChange}
+          required
+          className="mt-2 px-4 py-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-custom-green"
+        >
+          <option value="">Select an area</option>
+          {areas.map((area) => (
+            <option key={area.area_id} value={area.area_id}>
+              {area.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label className="text-lg text-custom-black font-semibold">Latitude:</label>
+        <input
+          type="text"
+          name="latitude"
+          value={newCenter.latitude}
+          onChange={handleInputChange}
+          readOnly
+          required
+          className="mt-2 px-4 py-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-custom-green"
+        />
+      </div>
+      <div>
+        <label className="text-lg text-custom-black font-semibold">Longitude:</label>
+        <input
+          type="text"
+          name="longitude"
+          value={newCenter.longitude}
+          onChange={handleInputChange}
+          readOnly
+          required
+          className="mt-2 px-4 py-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-custom-green"
+        />
+      </div>
+      <button
+        type="submit"
+        className="px-6 py-3 mt-4 bg-custom-green text-black rounded-lg hover:rounded-2xl transition duration-200 border border-black"
+      >
+        Create Center
+      </button>
+    </form>
+  </div>
+
+  <div className="mt-8">
+    <h3 className="text-xl font-semibold text-custom-black mb-4">Search Location</h3>
+    <input
+      type="text"
+      value={locationName}
+      onChange={(e) => setLocationName(e.target.value)}
+      placeholder="Enter location name"
+      className="px-4 py-2 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-custom-green mb-4"
+    />
+    <button
+      onClick={handleSearchLocation}
+      className="px-6 py-3 bg-custom-green text-black rounded-lg transition duration-200 hover:rounded-2xl border border-black"
+    >
+      Search
+    </button>
+  </div>
+
+  <div className="mt-8">
+    <h3 className="text-xl font-semibold text-custom-black mb-4">Select Location on Map</h3>
+    <MapContainer center={[24.8607, 67.0011]} zoom={12} style={{ height: '400px', width: '100%' }}>
+      <TileLayer
+        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+      />
+      <LocationMarker />
+    </MapContainer>
+  </div>
+</div>
+
     );
 };
 

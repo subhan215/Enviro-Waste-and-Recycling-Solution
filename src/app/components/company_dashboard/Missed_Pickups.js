@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import Loader from "../ui/Loader";
+
 
 const Missed_Pickups = () => {
   const [missedPickups, setMissedPickups] = useState([]);
@@ -21,7 +23,9 @@ const Missed_Pickups = () => {
       } catch (err) {
         setError('Failed to load missed pickups.');
       } finally {
-        setLoading(false);
+        setTimeout(async () => {
+          setLoading(false);  // Set loading to false after fetching is complete
+        }, 1000); // 1-second delay
       }
     };
 
@@ -77,7 +81,7 @@ const Missed_Pickups = () => {
     }
   };
 
-  if (loading) return <p className="text-center text-lg">Loading missed pickups...</p>;
+  if (loading) return<><Loader></Loader></>;
   if (error) return <p className="text-center text-lg text-red-600">{error}</p>;
 
   return (

@@ -1,9 +1,13 @@
-"use client"; 
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setCurrentChat } from '../../../store/slices/currentChatSlice';
-import axios from 'axios';
+"use client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentChat } from "../../../store/slices/currentChatSlice";
+//import { Modal, Button } from "react-bootstrap";
+//import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "axios";
+import Loader from "../ui/Loader";
+
 
 const Waste_Schedules = ({}) => {
   const [schedules, setSchedules] = useState([]);
@@ -23,10 +27,13 @@ const Waste_Schedules = ({}) => {
 
   let companyId = userData.user_id;
 
+
   useEffect(() => {
     const fetchCompanyRating = async () => {
       try {
-        const response = await axios.get(`/api/schedule/get_company_rating/${companyId}`);
+        const response = await axios.get(
+          `/api/schedule/get_company_rating/${companyId}`
+        );
         console.log("Company rating : ", response);
         setRating(response.data.data);
       } catch (error) {
@@ -36,7 +43,9 @@ const Waste_Schedules = ({}) => {
 
     const fetchCompanySchedules = async () => {
       try {
-        const response = await fetch(`/api/schedule/get_schedules_for_company/${companyId}`);
+        const response = await fetch(
+          `/api/schedule/get_schedules_for_company/${companyId}`
+        );
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
@@ -51,7 +60,9 @@ const Waste_Schedules = ({}) => {
 
     const fetchCompanyTrucks = async () => {
       try {
-        const response = await fetch(`/api/trucks/get_Trucks_Information/${companyId}`);
+        const response = await fetch(
+          `/api/trucks/get_Trucks_Information/${companyId}`
+        );
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
@@ -65,33 +76,40 @@ const Waste_Schedules = ({}) => {
 
     const fetchWastePrices = async () => {
       try {
-        const response = await axios.get('/api/requests/get_waste_price');
+        const response = await axios.get("/api/requests/get_waste_price");
         setWastePrices(response.data.data);
       } catch (error) {
-        alert('Error while fetching waste prices: ', error);
+        alert("Error while fetching waste prices: ", error);
         console.log(error);
       }
     };
 
-    fetchCompanyRating();
-    fetchWastePrices();
-    fetchCompanySchedules();
-    fetchCompanyTrucks();
+    // Delay the fetch functions by 1 second
+    const delayFetches = () => {
+      setTimeout(() => {
+        fetchCompanyRating();
+        fetchWastePrices();
+        fetchCompanySchedules();
+        fetchCompanyTrucks();
+      }, 1000);
+    };
+
+    delayFetches();
   }, [companyId]);
 
   const handleAssignTruck = async (scheduleId) => {
     if (!selectedTruck) {
-      alert('Please select a truck to assign.');
+      alert("Please select a truck to assign.");
       return;
     }
 
     setAssigning(true);
 
     try {
-      const response = await fetch('/api/schedule/assign_truck', {
-        method: 'POST',
+      const response = await fetch("/api/schedule/assign_truck", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           schedule_id: scheduleId,
@@ -102,18 +120,20 @@ const Waste_Schedules = ({}) => {
       const result = await response.json();
 
       if (response.ok) {
-        alert('Truck assigned successfully!');
+        alert("Truck assigned successfully!");
         setSchedules((prevSchedules) =>
           prevSchedules.map((schedule) =>
-            schedule.schedule_id == result.schedule.schedule_id ? result.schedule : schedule
+            schedule.schedule_id == result.schedule.schedule_id
+              ? result.schedule
+              : schedule
           )
         );
       } else {
         alert(`Failed to assign truck: ${result.message}`);
       }
     } catch (err) {
-      console.error('Error assigning truck:', err);
-      alert('An error occurred while assigning the truck.');
+      console.error("Error assigning truck:", err);
+      alert("An error occurred while assigning the truck.");
     } finally {
       setAssigning(false);
     }
@@ -121,24 +141,24 @@ const Waste_Schedules = ({}) => {
 
   const handleInitiateChat = async (company_id, userId) => {
     try {
-      const response = await fetch('/api/chat/create_chat', {
-        method: 'POST',
+      const response = await fetch("/api/chat/create_chat", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ company_id, user_id: userId }),
       });
       const result = await response.json();
       if (response.ok) {
         dispatch(setCurrentChat(result.data.chat_id));
-        alert('Chat initiated successfully!');
-        navigate.push('/chat');
+        alert("Chat initiated successfully!");
+        navigate.push("/chat");
       } else {
         alert(`Failed to initiate chat: ${result.message}`);
       }
     } catch (err) {
-      console.error('Error initiating chat:', err);
-      alert('An error occurred while initiating the chat.');
+      console.error("Error initiating chat:", err);
+      alert("An error occurred while initiating the chat.");
     }
   };
 
@@ -155,89 +175,240 @@ const Waste_Schedules = ({}) => {
       weight: weights[item.name] || 0,
     }));
     try {
-      const response = await axios.post('/api/schedule/mark_as_done', {
+      const response = await axios.post("/api/schedule/mark_as_done", {
         schedule_id: selectedSchedule,
         weights: weightsData,
       });
       if (response.status === 200) {
-        alert('Schedule marked as done successfully!');
+        alert("Schedule marked as done successfully!");
         setShowForm(false);
         setSelectedSchedule(null);
         const { updatedSchedule } = response.data;
         setSchedules((prevSchedules) =>
           prevSchedules.map((schedule) =>
-            schedule.schedule_id == updatedSchedule.schedule_id ? updatedSchedule : schedule
+            schedule.schedule_id == updatedSchedule.schedule_id
+              ? updatedSchedule
+              : schedule
           )
         );
       }
     } catch (error) {
-      console.error('Error marking schedule as done:', error);
-      alert('An error occurred while marking the schedule as done.');
+      console.error("Error marking schedule as done:", error);
+      alert("An error occurred while marking the schedule as done.");
     }
   };
 
-  if (loading) return <p>Loading company schedules...</p>;
-  if (schedules.length === 0) return <><p>Current rating : {Rating}</p><p>No schedules found for this company.</p></>;
+  if (loading) return<><Loader></Loader></>;
+  if (schedules.length === 0)
+    return (
+      <>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="size-6"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+          />
+        </svg>
+        {Rating}
+        <p>No schedules found for this company.</p>
+      </>
+    );
 
   return (
-    <div>
-      <p>Current rating : {Rating}</p>
-      <h2>Company Schedules</h2>
-      <ul>
-        {schedules.map((schedule) => (
-          schedule.status !== 'done' && (
-            <li key={schedule.schedule_id}>
-              <p><strong>Date:</strong> {schedule.date}</p>
-              <p><strong>Time:</strong> {schedule.time}</p>
-              <p><strong>Status:</strong> {schedule.status}</p>
-              <p><strong>Truck Assigned:</strong> {schedule.licenseplate}</p>
-              <button onClick={() => handleInitiateChat(schedule.company_id, schedule.user_id)}>Contact User</button>
-              <br />
-              {(schedule.status === 'Scheduled' && !schedule.truckid) && (
-                <div>
-                  <label>
-                    Select Truck:
-                    <select value={selectedTruck} onChange={(e) => setSelectedTruck(e.target.value)}>
-                      <option value="">Choose a truck</option>
-                      {trucks.map((truck) => (
-                        <option key={truck.truckid} value={truck.truckid}>
-                          {truck.licenseplate}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <button onClick={() => handleAssignTruck(schedule.schedule_id)} disabled={assigning}>
-                    {assigning ? 'Assigning...' : 'Assign Truck'}
-                  </button>
-                </div>
-              )}
-          {schedule.truckid ? (
-              <button onClick={() => handleMarkAsDone(schedule.schedule_id)}>Mark as Done</button>
-            ) : (
-              <p>Truck not assigned yet. Cannot mark as done.</p>
-            )}
+    <>
+      <h1 className="text-3xl font-bold mb-6  text-custom-black ">
+        Company Schedules
+      </h1>
+      <div className="p-6 bg-white shadow rounded-lg">
+        {/* <p className="text-lg font-semibold mb-4 text-custom-black">Current rating: {Rating}</p> */}
+        <div style={{ display: "flex" }}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="size-6"
+            style={{ fill: "#FFAA00", marginRight: "8px" }} // Adjust the margin as needed
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-1.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+            />
+          </svg>
+          Rating:&nbsp;
+          {Rating}
+        </div>
 
-            </li>
-          )
-        ))}
-      </ul>
-      {showForm && (
-        <form onSubmit={handleFormSubmit}>
-          <h3>Enter received weights</h3>
-          {wastePrices.map((item) => (
-            <div key={item.name}>
-              <label>{item.name} ({item.rate_per_kg} per kg):</label>
-              <input
-                type="number"
-                value={weights[item.name] || ''}
-                onChange={(e) => setWeights({ ...weights, [item.name]: e.target.value })}
-              />
-            </div>
-          ))}
-          <button type="submit">Submit</button>
-        </form>
-      )}
-    </div>
+        <ul className="space-y-6">
+          {schedules.map((schedule) =>
+            schedule.status !== "done" ? (
+              <li
+                key={schedule.schedule_id}
+                className="p-6 bg-white border border-gray-200 rounded-lg shadow-lg mb-6"
+              >
+                <button
+                  onClick={() =>
+                    handleInitiateChat(schedule.company_id, schedule.user_id)
+                  }
+                  className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="h-5 w-5 text-black"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.848 2.771A49.144 49.144 0 0 1 12 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 0 1-3.476.383.39.39 0 0 0-.297.17l-2.755 4.133a.75.75 0 0 1-1.248 0l-2.755-4.133a.39.39 0 0 0-.297-.17 48.9 48.9 0 0 1-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97ZM6.75 8.25a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H7.5Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+                <div className="flex justify-between items-start mb-6">
+                  <div className="space-y-3 ">
+                    <p className="text-lg font-semibold">
+                      <strong>Date:</strong> {schedule.date}
+                    </p>
+                    <p className="text-lg font-semibold">
+                      <strong>Time:</strong> {schedule.time}
+                    </p>
+                    <p className="text-lg font-semibold">
+                      <strong>Status:</strong> {schedule.status}
+                    </p>
+                    <p className="text-lg font-semibold">
+                      <strong>Truck Assigned:</strong>{" "}
+                      {schedule.licenseplate || "None"}
+                    </p>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleInitiateChat(
+                          schedule.company_id,
+                          schedule.user_id
+                        )
+                      }
+                      className="px-4 py-2 text-white rounded focus:outline-none focus:ring-2  transition-transform duration-200 ease-in-out"
+                      style={{ backgroundColor: "transparent" }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="size-6"
+                        style={{ fill: "black" }}
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4.848 2.771A49.144 49.144 0 0 1 12 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 0 1-3.476.383.39.39 0 0 0-.297.17l-2.755 4.133a.75.75 0 0 1-1.248 0l-2.755-4.133a.39.39 0 0 0-.297-.17 48.9 48.9 0 0 1-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97ZM6.75 8.25a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H7.5Z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <style jsx>{`
+                        button:hover {
+                          background-color: #007bff; /* Change to a light blue color */
+                          color: white;
+                          transform: scale(1.05);
+                        }
+                        button:hover svg {
+                          fill: white; /* Change the SVG fill color on hover */
+                        }
+                      `}</style>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Conditional Truck Assignment Section */}
+                {schedule.status === "Scheduled" && !schedule.truckid && (
+                  <div className="mt-6 p-6 bg-gray-50 border border-gray-300 rounded-lg shadow-inner">
+                    <label className="block mb-4 text-sm font-medium text-gray-700">
+                      Select Truck:
+                      <select
+                        value={selectedTruck}
+                        onChange={(e) => setSelectedTruck(e.target.value)}
+                        className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                      >
+                        <option value="">Choose a truck</option>
+                        {trucks.map((truck) => (
+                          <option key={truck.truckid} value={truck.truckid}>
+                            {truck.licenseplate}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <button
+                      onClick={() => handleAssignTruck(schedule.schedule_id)}
+                      disabled={assigning}
+                      className={`w-full px-6 py-3 text-custom-black  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                        assigning
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-custom-green hover:bg-green-600 focus:ring-custom-green border border-custom-black"
+                      }`}
+                    >
+                      {assigning ? "Assigning..." : "Assign Truck"}
+                    </button>
+                  </div>
+                )}
+
+                {/* Mark as Done Button */}
+                <div className="mt-6">
+                  {schedule.truckid && (
+                    <button
+                      onClick={() => {
+                        handleMarkAsDone(schedule.schedule_id);
+                      }}
+                      className="w-full px-6 py-3 bg-custom-green text-cusiom-black border border-custom-black rounded-lg "
+                    >
+                      Mark as Done
+                    </button>
+                  )}
+                </div>
+              </li>
+            ) : null
+          )}
+        </ul>
+        {showForm && (
+          <form
+            onSubmit={handleFormSubmit}
+            className="mt-6 p-6 bg-gray-100 border border-gray-300 rounded-lg"
+          >
+            <h3 className="text-xl font-semibold mb-4">
+              Enter received weights
+            </h3>
+            {wastePrices.map((item) => (
+              <div key={item.name} className="mb-4">
+                <label className="block mb-1 font-medium">
+                  {item.name} ({item.rate_per_kg} per kg):
+                </label>
+                <input
+                  type="number"
+                  value={weights[item.name] || ""}
+                  onChange={(e) =>
+                    setWeights({ ...weights, [item.name]: e.target.value })
+                  }
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+                />
+              </div>
+            ))}
+            <button
+              type="submit"
+              className="mt-4 px-4 py-2 bg-blue-600 text-custom-black rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            >
+              Submit
+            </button>
+          </form>
+        )}
+      </div>
+    </>
   );
 };
 

@@ -134,7 +134,7 @@ function CreateRequestForRecycledWaste() {
     }
   };
   useEffect(() => {
-    const fetchCurrentRequest = async () => {
+    const fetchcurrentrequest = async () => {
       setLoading(true);
       try {
         await fetchCurrentRequest(); // Assuming this is a function that fetches the current request
@@ -147,7 +147,7 @@ function CreateRequestForRecycledWaste() {
       }
     };
 
-    fetchCurrentRequest();
+    fetchcurrentrequest();
   }, []);
   
   const deleteRequest = async (requestId) => {
@@ -306,7 +306,7 @@ function CreateRequestForRecycledWaste() {
     // </div>
     <div className="container mx-auto px-4 py-8 ">
       {!currentRequest ? (
-        <div className="bg-white p-8 shadow-lg rounded-lg border-4 border-black">
+        <div className="bg-white p-8 shadow-lg rounded-lg border-2 border-black">
           <h2 className="text-3xl font-bold text-black  p-2 mb-6 rounded">
             Create Request for Recycled Waste
           </h2>
@@ -365,7 +365,7 @@ function CreateRequestForRecycledWaste() {
             </div>
             <button
               type="submit"
-              className="bg-custom-green text-black py-2 px-4 rounded-lg font-bold border border-black hover:bg-custom-green transition duration-300"
+              className="bg-custom-green text-black py-2 px-4 rounded-lg font-bold border border-black hover:bg-custom-green transition duration-300 hover:rounded-2xl"
             >
               Create Request
             </button>
@@ -373,7 +373,7 @@ function CreateRequestForRecycledWaste() {
               <p className="text-custom-green mt-4">{successMessage}</p>
             )}
             {error && <p className="text-red-500 mt-4">{error}</p>}
-            <h3 className="text-xl font-bold mt-6 mb-2 text-black">
+            <h3 className="text-xl font-bold mt-6 mb-2 text-black hover:rounded-2xl ">
               Search Location
             </h3>
             <input
@@ -386,7 +386,7 @@ function CreateRequestForRecycledWaste() {
             <button
               type="button"
               onClick={handleSearchLocation}
-              className="bg-custom-green text-black py-2 px-4 rounded-lg font-bold border border-black hover:bg-custom-green transition duration-300 mb-6"
+              className="bg-custom-green text-black py-2 px-4 rounded-lg font-bold border border-black hover:bg-custom-green transition duration-300 mb-6 hover:rounded-2xl"
             >
               Search
             </button>

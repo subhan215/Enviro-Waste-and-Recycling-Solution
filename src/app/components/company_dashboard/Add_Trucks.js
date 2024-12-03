@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
+import Truck_loader from "../ui/Truck_loader";
+
 const Add_Trucks = () => {
+    const [loading, setLoading] = useState(true)
     const [data, setData] = useState({
         licensePlate: "", 
         capacity: "", 
@@ -33,7 +36,19 @@ const Add_Trucks = () => {
 
     // Fetch areas when the component mounts
     useEffect(() => {
-        getNonAssignedTruckAreas();
+        const run_add_truck = async () => {
+      setLoading(true);
+      try {
+        await getNonAssignedTruckAreas();
+      } catch (error) {
+        console.error('Error getting non assigned area:', error);
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000); // Delay for 5 seconds
+      }   
+    };
+    run_add_truck();
     }, []);
 
     const handleSubmit = async (e) => {
@@ -63,70 +78,77 @@ const Add_Trucks = () => {
         }
     };
 
+    if(loading) return <Truck_loader></Truck_loader>
     return (
-        <div className="relative flex flex-col bg-[#f8fcf9] overflow-x-hidden" style={{ fontFamily: '"Public Sans", "Noto Sans", sans-serif' }}>
-            <div className="flex justify-center items-center flex-1">
-                <div className="layout-content-container flex flex-col w-[512px] max-w-[960px] py-5">
-                    <h2 className="text-2xl font-bold mb-4 text-center">Add Truck Information</h2>
-                    <form onSubmit={handleSubmit} className="flex flex-col px-4">
-                        <label className="flex flex-col min-w-40 flex-1 mb-4">
-                            <input
-                                type="text"
-                                id="licensePlate"
-                                value={data.licensePlate}
-                                onChange={(e) => setData({ ...data, licensePlate: e.target.value })}
-                                placeholder="License Plate"
-                                className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#4e975f] text-base font-normal"
-                                required
-                            />
-                        </label>
-
-                        <label className="flex flex-col min-w-40 flex-1 mb-4">
-                            {/* Dropdown for selecting area */}
-                            <select
-                                id="area"
-                                value={data.area}
-                                onChange={(e) => setData({ ...data, area_id: e.target.value })}
-                                className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] text-base font-normal"
-                                required
-                            >
-                                <option value="" disabled selected>Select Area</option>
-                                
-                                {allAreas?.length > 0 ? (
-                                    allAreas.map((area) => (
-                                        <option key={area.area_id} value={area.area_id}>
-                                            <span>{area.name}</span>
-                                        </option>
-                                    ))
-                                ) : (
-                                    <option value="">No areas available</option>
-                                )}
-                            </select>
-                        </label>
-
-                        <label className="flex flex-col min-w-40 flex-1 mb-4">
-                            <input
-                                type="number"
-                                id="capacity"
-                                value={data.capacity}
-                                onChange={(e) => setData({ ...data, capacity: e.target.value })}
-                                placeholder="Capacity (in tons)"
-                                step="0.01"
-                                className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#4e975f] text-base font-normal"
-                                required
-                            />
-                        </label>
-
-                        <button
-                            type="submit"
-                            className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#17cf42] text-[#0e1b11] text-sm font-bold leading-normal"
-                        >
-                            Add Truck
-                        </button>
-                    </form>
-                </div>
+        <div className="container mx-auto px-4 py-8">
+        <div className="bg-white p-8 shadow-lg rounded-lg ">
+          <h2 className="text-3xl font-bold text-custom-black p-2 mb-6 rounded text-center">
+            Add Truck Information
+          </h2>
+          <form onSubmit={handleSubmit} className="flex flex-col">
+            <div className="mb-4">
+              <label htmlFor="licensePlate" className="block text-lg font-semibold text-custom-black mb-2">
+                License Plate:
+              </label>
+              <input
+                type="text"
+                id="licensePlate"
+                value={data.licensePlate}
+                onChange={(e) => setData({ ...data, licensePlate: e.target.value })}
+                placeholder="License Plate"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              />
             </div>
+            <div className="mb-4">
+              <label htmlFor="area" className="block text-lg font-semibold text-custom-black mb-2">
+                Select Area:
+              </label>
+              <select
+                id="area"
+                value={data.area_id}
+                onChange={(e) => setData({ ...data, area_id: e.target.value })}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              >
+                <option value="" disabled>
+                  Select Area
+                </option>
+                {allAreas?.length > 0 ? (
+                  allAreas.map((area) => (
+                    <option key={area.area_id} value={area.area_id}>
+                      {area.name}
+                    </option>
+                  ))
+                ) : (
+                  <option value="">No areas available</option>
+                )}
+              </select>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="capacity" className="block text-lg font-semibold text-custom-black mb-2">
+                Capacity (in tons):
+              </label>
+              <input
+                type="number"
+                id="capacity"
+                value={data.capacity}
+                onChange={(e) => setData({ ...data, capacity: e.target.value })}
+                placeholder="Capacity (in tons)"
+                step="0.01"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              />
+            </div>
+            <button
+              type="submit"
+              className="bg-custom-green text-custom-black py-2 px-4 rounded-lg font-bold border border-custom-black hover:bg-custom-green transition duration-300 hover:rounded-2xl"
+            >
+              Add Truck
+            </button>
+          </form>
         </div>
+      </div>
     );
 };
 
