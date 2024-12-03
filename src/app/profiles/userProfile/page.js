@@ -4,6 +4,7 @@ import ReportMissedPickups from "../../components/user_dashboard/ReportMissedPic
 import CreateRequestForRecycledWaste from "../../components/user_dashboard/CreateRequestForRecycledWaste";
 import Waste_Pickup_Schedules from "../../components/user_dashboard/User_Schedules";
 import Report_to_admin from "../../components/user_dashboard/Report_to_admin";
+import LocateRecyclingCenters from "../../components/user_dashboard/LocateRecyclingCenters"
 const UserProfilePage = () => {
   const [selectedOption, setSelectedOption] = useState("reportMissedPickups");
 
@@ -18,6 +19,8 @@ const UserProfilePage = () => {
         return <Waste_Pickup_Schedules />;
       case "report_to_admin":
         return <Report_to_admin />;
+      case "locate_recycling_centers": 
+        return <LocateRecyclingCenters />
       default:
         return <p>Select an option to get started.</p>;
     }
@@ -26,11 +29,11 @@ const UserProfilePage = () => {
   return (
     <div className="min-h-screen flex bg-slate-200">
       {/* Sidebar */}
-      <div className="w-64 bg-custom-green shadow-md p-4 border-2 border-black rounded-md mt-2">
+      <div className="w-64 bg-custom-green shadow-md border-2 border-black rounded-md mt-2">
         <h2 className="text-2xl font-bold mb-6 ">User Dashboard</h2>
         <ul>
           <li
-            className={`py-2 px-4 mb-2 rounded-lg cursor-pointer ${
+            className={`py-2 px-4 mb-2 rounded cursor-pointer ${
               selectedOption === "reportMissedPickups"
                 ? "bg-white text-black border-2 border-black hover:rounded-2xl"
                 : "hover:rounded-2xl"
@@ -69,6 +72,16 @@ const UserProfilePage = () => {
             onClick={() => setSelectedOption("report_to_admin")}
           >
             Report to Admin
+          </li>
+          <li
+            className={`py-2 px-4 mb-2 rounded cursor-pointer ${
+              selectedOption === "locate_recycling_centers"
+                ? "bg-white text-black border-2 border-black hover:rounded-2xl"
+                : "hover:rounded-2xl"
+            }`}
+            onClick={() => setSelectedOption("locate_recycling_centers")}
+          >
+            Locate Recycling Centers
           </li>
         </ul>
       </div>

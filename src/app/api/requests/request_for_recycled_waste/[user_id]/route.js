@@ -28,6 +28,7 @@ export async function GET(req, { params }) {
         console.log(result.rows);
 
         if (result.rowCount === 0) {
+            console.log("this happens")
             // Rollback transaction if no requests found
             await client.query("ROLLBACK");
             return NextResponse.json(
