@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Loader from "../ui/Loader";
+import Truck_loader from "../ui/Truck_loader";
 
 const ReportMissedPickups = () => {
   const [allMissedPickups, setAllMissedPickups] = useState([]);
@@ -129,7 +130,7 @@ const ReportMissedPickups = () => {
     fetchMissedPickups();
   }, [userId]);
 
-  if(loading) return <Loader></Loader>
+  if(loading) return <Truck_loader></Truck_loader>
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       <h2 className="text-3xl font-bold text-custom-black p-2 mb-6 rounded">

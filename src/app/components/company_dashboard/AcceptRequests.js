@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import Loader from "../ui/Loader";
+
 
 function AcceptRequests() {
     const [requests, setRequests] = useState([]);
@@ -10,35 +12,40 @@ function AcceptRequests() {
     const [loading, setLoading] = useState(true); // New state for loading
     const userData = useSelector((state) => state.userData.value);
 
+
     useEffect(() => {
-        // Fetch requests from the database
         const fetchRequests = async () => {
-            setLoading(true); // Start loading
-            try {
-                const response = await axios.get(
-                    `/api/requests/get_requests_near_company/${userData.user_id}`
-                );
-                const fetchedRequests = response.data.requests;
-
-                // For each request, fetch the location name based on latitude and longitude
-                const requestsWithLocationNames = await Promise.all(
-                    fetchedRequests.map(async (request) => {
-                        const locationName = await fetchLocationName(request.latitude, request.longitude);
-                        return { ...request, locationName };
-                    })
-                );
-
-                setRequests(requestsWithLocationNames);
-            } catch (err) {
-                console.error("Error fetching requests:", err);
-                setError("Error fetching requests");
-            } finally {
-                setLoading(false); // End loading
-            }
+          setLoading(true); // Start loading
+          try {
+            const response = await axios.get(
+              `/api/requests/get_requests_near_company/${userData.user_id}`
+            );
+            const fetchedRequests = response.data.requests;
+    
+            // For each request, fetch the location name based on latitude and longitude
+            const requestsWithLocationNames = await Promise.all(
+              fetchedRequests.map(async (request) => {
+                const locationName = await fetchLocationName(request.latitude, request.longitude);
+                return { ...request, locationName };
+              })
+            );
+    
+            setRequests(requestsWithLocationNames);
+          } catch (err) {
+            console.error("Error fetching requests:", err);
+            setError("Error fetching requests");
+          } finally {
+            setLoading(false); // End loading
+          }
         };
-
-        fetchRequests();
-    }, [userData.user_id]);
+    
+        // Delay the fetchRequests call by 1 second
+        const delayFetchRequests = () => {
+          setTimeout(fetchRequests, 1000);
+        };
+    
+        delayFetchRequests();
+      }, [userData.user_id]);
 
     // Function to fetch location name using reverse geocoding API
     const fetchLocationName = async (lat, lon) => {
@@ -79,49 +86,62 @@ function AcceptRequests() {
             setError("Failed to offer price");
         }
     };
+    if (loading) return<><Loader></Loader></>;
 
     return (
-        <div>
-            <h2>Accept Requests</h2>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
+<div className="p-6 bg-white text-white rounded-2xl">
+  <h2 className="text-2xl font-bold text-custom-black  mb-6">Accept Requests</h2>
 
-            {loading ? (
-                <p>Loading requests...</p>
-            ) : requests.length === 0 ? (
-                <p>Please locate a recycling center for your company first to view requests.</p>
-            ) : (
-                <ul>
-                    {requests.map((request) => (
-                        <li key={request.request_id} className="request-item">
-                            <p>Waste Weight: {request.weight}</p>
-                            <p>Preferred Date: {request.date}</p>
-                            <p>Preferred Time: {request.time}</p>
-                            <p>Location: {request.locationName || `${request.latitude}, ${request.longitude}`}</p>
-                            <p>Distance: {request.distance}</p>
-                            <p>
-                                Minimum price offered till now:{" "}
-                                {request.offered_price ? request.offered_price : " "}
-                                <div>
-                                    <input
-                                        type="number"
-                                        placeholder="Enter your price"
-                                        onChange={(e) => setNewPriceOffered(e.target.value)}
-                                    />
-                                    <button
-                                        onClick={() =>
-                                            handleOfferPrice(request.request_id, request.offered_price, newPriceOffered)
-                                        }
-                                    >
-                                        Offer Price
-                                    </button>
-                                </div>
-                            </p>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
+  {error && <p className="text-red-500 mb-4">{error}</p>}
+  {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
+
+  {loading ? (
+    <p className="text-lg text-center">Loading requests...</p>
+  ) : requests.length === 0 ? (
+    <p className="text-lg text-center">Please locate a recycling center for your company first to view requests.</p>
+  ) : (
+    <ul className="space-y-4">
+      {requests.map((request) => (
+        <li key={request.request_id} className="p-4 bg-white rounded-lg shadow-md border border-custom-green">
+          <div className="text-lg font-semibold text-custom-black mb-2">
+            Waste Weight: <span className="font-normal">{request.weight}</span>
+          </div>
+          <div className="text-lg text-custom-black mb-2">
+            Preferred Date: <span className="font-normal">{request.date}</span>
+          </div>
+          <div className="text-lg text-custom-black mb-2">
+            Preferred Time: <span className="font-normal">{request.time}</span>
+          </div>
+          <div className="text-lg text-custom-black mb-2">
+            Location: <span className="font-normal">{request.locationName || `${request.latitude}, ${request.longitude}`}</span>
+          </div>
+          <div className="text-lg text-custom-black mb-2">
+            Distance: <span className="font-normal">{request.distance}</span>
+          </div>
+          <div className="text-lg text-custom-black mb-2">
+            Minimum price offered till now: <span className="font-normal">{request.offered_price ? request.offered_price : " "}</span>
+          </div>
+          <div className="mt-4">
+            <input
+              type="text"
+              placeholder="Enter your price"
+              className="px-4 py-2 w-full rounded-lg border text-custom-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-custom-black mb-2"
+              value = {newPriceOffered}
+              onChange={(e) => setNewPriceOffered(e.target.value)}
+            />
+            <button
+              onClick={() => handleOfferPrice(request.request_id, request.offered_price, newPriceOffered)}
+              className="px-6 py-3 bg-custom-green text-black rounded-lg hover:rounded-2xl transition duration-200 border border-black mt-2"
+            >
+              Offer Price
+            </button>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
+
     );
 }
 
