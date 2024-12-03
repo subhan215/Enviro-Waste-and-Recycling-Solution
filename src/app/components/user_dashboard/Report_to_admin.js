@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import Loader from "../ui/Loader";
 
 const Report_to_admin = () => {
   const [companies, setCompanies] = useState([]);
@@ -54,6 +55,7 @@ const Report_to_admin = () => {
 
     fetchData();
   }, [user_id]);
+
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -76,6 +78,7 @@ const Report_to_admin = () => {
 
     fetchMessages();
   }, [user_id]); 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -124,7 +127,7 @@ const Report_to_admin = () => {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <Loader></Loader>;
   }
 
   // Exclude companies for which reports already exist
@@ -133,78 +136,162 @@ const Report_to_admin = () => {
   ); */
 
   return (
-    <div>
-       <div>
-      <h2>Messages from admin panel</h2>
-      {messages.length > 0 ? (
-        <div>
-          {messages.map((message) => (
-            <div key={message.report_id} className="message-box">
-              <p>{message.message} against company -- <strong>{message.name}</strong> </p>
-            </div>
-          ))}
+    // <div>
+    //    <div>
+    //   <h2>Messages from admin panel</h2>
+    //   {messages.length > 0 ? (
+    //     <div>
+    //       {messages.map((message) => (
+    //         <div key={message.report_id} className="message-box">
+    //           <p>{message.message} against company -- <strong>{message.name}</strong> </p>
+    //         </div>
+    //       ))}
+    //     </div>
+    //   ) : (
+    //     <p>No messages found.</p>
+    //   )}
+    // </div>
+    //   <h2>Report to Admin</h2>
+    //   {error && <p className="text-red-500">{error}</p>}
+
+    //   {/* Existing Reports Section */}
+    //   <div>
+    //     <h3>Your Existing Reports</h3>
+    //     {existingReports.length > 0 ? (
+    //       existingReports.map((report) => (
+    //         <div key={report.report_id} className="report-box">
+    //           <p><strong>Company:</strong> {report.name}</p>
+    //           <p><strong>Description:</strong> {report.description}</p>
+    //         </div>
+    //       ))
+    //     ) : (
+    //       <p>No existing reports found.</p>
+    //     )}
+    //   </div>
+
+    //   {/* New Report Form Section */}
+    //   <div>
+    //     <h3>Submit a New Report</h3>
+    //     {companies.length > 0 ? (
+    //       <form onSubmit={handleSubmit}>
+    //         <div>
+    //           <label htmlFor="companyId">Select Company:</label>
+    //           <select
+    //             id="companyId"
+    //             value={companyId}
+    //             onChange={(e) => setCompanyId(e.target.value)}
+    //             required
+    //           >
+    //             <option value="" disabled>
+    //               -- Select a Company --
+    //             </option>
+    //             {companies.map((company) => (
+    //               <option key={company.user_id} value={company.user_id}>
+    //                 {company.name}
+    //               </option>
+    //             ))}
+    //           </select>
+    //         </div>
+    //         <div>
+    //           <label htmlFor="description">Description:</label>
+    //           <textarea
+    //             id="description"
+    //             value={description}
+    //             onChange={(e) => setDescription(e.target.value)}
+    //             required
+    //           />
+    //         </div>
+    //         <button type="submit">Submit</button>
+    //       </form>
+    //     ) : (
+    //       <p>All available companies have already been reported.</p>
+    //     )}
+    //   </div>
+    // </div>
+<div className="min-h-screen bg-white text-custom-black p-6">
+  {/* Messages Section */}
+  <div className="mb-8">
+    <h2 className="text-3xl font-bold text-custom-black mb-4">Messages from Admin Panel</h2>
+    {messages.length > 0 ? (
+      <div>
+        {messages.map((message) => (
+          <div key={message.report_id} className="message-box bg-white text-black p-4 mb-4 rounded-lg shadow-md hover:scale-105 transition-all">
+            <p>{message.message} against company -- <strong>{message.name}</strong></p>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p>No messages found.</p>
+    )}
+  </div>
+
+  {/* Report to Admin Section */}
+  <h2 className="text-3xl font-bold text-custom-black mb-4">Report to Admin</h2>
+  {error && <p className="text-red-500 mb-4">{error}</p>}
+
+  {/* Existing Reports Section */}
+  <div className="mb-8">
+    <h3 className="text-2xl font-semibold text-custom-black mb-4">Your Existing Reports</h3>
+    {existingReports.length > 0 ? (
+      existingReports.map((report) => (
+        <div key={report.report_id} className="report-box bg-white text-black p-4 mb-4 rounded-lg shadow-md hover:scale-105 transition-all">
+          <p><strong>Company:</strong> {report.name}</p>
+          <p><strong>Description:</strong> {report.description}</p>
         </div>
-      ) : (
-        <p>No messages found.</p>
-      )}
-    </div>
-      <h2>Report to Admin</h2>
-      {error && <p className="text-red-500">{error}</p>}
+      ))
+    ) : (
+      <p>No existing reports found.</p>
+    )}
+  </div>
 
-      {/* Existing Reports Section */}
-      <div>
-        <h3>Your Existing Reports</h3>
-        {existingReports.length > 0 ? (
-          existingReports.map((report) => (
-            <div key={report.report_id} className="report-box">
-              <p><strong>Company:</strong> {report.name}</p>
-              <p><strong>Description:</strong> {report.description}</p>
-            </div>
-          ))
-        ) : (
-          <p>No existing reports found.</p>
-        )}
-      </div>
+  {/* New Report Form Section */}
+  <div>
+    <h3 className="text-2xl font-semibold text-custom-black mb-4">Submit a New Report</h3>
+    {companies.length > 0 ? (
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto">
+        <div className="mb-4">
+          <label htmlFor="companyId" className="block text-custom-black font-semibold mb-2">Select Company:</label>
+          <select
+            id="companyId"
+            value={companyId}
+            onChange={(e) => setCompanyId(e.target.value)}
+            required
+            className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600"
+          >
+            <option value="" disabled>-- Select a Company --</option>
+            {companies.map((company) => (
+              <option key={company.user_id} value={company.user_id}>
+                {company.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      {/* New Report Form Section */}
-      <div>
-        <h3>Submit a New Report</h3>
-        {companies.length > 0 ? (
-          <form onSubmit={handleSubmit}>
-            <div>
-              <label htmlFor="companyId">Select Company:</label>
-              <select
-                id="companyId"
-                value={companyId}
-                onChange={(e) => setCompanyId(e.target.value)}
-                required
-              >
-                <option value="" disabled>
-                  -- Select a Company --
-                </option>
-                {companies.map((company) => (
-                  <option key={company.user_id} value={company.user_id}>
-                    {company.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label htmlFor="description">Description:</label>
-              <textarea
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              />
-            </div>
-            <button type="submit">Submit</button>
-          </form>
-        ) : (
-          <p>All available companies have already been reported.</p>
-        )}
-      </div>
-    </div>
+        <div className="mb-4">
+          <label htmlFor="description" className="block text-custom-black font-semibold mb-2">Description:</label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+            className="w-full p-3 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="w-full py-3 bg-[#00ED64] text-black border-2 border-white rounded-lg hover:bg-green-600 transition duration-300 ease-in-out"
+        >
+          Submit
+        </button>
+      </form>
+    ) : (
+      <p>All available companies have already been reported.</p>
+    )}
+  </div>
+</div>
+
+
   );
 };
 
