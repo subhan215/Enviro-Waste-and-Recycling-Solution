@@ -95,7 +95,7 @@ const RecyclingCenterNearby = () => {
       <h1 className="text-4xl font-semibold text-center text-gray-800 mb-6">Recycling Centers Near You</h1>
 
       <button
-        className="bg-[#00ED64] text-white px-6 py-2 rounded-lg mb-4 block mx-auto hover:bg-green-600 transition duration-300 transform hover:scale-105"
+        className="bg-custom-green text-custom-black px-6 py-2 rounded-lg mb-4 block mx-auto hover:bg-green-600 transition duration-300 transform hover:scale-105 border border-custom-black"
         onClick={handleToggleView}
       >
         {viewMap ? 'View as List' : 'View on Map'}

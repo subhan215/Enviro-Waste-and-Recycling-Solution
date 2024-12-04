@@ -208,7 +208,7 @@ const ManageAndViewAreas = () => {
         {selectedAreas.length > 0 && (
           <div>
             <button
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              className="px-4 py-2 bg-custom-green text-black rounded hover:bg-green-600 hover:rounded-2xl border border-custom-black"
               onClick={handleAssignArea}
             >
               Click to send the add area request for approval
