@@ -334,7 +334,7 @@ function CreateRequestForRecycledWaste() {
     // </div>
     <div className="container mx-auto px-4 py-8 ">
       {!currentRequest ? (
-        <div className="bg-white p-8 shadow-lg rounded-lg border-2 border-black">
+        <div className="bg-white p-8 shadow-lg rounded-lg ">
           <h2 className="text-3xl font-bold text-black  p-2 mb-6 rounded">
             Create Request for Recycled Waste
           </h2>

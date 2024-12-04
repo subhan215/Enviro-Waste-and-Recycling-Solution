@@ -136,6 +136,7 @@ const Report_to_admin = () => {
   ); */
 
   return (
+    
     // <div>
     //    <div>
     //   <h2>Messages from admin panel</h2>
@@ -208,7 +209,10 @@ const Report_to_admin = () => {
     //     )}
     //   </div>
     // </div>
+    <>
+
 <div className="min-h-screen bg-white text-custom-black p-6">
+  
   {/* Messages Section */}
   <div className="mb-8">
     <h2 className="text-3xl font-bold text-custom-black mb-4">Messages from Admin Panel</h2>
@@ -291,7 +295,7 @@ const Report_to_admin = () => {
   </div>
 </div>
 
-
+</>
   );
 };
 

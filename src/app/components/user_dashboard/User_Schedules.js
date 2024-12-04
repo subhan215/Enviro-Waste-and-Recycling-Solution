@@ -225,7 +225,9 @@ const SchedulesList = () => {
   if (loading) return<><Loader></Loader></>;
 
   return (
-<div className="max-w-4xl mx-auto bg-white p-8 rounded-lg  border-4 border-custom-black">
+    <>
+
+<div className="max-w-4xl mx-auto bg-white p-8 rounded-lg ">
   {/* Rewards Section */}
   <div className="mb-6">
     <h2 className="text-3xl font-bold text-black mb-2">Rewards Earned: {rewards}</h2>
@@ -357,7 +359,7 @@ const SchedulesList = () => {
     </>
   )}
 </div>
-
+</>
   );
 };
 
