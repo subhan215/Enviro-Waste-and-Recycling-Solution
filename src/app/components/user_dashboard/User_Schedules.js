@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentChat } from '../../../store/slices/currentChatSlice';
 import Loader from '../ui/Loader';
-
+import NoDataDisplay from '../animations/NoDataDisplay';
+import { FaComment } from 'react-icons/fa';
 const SchedulesList = () => {
   const userData = useSelector((state) => state.userData.value);
   const [schedules, setSchedules] = useState([]);
@@ -34,11 +35,12 @@ const SchedulesList = () => {
   const handleFormSubmit = async (e, schedule_id) => {
     e.preventDefault();
     const { accountType, accountDetails, rewardAmount, wallet_Bank_name } = formData;
-    if (!accountType || !accountDetails || !rewardAmount) {
+    if (!accountType || !accountDetails || !rewardAmount || !wallet_Bank_name) {
       alert('Please fill in all fields.');
       return;
     }
-    if (rewardAmount > rewards) {
+    alert("Reward Amount: " + rewardAmount); 
+    if (formData.rewardAmount > rewards) {
       alert('You cannot convert more rewards than you have.');
       return;
     }
@@ -185,6 +187,7 @@ const SchedulesList = () => {
       console.error('Error fetching active request:', err);
     }
   };
+  
   const fetchSchedules = async () => {
     try {
       const response = await fetch(`/api/schedule/get_schedule_for_user/${userData.user_id}`);
@@ -195,80 +198,106 @@ const SchedulesList = () => {
       setSchedules(data);
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoading(false);
     }
   };
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Start loading
+        setLoading(true);
+  
         // Simulate a 5-second delay
         await new Promise(resolve => setTimeout(resolve, 1000));
-
+  
         // Fetch data
         await fetchSchedules();
         await fetchActiveRequest();
-
-        // Set data and loading state
+  
+        // Set data and loading state after fetching is done
         setData({ message: 'Data fetched successfully!' });
-        setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
-        setLoading(false); // Ensure loading state is reset even if there's an error
+      } finally {
+        // Set loading to false once data is fetched or an error occurs
+        setLoading(false);
       }
     };
-
+  
     fetchData();
   }, [userData]);
-  
   console.log(activeRequest)
   if (loading) return<><Loader></Loader></>;
 
   return (
     <>
-
-<div className="max-w-4xl mx-auto bg-white p-8 rounded-lg ">
+<div className="max-w-6xl mx-auto p-6 rounded-lg">
   {/* Rewards Section */}
-  <div className="mb-6">
-    <h2 className="text-3xl font-bold text-black mb-2">Rewards Earned: {rewards}</h2>
-    <h3 className="text-xl text-gray-700">Equivalent in PKR: {equivalentPKR} PKR</h3>
+  <div className="mb-8 text-center">
+    <h2 className="text-4xl font-bold text-black mb-2">Rewards Earned: {rewards}</h2>
+    <h3 className="text-xl text-gray-600">Equivalent in PKR: {equivalentPKR} PKR</h3>
   </div>
 
   {/* Active Request Section */}
-  {activeRequest && (activeRequest.status !== 'Rejected' && activeRequest.status !== 'Approved' && !activeRequest.isseen) ? (
-    <div className="bg-yellow-100 p-6 rounded-lg mb-6">
-      <p className="text-xl text-black mb-4">You already have a pending transaction request. Please wait for it to be processed before creating another.</p>
-      <p className="font-semibold text-lg">Active request details</p>
+  {activeRequest ? (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div className="relative col-span-1 bg-white p-6 rounded-lg shadow-md">
+      {/* Cross Icon for Cancel */}
+      {activeRequest.status === 'Pending' && (
+        <button
+          onClick={handleCancelRequest}
+          className="absolute top-2 right-2 text-3xl text-red-500 hover:text-red-700 transition duration-300"
+          aria-label="Cancel Current Request"
+        >
+          &times; {/* Unicode for cross symbol */}
+        </button>
+      )}
+  
+      <h3 className="text-xl font-bold text-black mb-4">Active Request Details</h3>
       <p><strong>Account Type:</strong> {activeRequest.account_type}</p>
       <p><strong>{activeRequest.account_type === 'wallet' ? 'Wallet' : 'Bank'}:</strong> {activeRequest.wallet_bank_name}</p>
-      <p><strong>Account details:</strong> {activeRequest.account_details}</p>
-      <p><strong>Rewards to convert:</strong> {activeRequest.conversion_amount}</p>
+      <p><strong>Account Details:</strong> {activeRequest.account_details}</p>
+      <p><strong>Rewards to Convert:</strong> {activeRequest.conversion_amount}</p>
       <p><strong>Equivalent PKR:</strong> {activeRequest.equivalent_pkr}</p>
-      <button onClick={handleCancelRequest} className="bg-red-500 text-white py-2 px-4 rounded-lg mt-4 hover:bg-red-700 transition duration-300">
-        Cancel Current Request
-      </button>
-    </div>
-  ) : (
-    <>
-      {/* Approved or Rejected Request */}
-      {activeRequest && (activeRequest.status === 'Approved' || activeRequest.status === 'Rejected') && (
-        <div className="bg-blue-100 p-6 rounded-lg mb-6">
-          <p className="text-xl text-black">
-            Your request has been {activeRequest.status}.{' '}
-            {!activeRequest.is_seen && <button onClick={handleMarkAsSeen} className="bg-green-500 text-white py-1 px-3 rounded-lg hover:bg-green-700 transition duration-300">Mark as Seen</button>}
-          </p>
+  
+      {/* Show Approve/Rejection or Mark as Seen Buttons based on Request Status */}
+      {activeRequest.status === 'Approved' && (
+        <div className="mt-4">
+          <p className="text-lg font-semibold text-green-600">Request Approved</p>
+          {!activeRequest.is_seen && (
+            <button
+              onClick={handleMarkAsSeen}
+              className="mt-2 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300"
+            >
+              Mark as Seen
+            </button>
+          )}
         </div>
       )}
-
-      {/* Form to Convert Rewards */}
-      <button onClick={() => setShowForm(!showForm)} className="bg-custom-green text-black py-2 px-4 rounded-lg mb-6 hover:bg-white transition duration-300">
+  
+      {activeRequest.status === 'Rejected' && (
+        <div className="mt-4">
+          <p className="text-lg font-semibold text-red-600">Request Rejected</p>
+        </div>
+      )}
+    </div>
+  </div>
+  
+  ) : (
+    <div className="mb-8">
+      <button
+        onClick={() => setShowForm(!showForm)}
+        className="w-full bg-custom-green text-black py-3 px-6 rounded-lg hover:bg-white transition duration-300"
+      >
         {showForm ? 'Cancel Conversion' : 'Convert Rewards into Account'}
       </button>
 
       {showForm && (
-        <form onSubmit={handleFormSubmit} className="space-y-4">
+        <form onSubmit={handleFormSubmit} className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-lg font-semibold text-gray-700">Account Type:</label>
+            <label className="block text-lg font-semibold text-gray-700 mb-2">
+              Account Type
+            </label>
             <select
               name="accountType"
               value={formData.accountType}
@@ -281,7 +310,9 @@ const SchedulesList = () => {
             </select>
           </div>
           <div>
-            <label className="block text-lg font-semibold text-gray-700">Wallet or Bank Name:</label>
+            <label className="block text-lg font-semibold text-gray-700 mb-2">
+              Wallet or Bank Name
+            </label>
             <input
               type="text"
               name="wallet_Bank_name"
@@ -292,7 +323,9 @@ const SchedulesList = () => {
             />
           </div>
           <div>
-            <label className="block text-lg font-semibold text-gray-700">Account Details:</label>
+            <label className="block text-lg font-semibold text-gray-700 mb-2">
+              Account Details
+            </label>
             <input
               type="text"
               name="accountDetails"
@@ -303,62 +336,110 @@ const SchedulesList = () => {
             />
           </div>
           <div>
-            <label className="block text-lg font-semibold text-gray-700">Reward Amount to Convert:</label>
+            <label className="block text-lg font-semibold text-gray-700 mb-2">
+              Reward Amount to Convert
+            </label>
             <input
               type="number"
               name="rewardAmount"
               value={formData.rewardAmount}
-              onChange={handleFormChange}
+              onChange={(e)=> setFormData({...formData , rewardAmount: e.target.value})}
               placeholder="Enter amount"
               max={rewards}
               className="w-full p-3 border rounded-lg"
             />
           </div>
-          <button type="submit" className="bg-green-500 text-white py-2 px-4 rounded-lg mt-4 hover:bg-green-700 transition duration-300">
-            Submit Request
-          </button>
+          <div className="col-span-1 md:col-span-2">
+            <button
+              type="submit"
+              className="w-full bg-custom-green text-white py-3 px-6 rounded-lg hover:bg-custom-green-700 transition duration-300"
+            >
+              Submit Request
+            </button>
+          </div>
         </form>
       )}
-    </>
+    </div>
   )}
 
   {/* Schedules Section */}
-  {schedules.length === 0 ? (
-    <p className="text-lg text-gray-700">No schedules found.</p>
-  ) : (
-    <>
-      <h2 className="text-2xl font-bold text-black mb-4">Schedules</h2>
-      <ul className="space-y-4">
+  <div>
+    <h2 className="text-3xl font-bold text-black mb-6">Schedules</h2>
+    {schedules.length === 0 ? (
+      <NoDataDisplay emptyText="No Schedules Found" />
+    ) : (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {schedules.map((schedule) => (
-          <li key={schedule.schedule_id} className="p-4 border border-gray-200 rounded-lg">
-            <p><strong>Date:</strong> {schedule.date}</p>
-            <p><strong>Time:</strong> {schedule.time}</p>
-            <p><strong>Status:</strong> {schedule.status}</p>
-            {schedule.price && <p><strong>Price:</strong> {schedule.price}</p>}
-            {schedule.status === 'RatingRequired' && (
-              <form onSubmit={(e) => handleRating(e, schedule.schedule_id)} className="mt-4">
-                <input
-                  type="number"
-                  step="0.1"
-                  value={rating}
-                  onChange={(e) => setRating(e.target.value)}
-                  className="p-2 border rounded-lg"
-                />
-                <button type="submit" className="bg-yellow-500 text-white py-1 px-4 rounded-lg ml-2 hover:bg-yellow-700 transition duration-300">
-                  Submit Rating
-                </button>
-              </form>
-            )}
-            {schedule.truckid && <p><strong>Truck Assigned by Company:</strong> {schedule.licenseplate}</p>}
-            <button onClick={() => handleInitiateChat(schedule.company_id, user_id)} className="bg-custom-green text-custom-black py-2 px-4 rounded-lg mt-2 hover:bg-white transition duration-300">
-              Initiate Chat with Company
+          <div
+          key={schedule.schedule_id}
+          className="p-6 bg-white border border-gray-200 rounded-lg shadow hover:shadow-md transition duration-200 relative"
+        >
+          {/* Chat Icon Button - Positioned at Top Right */}
+          <div className="absolute top-2 right-2">
+            <button
+              onClick={() => handleInitiateChat(schedule.company_id, user_id)}
+              className="text-custom-green hover:text-green-700"
+            >
+             <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="h-5 w-5 text-black"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4.848 2.771A49.144 49.144 0 0 1 12 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 0 1-3.476.383.39.39 0 0 0-.297.17l-2.755 4.133a.75.75 0 0 1-1.248 0l-2.755-4.133a.39.39 0 0 0-.297-.17 48.9 48.9 0 0 1-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97ZM6.75 8.25a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H7.5Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
             </button>
-          </li>
+          </div>
+    
+          {/* Schedule Information */}
+          <p className="text-lg font-semibold mb-2">
+            Date:{" "}
+            {`${new Date(schedule.date).getMonth() + 1}/${new Date(
+              schedule.date
+            ).getDate()}/${new Date(schedule.date).getFullYear()}`}
+          </p>
+          <p>
+            <strong>Time:</strong> {schedule.time}
+          </p>
+          <p>
+            <strong>Status:</strong> {schedule.status}
+          </p>
+          {!schedule.price && <p><strong>No Price Offered</strong> </p>}
+          {schedule.price && <p><strong>Price:</strong> {schedule.price}</p>}
+          {schedule.status === 'RatingRequired' && (
+            <form
+              onSubmit={(e) => handleRating(e, schedule.schedule_id)}
+              className="mt-4"
+            >
+              <input
+                type="number"
+                step="0.1"
+                value={rating}
+                onChange={(e) => setRating(e.target.value)}
+                className="w-full p-2 border rounded-lg"
+              />
+              <button
+                type="submit"
+                className="w-full bg-yellow-500 text-white py-2 px-4 rounded-lg mt-2 hover:bg-yellow-700 transition duration-300"
+              >
+                Submit Rating
+              </button>
+            </form>
+          )}
+          {schedule.truckid && (
+            <p><strong>Truck Assigned:</strong> {schedule.licenseplate}</p>
+          )}
+        </div>
         ))}
-      </ul>
-    </>
-  )}
+      </div>
+    )}
+  </div>
 </div>
+
 </>
   );
 };

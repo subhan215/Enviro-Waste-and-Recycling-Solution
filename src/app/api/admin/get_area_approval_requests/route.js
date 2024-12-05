@@ -8,8 +8,8 @@ export async function GET(req) {
 
     // Query to get all area approval requests
     console.log("hello");
-    const query = `SELECT area_approval_id, area_id, company_id, status, name 
-                   FROM request_for_area_approval 
+    const query = `SELECT area_approval_id, area.area_id, request_for_area_approval.company_id, status, area.name , company.name as company_name
+                   FROM request_for_area_approval join area on area.area_id = request_for_area_approval.area_id
                    JOIN company 
                    ON company.user_id = request_for_area_approval.company_id`;
     const { rows } = await pool.query(query);

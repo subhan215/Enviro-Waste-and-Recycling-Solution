@@ -7,6 +7,7 @@ import { setCurrentChat } from "../../../store/slices/currentChatSlice";
 //import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import Loader from "../ui/Loader";
+import NoDataDisplay from "../animations/NoDataDisplay";
 
 
 const Waste_Schedules = ({}) => {
@@ -202,33 +203,36 @@ const Waste_Schedules = ({}) => {
   if (schedules.length === 0)
     return (
       <>
+        <div className="flex items-center gap-2">
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="size-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
-          />
-        </svg>
-        {Rating}
-        <p>No schedules found for this company.</p>
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="currentColor"
+            className="size-6"
+            style={{ fill: "#FFAA00", marginRight: "8px" }} // Adjust the margin as needed
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-1.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+            />
+          </svg>
+          <span className="text-lg font-semibold">{Rating}</span>
+        </div>
+        <NoDataDisplay emptyText="No schedules Found!" />
       </>
     );
-
+    
   return (
     <>
-      <h1 className="text-3xl font-bold mb-6  text-custom-black ">
+      <h1 className="text-3xl font-bold mb-2  text-custom-black ">
         Company Schedules
       </h1>
-      <div className="p-6 bg-white shadow rounded-lg">
+      <div className="p-6 rounded-lg">
         {/* <p className="text-lg font-semibold mb-4 text-custom-black">Current rating: {Rating}</p> */}
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex" }} className="mb-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -248,135 +252,98 @@ const Waste_Schedules = ({}) => {
           {Rating}
         </div>
 
-        <ul className="space-y-6">
-          {schedules.map((schedule) =>
-            schedule.status !== "done" ? (
-              <li
-                key={schedule.schedule_id}
-                className="p-6 bg-white border border-gray-200 rounded-lg shadow-lg mb-6"
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
+        {schedules.map((schedule) =>
+          schedule.status !== "done" ? (
+            <div
+              key={schedule.schedule_id}
+              className="relative p-6 bg-white border border-gray-200 rounded-lg shadow-lg"
+            >
+              <button
+                onClick={() =>
+                  handleInitiateChat(schedule.company_id, schedule.user_id)
+                }
+                className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200"
               >
-                <button
-                  onClick={() =>
-                    handleInitiateChat(schedule.company_id, schedule.user_id)
-                  }
-                  className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200"
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="h-5 w-5 text-black"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="h-5 w-5 text-black"
+                  <path
+                    fillRule="evenodd"
+                    d="M4.848 2.771A49.144 49.144 0 0 1 12 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 0 1-3.476.383.39.39 0 0 0-.297.17l-2.755 4.133a.75.75 0 0 1-1.248 0l-2.755-4.133a.39.39 0 0 0-.297-.17 48.9 48.9 0 0 1-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97ZM6.75 8.25a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H7.5Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+
+              <div className="space-y-3 mb-6">
+                <p className="text-lg font-semibold">
+                  <strong>Date:</strong>      {`${new Date(schedule.date).getMonth() + 1}/${new Date(
+                schedule.date
+              ).getDate()}/${new Date(schedule.date).getFullYear()}`}
+                </p>
+                <p className="text-lg font-semibold">
+                  <strong>Time:</strong> {schedule.time}
+                </p>
+                <p className="text-lg font-semibold">
+                  <strong>Status:</strong> {schedule.status}
+                </p>
+                <p className="text-lg font-semibold">
+                  <strong>Truck Assigned:</strong>{" "}
+                  {schedule.licenseplate || "None"}
+                </p>
+              </div>
+
+              
+
+              {schedule.status === "Scheduled" && !schedule.truckid && (
+                <div className="mt-6 p-6 rounded-lg">
+                  <label className="block mb-4 text-sm font-medium text-gray-700">
+                    Select Truck:
+                    <select
+                      value={selectedTruck}
+                      onChange={(e) => setSelectedTruck(e.target.value)}
+                      className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    >
+                      <option value="">Choose a truck</option>
+                      {trucks.map((truck) => (
+                        <option key={truck.truckid} value={truck.truckid}>
+                          {truck.licenseplate}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button
+                    onClick={() => handleAssignTruck(schedule.schedule_id)}
+                    disabled={assigning}
+                    className={`w-full px-6 py-3 text-custom-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                      assigning
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-custom-green hover:bg-green-600 focus:ring-custom-green border border-custom-black"
+                    }`}
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M4.848 2.771A49.144 49.144 0 0 1 12 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 0 1-3.476.383.39.39 0 0 0-.297.17l-2.755 4.133a.75.75 0 0 1-1.248 0l-2.755-4.133a.39.39 0 0 0-.297-.17 48.9 48.9 0 0 1-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97ZM6.75 8.25a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H7.5Z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                    {assigning ? "Assigning..." : "Assign Truck"}
+                  </button>
+                </div>
+              )}
+
+              {schedule.truckid && (
+                <button
+                  onClick={() => {
+                    handleMarkAsDone(schedule.schedule_id);
+                  }}
+                  className="w-full px-6 py-3 bg-custom-green text-cusiom-black border border-custom-black hover:bg-green-600 hover:text-white focus:ring-custom-green rounded-lg"
+                >
+                  Mark as Done
                 </button>
-                <div className="flex justify-between items-start mb-6">
-                  <div className="space-y-3 ">
-                    <p className="text-lg font-semibold">
-                      <strong>Date:</strong> {schedule.date}
-                    </p>
-                    <p className="text-lg font-semibold">
-                      <strong>Time:</strong> {schedule.time}
-                    </p>
-                    <p className="text-lg font-semibold">
-                      <strong>Status:</strong> {schedule.status}
-                    </p>
-                    <p className="text-lg font-semibold">
-                      <strong>Truck Assigned:</strong>{" "}
-                      {schedule.licenseplate || "None"}
-                    </p>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleInitiateChat(
-                          schedule.company_id,
-                          schedule.user_id
-                        )
-                      }
-                      className="px-4 py-2 text-white rounded focus:outline-none focus:ring-2  transition-transform duration-200 ease-in-out"
-                      style={{ backgroundColor: "transparent" }}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="size-6"
-                        style={{ fill: "black" }}
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M4.848 2.771A49.144 49.144 0 0 1 12 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 0 1-3.476.383.39.39 0 0 0-.297.17l-2.755 4.133a.75.75 0 0 1-1.248 0l-2.755-4.133a.39.39 0 0 0-.297-.17 48.9 48.9 0 0 1-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97ZM6.75 8.25a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H7.5Z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                      <style jsx>{`
-                        button:hover {
-                          background-color: #007bff; /* Change to a light blue color */
-                          color: white;
-                          transform: scale(1.05);
-                        }
-                        button:hover svg {
-                          fill: white; /* Change the SVG fill color on hover */
-                        }
-                      `}</style>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Conditional Truck Assignment Section */}
-                {schedule.status === "Scheduled" && !schedule.truckid && (
-                  <div className="mt-6 p-6 bg-gray-50 border border-gray-300 rounded-lg shadow-inner">
-                    <label className="block mb-4 text-sm font-medium text-gray-700">
-                      Select Truck:
-                      <select
-                        value={selectedTruck}
-                        onChange={(e) => setSelectedTruck(e.target.value)}
-                        className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-                      >
-                        <option value="">Choose a truck</option>
-                        {trucks.map((truck) => (
-                          <option key={truck.truckid} value={truck.truckid}>
-                            {truck.licenseplate}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <button
-                      onClick={() => handleAssignTruck(schedule.schedule_id)}
-                      disabled={assigning}
-                      className={`w-full px-6 py-3 text-custom-black  rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
-                        assigning
-                          ? "bg-gray-400 cursor-not-allowed"
-                          : "bg-custom-green hover:bg-green-600 focus:ring-custom-green border border-custom-black"
-                      }`}
-                    >
-                      {assigning ? "Assigning..." : "Assign Truck"}
-                    </button>
-                  </div>
-                )}
-
-                {/* Mark as Done Button */}
-                <div className="mt-6">
-                  {schedule.truckid && (
-                    <button
-                      onClick={() => {
-                        handleMarkAsDone(schedule.schedule_id);
-                      }}
-                      className="w-full px-6 py-3 bg-custom-green text-cusiom-black border border-custom-black rounded-lg "
-                    >
-                      Mark as Done
-                    </button>
-                  )}
-                </div>
-              </li>
-            ) : null
-          )}
-        </ul>
-        {showForm && (
+              )}
+            </div>
+          ) : null
+        )}
+      </div>{showForm && (
           <form
             onSubmit={handleFormSubmit}
             className="mt-6 p-6 bg-gray-100 border border-gray-300 rounded-lg"

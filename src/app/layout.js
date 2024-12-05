@@ -49,8 +49,9 @@ function LayoutContent({ children }) {
         if (data.success) {
           dispatch(setUserData({ ...data.user, role: data.role }));
         } else {
-          console.log("Data not found!");
-          navigate.push('/signin'); // Redirect if user data is not found
+          //console.log("Data not found!");
+          //alert("asasa")
+          //navigate.push('/signin'); // Redirect if user data is not found
         }
       } catch (error) {
         console.error('Error fetching user data:', error);

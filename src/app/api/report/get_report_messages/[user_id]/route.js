@@ -17,10 +17,10 @@ export async function GET(req, { params }) {
 
     // Query to get reports with messages from the reports table
     const getMessagesQuery = `
-      SELECT r.message, c.name
+      SELECT r.message, c.name , r.report_id
       FROM reports r
       JOIN company c ON c.user_id = r.company_id
-      WHERE r.user_id = $1 AND r.message IS NOT NULL AND r.message != ''
+      WHERE r.user_id = $1 AND (r.message IS NOT NULL AND r.message != '') AND r.status!=true
       ORDER BY r.report_id DESC LIMIT 5;
     `;
 

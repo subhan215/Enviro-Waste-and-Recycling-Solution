@@ -15,7 +15,7 @@ export async function GET(req, { params }) {
     await client.query('BEGIN');
     
     all_centers = await client.query(
-      'SELECT * from recycling_center where company_id = $1',
+      'SELECT * from recycling_center where recycling_center.company_id = $1',
       [companyId]
     );
 

@@ -22,7 +22,7 @@ export async function GET(req, { params }) {
 
         // Fetch all missed pickups that are not completed for the given user id
         all_missed_pickups = await client.query(
-            'SELECT status, missed_pickup_id, company_id, created_at, clean_img FROM missed_pickup WHERE user_id = $1 AND status != $2',
+            'SELECT * FROM missed_pickup join company on company.user_id = missed_pickup.company_id WHERE missed_pickup.user_id = $1 AND missed_pickup.status != $2',
             [id, "completed"]
         );
 

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Loader from '../ui/Loader';
-
-
+import NoDataDisplay from "../../components/animations/NoDataDisplay"
 const ManageAndViewAreas = () => {
   const [areas, setAreas] = useState([]);
   const [nonAssignedAreas, setNonAssignedAreas] = useState([]);
@@ -110,126 +109,117 @@ const ManageAndViewAreas = () => {
 
   if (loading) return<><Loader></Loader></>;
   return (
-<div className="p-6 bg-white min-h-screen">
-  <div className="bg-white shadow-md rounded p-6">
-    <h2 className="text-2xl font-bold mb-4">Manage and View Areas</h2>
-    {/* <p className="mb-4">{viewMode ? "View assigned areas" : "Add New Area"}</p> */}
-
-    {/* Toggle between view and manage modes */}
+    <div className="p-6 min-h-screen">
+      <div className="rounded p-6">
+        <h2 className="text-2xl font-bold mb-4">Manage and View Areas</h2>
+  
+        {/* Toggle between view and manage modes */}
+        <button
+          className="mb-6 px-4 py-2 bg-custom-green text-black rounded hover:rounded-2xl border border-custom-black"
+          onClick={() => setViewMode((prev) => !prev)}
+        >
+          {viewMode ? "Add new area" : "View Assigned Areas"}
+        </button>
+  
+       {/* Fetch Area Requests */}
+<div className="mb-8">
+  <div className="flex justify-between items-center mb-4">
+    {loading ? (
+      <p className="text-gray-600">Loading....</p>
+    ) : null}
+    {areaRequests.length === 0 && (
     <button
       className="mb-6 px-4 py-2 bg-custom-green text-black rounded hover:rounded-2xl border border-custom-black"
-      onClick={() => setViewMode((prev) => !prev)}
+      onClick={fetchAreaRequests}
     >
-      {viewMode ? "Add new area" : "View Assigned Areas"}
+      Fetch Area Requests
     </button>
+)}
+  </div>
 
-    {/* Fetch Area Requests */}
-    <div className="mb-6">
-      {loading ? (
-        <p className="text-gray-600">Loading....</p>
-      ) : (
-        <p className="text-gray-600">No requests fetched</p>
-      )}
-      <button
-        className="mt-2 px-4 py-2 bg-custom-green text-black rounded hover:rounded-2xl border border-custom-black"
-        onClick={fetchAreaRequests}
-      >
-        Fetch Area Requests
-      </button>
-      {areaRequests.length > 0 && (
-        <div className="mt-4">
-          {areaRequests.map((req, index) => (
-            <div key={index} className="bg-gray-50 p-4 mb-4 rounded shadow">
-              <p className="font-semibold">Request {index + 1}</p>
-              <p>Area name: {req.name}</p>
-              <p>Status: {req.status}</p>
-            </div>
-          ))}
+  {areaRequests.length > 0 ?  (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {areaRequests.map((req, index) => (
+        <div key={index} className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
+          <p className="font-semibold text-custom-green">Request {index + 1}</p>
+          <p className="text-sm text-custom-green mb-2">Area Name: {req.name}</p>
+          <p className="text-sm text-custom-green">Status: {req.status}</p>
         </div>
-      )}
+      ))}
     </div>
+  ): <NoDataDisplay emptyText = "No requests Fetched"/>}
+</div>
 
-    {/* View Assigned Areas */}
-    {viewMode && (
-      <div className="mt-6">
-        <h3 className="text-xl font-bold mb-4">Assigned Areas</h3>
-        <table className="min-w-full bg-white shadow-md rounded">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 border-b text-left">Area Name</th>
-              <th className="py-2 px-4 border-b text-left">Truck ID</th>
-              <th className="py-2 px-4 border-b text-left">License Plate</th>
-              <th className="py-2 px-4 border-b text-left">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {areas.length > 0 ? (
-              areas.map((area, index) => (
-                <tr key={index} className="hover:bg-gray-100">
-                  <td className="py-2 px-4 border-b">{area.name}</td>
-                  <td className="py-2 px-4 border-b">{area.truckid ? area.truckid : "null"}</td>
-                  <td className="py-2 px-4 border-b">{area.licenseplate ? area.licenseplate : "null"}</td>
-                  <td className="py-2 px-4 border-b">{area.status}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="text-center py-4">No assigned areas found</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    )}
-
-    {/* Manage Areas */}
-    {!viewMode && (
-      <div className="mt-6">
-        <label className="block mb-4 text-lg font-semibold">Select Non-Assigned Areas:</label>
-        <div className="mb-6">
-          {nonAssignedAreas.length > 0 ? (
-            nonAssignedAreas.map((area, index) => (
-              <div key={index} className="flex items-center mb-2">
-                <input
-                  type="checkbox"
-                  id={`area-${area.area_id}`}
-                  value={area.area_id}
-                  onChange={handleAreaSelect}
-                  className="mr-2"
-                />
-                <label htmlFor={`area-${area.area_id}`}>{area.name}</label>
+  
+        {/* View Assigned Areas */}
+        {viewMode && (
+          <div className="mt-6">
+            <h3 className="text-xl font-bold mb-4">Assigned Areas</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+              {areas.length > 0 ? (
+                areas.map((area, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-50 p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out"
+                  >
+                    <h4 className="text-lg  text-custom-green font-semibold mb-2">{area.name}</h4>
+                    <p className="text-sm text-custom-green mb-2">License Plate: {area.licenseplate || "null"}</p>
+                  </div>
+                ))
+              ) : (
+                <noDataDisplay emptyText= "No Assigned Areas Found"/>
+              )}
+            </div>
+          </div>
+        )}
+  
+        {/* Manage Areas */}
+        {!viewMode && (
+          <div className="mt-6">
+            <label className="block mb-4 text-lg font-semibold">Select Non-Assigned Areas:</label>
+            <div className="mb-6">
+              {nonAssignedAreas.length > 0 ? (
+                nonAssignedAreas.map((area, index) => (
+                  <div key={index} className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id={`area-${area.area_id}`}
+                      value={area.area_id}
+                      onChange={handleAreaSelect}
+                      className="mr-2"
+                    />
+                    <label htmlFor={`area-${area.area_id}`}>{area.name}</label>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-600">No non-assigned areas available.</p>
+              )}
+            </div>
+  
+            {selectedAreas.length > 0 && (
+              <div>
+                <button
+                  className="px-4 py-2 bg-custom-green text-black rounded hover:bg-green-600 hover:rounded-2xl border border-custom-black"
+                  onClick={handleAssignArea}
+                >
+                  Click to send the add area request for approval
+                </button>
+                <button
+                  className="ml-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                  onClick={() => {
+                    setIsAddingArea(false);
+                    setSelectedAreas([]); // Reset selection if canceled
+                  }}
+                >
+                  Cancel
+                </button>
               </div>
-            ))
-          ) : (
-            <p className="text-gray-600">No non-assigned areas available.</p>
-          )}
-        </div>
-
-        {selectedAreas.length > 0 && (
-          <div>
-            <button
-              className="px-4 py-2 bg-custom-green text-black rounded hover:bg-green-600 hover:rounded-2xl border border-custom-black"
-              onClick={handleAssignArea}
-            >
-              Click to send the add area request for approval
-            </button>
-            <button
-              className="ml-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-              onClick={() => {
-                setIsAddingArea(false);
-                setSelectedAreas([]); // Reset selection if canceled
-              }}
-            >
-              Cancel
-            </button>
+            )}
           </div>
         )}
       </div>
-    )}
-  </div>
-</div>
-
+    </div>
   );
-};
+  };
 
 export default ManageAndViewAreas;

@@ -46,11 +46,12 @@ const Truck_Information = () => {
         className="p-6 bg-white rounded-lg shadow-lg flex flex-col space-y-4 transition-transform transform hover:scale-105"
       >
         <div className="text-lg font-semibold text-custom-black">
-          ID: <span className="font-normal">{truck.truckid}</span>
+          License Plate: <span className="font-normal">{truck.licenseplate}</span>
         </div>
-        <div className="text-lg text-custom-black">
+        {truck.name ?  <div className="text-lg text-custom-black">
           Assigned Area: <span className="font-normal">{truck.name}</span>
-        </div>
+        </div>: null}
+       
         <div className="text-lg text-custom-black">
           Capacity Status: <span className="font-normal">{truck.capacity}</span>
         </div>

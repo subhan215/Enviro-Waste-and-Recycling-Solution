@@ -14,6 +14,15 @@ const config: Config = {
         'custom-green' : '#00ED64',
         'custom-black' : '#001E2B'
       },
+      animation: {
+        wiggle: 'wiggle 1s ease-in-out infinite',
+      },
+      keyframes: {
+        wiggle: {
+          '0%, 100%': { transform: 'rotate(-3deg)' },
+          '50%': { transform: 'rotate(3deg)' },
+        },
+      },
     },
   },
   plugins: [],

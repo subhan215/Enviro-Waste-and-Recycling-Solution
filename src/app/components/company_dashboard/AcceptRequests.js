@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import Loader from "../ui/Loader";
+import NoDataDisplay from "../animations/NoDataDisplay";
 
 
 function AcceptRequests() {
@@ -89,7 +90,7 @@ function AcceptRequests() {
     if (loading) return<><Loader></Loader></>;
 
     return (
-<div className="p-6 bg-white text-white rounded-2xl">
+<div className="p-6 rounded-2xl">
   <h2 className="text-2xl font-bold text-custom-black  mb-6">Accept Requests</h2>
 
   {error && <p className="text-red-500 mb-4">{error}</p>}
@@ -97,28 +98,33 @@ function AcceptRequests() {
 
   {loading ? (
     <p className="text-lg text-center">Loading requests...</p>
-  ) : requests.length === 0 ? (
-    <p className="text-lg text-center">Please locate a recycling center for your company first to view requests.</p>
-  ) : (
+  ) : requests.length === 0 ? ( <>
+    <NoDataDisplay emptyText="No requests Found"/>
+    <p className="text-lg text-center">If you haven't locate a recycling center, locate them you will see request
+      for wastes if any available
+    </p>
+    </>) : (
     <ul className="space-y-4">
       {requests.map((request) => (
         <li key={request.request_id} className="p-4 bg-white rounded-lg shadow-md border border-custom-green">
           <div className="text-lg font-semibold text-custom-black mb-2">
             Waste Weight: <span className="font-normal">{request.weight}</span>
           </div>
-          <div className="text-lg text-custom-black mb-2">
-            Preferred Date: <span className="font-normal">{request.date}</span>
+          <div className="text-lg font-semibold text-custom-black mb-2">
+            Preferred Date: <span className="font-normal"> {`${new Date(request.date).getMonth() + 1}/${new Date(
+                request.date
+              ).getDate()}/${new Date(request.date).getFullYear()}`}</span>
           </div>
-          <div className="text-lg text-custom-black mb-2">
+          <div className="text-lg font-semibold text-custom-black mb-2">
             Preferred Time: <span className="font-normal">{request.time}</span>
           </div>
-          <div className="text-lg text-custom-black mb-2">
+          <div className="text-lg font-semibold text-custom-black mb-2">
             Location: <span className="font-normal">{request.locationName || `${request.latitude}, ${request.longitude}`}</span>
           </div>
-          <div className="text-lg text-custom-black mb-2">
+          <div className="text-lg font-semibold text-custom-black mb-2">
             Distance: <span className="font-normal">{request.distance}</span>
           </div>
-          <div className="text-lg text-custom-black mb-2">
+          <div className="text-lg font-semibold text-custom-black mb-2">
             Minimum price offered till now: <span className="font-normal">{request.offered_price ? request.offered_price : " "}</span>
           </div>
           <div className="mt-4">

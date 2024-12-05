@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import Loader from "../ui/Loader";
+import NoDataHappyFace from "../animations/noDataHappyFace";
 
 const Report_to_admin = () => {
   const [companies, setCompanies] = useState([]);
@@ -43,26 +44,13 @@ const Report_to_admin = () => {
       setError(`Error fetching existing reports: ${err.message}`);
       console.error("Error fetching existing reports:", err);
     }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      await fetchCompanies();
-      await fetchExistingReports();
-      setLoading(false);
-    };
-
-    fetchData();
-  }, [user_id]);
-
-  useEffect(() => {
-    const fetchMessages = async () => {
+     };
+     const fetchMessages = async () => {
+      
       try {
         // Call the backend API to fetch the messages
         const response = await axios.get(`/api/report/get_report_messages/${user_id}`);
         console.log("Fetched Messages:", response.data.messages);
-
         if (response.data.messages) {
           setMessages(response.data.messages); // Store the messages in state
         } else {
@@ -71,23 +59,29 @@ const Report_to_admin = () => {
       } catch (err) {
         setError(`Error fetching messages: ${err.message}`);
         console.error("Error fetching messages:", err);
-      } finally {
-        setLoading(false);  // Stop loading after API call completes
-      }
+      } 
     };
-
-    fetchMessages();
-  }, [user_id]); 
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchCompanies();
+      await fetchExistingReports();
+      await fetchMessages() ; 
+      setLoading(false);
+    };
+    fetchData();
+  }, [user_id]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true)
     try {
       const response = await axios.post("/api/report/send_report", {
         user_id,
         company_id: companyId,
         description,
       });
-  
+      console.log(response)
       // Check if the response is successful
       if (response.data.success) {
         // Add the new report to the existing reports
@@ -109,17 +103,24 @@ const Report_to_admin = () => {
     } catch (err) {
       setError(`Error submitting report: ${err.message}`);
     }
+    finally{
+      setLoading(false) ; 
+    }
   };
   
   const handleMarkAsRead = async (reportId) => {
     try {
-      await axios.post("/api/report/mark_message_read", { report_id: reportId });
-      setShowMessages((prev) => ({ ...prev, [reportId]: false }));
-      setExistingReports((prev) =>
-        prev.map((report) =>
-          report.report_id === reportId ? { ...report, status: true } : report
-        )
-      );
+      const response = await axios.post("/api/report/mark_message_read", { report_id: reportId });
+      console.log(response) ; 
+      if(response.data.success) {
+        setMessages((prev) => ({ ...prev, [reportId]: false }));
+        setExistingReports((prev) =>
+          prev.map((report) =>
+            report.report_id === reportId ? { ...report, status: true } : report
+          )
+        );
+      }
+     
     } catch (err) {
       console.error("Error marking message as read:", err);
       setError(`Error marking message as read: ${err.message}`);
@@ -136,123 +137,67 @@ const Report_to_admin = () => {
   ); */
 
   return (
-    
-    // <div>
-    //    <div>
-    //   <h2>Messages from admin panel</h2>
-    //   {messages.length > 0 ? (
-    //     <div>
-    //       {messages.map((message) => (
-    //         <div key={message.report_id} className="message-box">
-    //           <p>{message.message} against company -- <strong>{message.name}</strong> </p>
-    //         </div>
-    //       ))}
-    //     </div>
-    //   ) : (
-    //     <p>No messages found.</p>
-    //   )}
-    // </div>
-    //   <h2>Report to Admin</h2>
-    //   {error && <p className="text-red-500">{error}</p>}
+        <>
 
-    //   {/* Existing Reports Section */}
-    //   <div>
-    //     <h3>Your Existing Reports</h3>
-    //     {existingReports.length > 0 ? (
-    //       existingReports.map((report) => (
-    //         <div key={report.report_id} className="report-box">
-    //           <p><strong>Company:</strong> {report.name}</p>
-    //           <p><strong>Description:</strong> {report.description}</p>
-    //         </div>
-    //       ))
-    //     ) : (
-    //       <p>No existing reports found.</p>
-    //     )}
-    //   </div>
-
-    //   {/* New Report Form Section */}
-    //   <div>
-    //     <h3>Submit a New Report</h3>
-    //     {companies.length > 0 ? (
-    //       <form onSubmit={handleSubmit}>
-    //         <div>
-    //           <label htmlFor="companyId">Select Company:</label>
-    //           <select
-    //             id="companyId"
-    //             value={companyId}
-    //             onChange={(e) => setCompanyId(e.target.value)}
-    //             required
-    //           >
-    //             <option value="" disabled>
-    //               -- Select a Company --
-    //             </option>
-    //             {companies.map((company) => (
-    //               <option key={company.user_id} value={company.user_id}>
-    //                 {company.name}
-    //               </option>
-    //             ))}
-    //           </select>
-    //         </div>
-    //         <div>
-    //           <label htmlFor="description">Description:</label>
-    //           <textarea
-    //             id="description"
-    //             value={description}
-    //             onChange={(e) => setDescription(e.target.value)}
-    //             required
-    //           />
-    //         </div>
-    //         <button type="submit">Submit</button>
-    //       </form>
-    //     ) : (
-    //       <p>All available companies have already been reported.</p>
-    //     )}
-    //   </div>
-    // </div>
-    <>
-
-<div className="min-h-screen bg-white text-custom-black p-6">
+<div className="min-h-screen text-custom-black p-6">
   
   {/* Messages Section */}
-  <div className="mb-8">
-    <h2 className="text-3xl font-bold text-custom-black mb-4">Messages from Admin Panel</h2>
-    {messages.length > 0 ? (
-      <div>
-        {messages.map((message) => (
-          <div key={message.report_id} className="message-box bg-white text-black p-4 mb-4 rounded-lg shadow-md hover:scale-105 transition-all">
-            <p>{message.message} against company -- <strong>{message.name}</strong></p>
+   {/* Messages Section */}
+   <div className="mb-8">
+        <h2 className="text-3xl font-bold text-custom-black mb-4">Messages from Admin Panel</h2>
+        {messages.length > 0 ? (
+          <div>
+            {messages.map((message) => (
+              <div
+                key={message.report_id}
+                className="message-box bg-white text-black p-4 mb-4 rounded-lg shadow-md hover:scale-105 transition-all relative"
+              >
+                {/* Cross icon button at the top-right corner */}
+                <button
+                  onClick={() => handleMarkAsRead(message.report_id)}
+                  className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+                >
+                  &times; {/* This is the cross icon */}
+                </button>
+                <p>
+                  {message.message} against company -- <strong>{message.name}</strong>
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
+        ) : (
+          <p>No messages found.</p>
+        )}
       </div>
-    ) : (
-      <p>No messages found.</p>
-    )}
-  </div>
 
-  {/* Report to Admin Section */}
-  <h2 className="text-3xl font-bold text-custom-black mb-4">Report to Admin</h2>
-  {error && <p className="text-red-500 mb-4">{error}</p>}
+ 
 
-  {/* Existing Reports Section */}
-  <div className="mb-8">
-    <h3 className="text-2xl font-semibold text-custom-black mb-4">Your Existing Reports</h3>
-    {existingReports.length > 0 ? (
-      existingReports.map((report) => (
-        <div key={report.report_id} className="report-box bg-white text-black p-4 mb-4 rounded-lg shadow-md hover:scale-105 transition-all">
+ {/* Existing Reports Section */}
+<div className="mb-8">
+  <h3 className="text-2xl font-semibold text-custom-black mb-4">Your Existing Reports</h3>
+  {existingReports.length > 0 ? (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {existingReports.map((report) => (
+        <div
+          key={report.report_id}
+          className="report-box bg-white text-black p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-lg transition-all duration-300"
+        >
           <p><strong>Company:</strong> {report.name}</p>
           <p><strong>Description:</strong> {report.description}</p>
         </div>
-      ))
-    ) : (
-      <p>No existing reports found.</p>
-    )}
-  </div>
+      ))}
+    </div>
+  ) : (
+    <NoDataHappyFace emptyText = "No existing Reports Found"/>
+  )}
+</div>
+
 
   {/* New Report Form Section */}
   <div>
     <h3 className="text-2xl font-semibold text-custom-black mb-4">Submit a New Report</h3>
     {companies.length > 0 ? (
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md max-w-lg mx-auto">
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md max-w-lg">
         <div className="mb-4">
           <label htmlFor="companyId" className="block text-custom-black font-semibold mb-2">Select Company:</label>
           <select

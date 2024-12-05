@@ -137,27 +137,31 @@ const RecyclingCenterNearby = () => {
               ))}
             </MapContainer>
           ) : (
-            <div className="bg-white shadow-lg rounded-lg p-4 border-l-4 border-[#00ED64]">
-              <h2 className="text-2xl font-semibold text-gray-700 mb-4">Recycling Centers List</h2>
-              <ul className="space-y-4">
-                {recyclingCenters.map((center) => {
-                  const distance = calculateDistance(
-                    userLocation.latitude,
-                    userLocation.longitude,
-                    center.latitude,
-                    center.longitude
-                  ).toFixed(2);
-                  return (
-                    <li key={center.recycling_center_id} className="p-4 border rounded-lg shadow-sm bg-gray-50 hover:bg-green-50 hover:shadow-md transition-all duration-300">
-                      <strong className="text-lg text-gray-800">{center.name}</strong>
-                      <p className="text-gray-600">Distance: {distance} km</p>
-                      <p className="text-gray-600">Area: {center.area}</p>
-                      <p className="text-gray-600">Street: {center.street}</p>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+            <div className="rounded-lg p-4 border-l-4 ">
+  <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+    {recyclingCenters.map((center) => {
+      const distance = calculateDistance(
+        userLocation.latitude,
+        userLocation.longitude,
+        center.latitude,
+        center.longitude
+      ).toFixed(2);
+
+      return (
+        <div
+          key={center.recycling_center_id}
+          className="p-6 border rounded-lg shadow-sm bg-gray-50 hover:bg-green-50 hover:shadow-md transition-all duration-300 border-[#00ED64]" 
+        >
+          <strong className="text-lg text-gray-800">{center.name}</strong>
+          <p className="text-gray-600">Distance: {distance} km</p>
+          <p className="text-gray-600">Area: {center.area}</p>
+          <p className="text-gray-600">Street: {center.street}</p>
+        </div>
+      );
+    })}
+  </div>
+</div>
+
           )
         )
       ) : (

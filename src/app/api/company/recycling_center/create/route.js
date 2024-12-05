@@ -7,12 +7,11 @@ export async function POST(req) {
     const client = await pool.connect(); // Create a client for transaction handling
 
     try {
-        const { company_id, area_id, latitude, longitude } = await req.json();
+        const { company_id, latitude, longitude } = await req.json();
         
         // Convert input fields to the correct types
         const parsedData = {
             company_id: parseInt(company_id, 10),
-            area_id: parseInt(area_id, 10),  // Convert area_id to integer
             latitude: parseFloat(latitude),    // Convert latitude to float
             longitude: parseFloat(longitude),  // Convert longitude to float
         };
@@ -21,7 +20,6 @@ export async function POST(req) {
         // Validate input data
         if (
             isNaN(parsedData.company_id) ||
-            isNaN(parsedData.area_id) ||
             isNaN(parsedData.latitude) ||
             isNaN(parsedData.longitude)
         ) {
@@ -36,8 +34,8 @@ export async function POST(req) {
 
         // Check if the recycling center already exists
         const existingCenterResult = await client.query(
-            `SELECT * FROM recycling_center WHERE company_id = $1 AND area_id = $2`,
-            [parsedData.company_id, parsedData.area_id]
+            `SELECT * FROM recycling_center WHERE company_id = $1 AND latitude = $2 AND longitude = $3`,
+            [parsedData.company_id, parsedData.latitude , parsedData.longitude]
         );
 
         if (existingCenterResult.rows.length > 0) {
@@ -51,9 +49,9 @@ export async function POST(req) {
 
         // Insert the new recycling center into the database
         const insertResult = await client.query(
-            `INSERT INTO recycling_center (company_id, area_id, latitude, longitude)
-             VALUES ($1, $2, $3, $4) RETURNING recycling_center_id, company_id, area_id, latitude, longitude`,
-            [parsedData.company_id, parsedData.area_id, parsedData.latitude, parsedData.longitude]
+            `INSERT INTO recycling_center (company_id , latitude, longitude)
+             VALUES ($1, $2, $3) RETURNING recycling_center_id, company_id,latitude, longitude`,
+            [parsedData.company_id,parsedData.latitude, parsedData.longitude]
         );
 
         const newCenter = insertResult.rows[0];

@@ -7,14 +7,20 @@ export async function GET(req) {
         // Begin the transaction
         await client.query('BEGIN');
 
-        // Query to fetch all reports
+        // Query to fetch all reports with aliases for clarity
         const all_reports = await client.query(`
-            SELECT * FROM reports 
-            JOIN company ON reports.company_id = company.user_id 
-            ORDER BY sentiment_rating DESC
+            SELECT 
+                c.*, 
+                u.*, 
+                r.*, 
+                c.name AS company_name 
+            FROM reports r
+            JOIN company c ON r.company_id = c.user_id
+            JOIN "User" u ON r.user_id = u.user_id
+            ORDER BY r.sentiment_rating DESC
         `);
 
-        console.log("All reports: ", all_reports);
+        console.log("All reports: ", all_reports.rows); // Log the rows instead of the entire result
 
         // Commit the transaction
         await client.query('COMMIT');

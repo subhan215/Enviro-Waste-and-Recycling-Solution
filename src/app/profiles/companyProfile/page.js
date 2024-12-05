@@ -114,9 +114,10 @@ const CompanyProfilePage = () => {
     if (contractStatus === "terminated") {
       return (
         <div>
-          <p>
+          {!pendingAgreement && <p>
             Your contract has been terminated. Please sign the agreement again.
-          </p>
+          </p> }
+         
           {pendingAgreement ? (
             <div>
               <h4>Your resign agreement request is pending!</h4>
@@ -125,7 +126,7 @@ const CompanyProfilePage = () => {
             <button
               onClick={handleReSignAgreement}
               disabled={isSigning}
-              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
+              className="mt-4 bg-custom-green text-white py-2 px-4 rounded"
             >
               {isSigning ? "Signing..." : "Re-sign Agreement"}
             </button>
@@ -152,7 +153,7 @@ const CompanyProfilePage = () => {
       case "submit_materials": 
         return <SubmitUserMaterials />
       default:
-        return <p>Select an option to get started.</p>;
+        return <p className="text-custom-green">Select an option to get started.</p>;
     }
   };
 
@@ -347,7 +348,7 @@ const CompanyProfilePage = () => {
             </li>
             <li
               className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${
-                selectedOption === "waste_schedules"
+                selectedOption === "submit_materials"
                   ? "bg-custom-green text-custom-custom-black"
                   : ""
               }`}
