@@ -6,7 +6,10 @@ import { removeCookie } from "../../cookies/removeCookie";
 import { getCookie } from "../../cookies/getCookie";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import {setUserData as setReduxUserData} from "../../store/slices/userDataSlice"
 const SignIn = () => {
+  const dispatch = useDispatch()
   const [accessToken, setAccessToken] = useState(getCookie("access_token"));
   const refreshToken = getCookie("refresh_token");
   const navigate = useRouter()
@@ -31,12 +34,16 @@ const SignIn = () => {
         alert(responseData.message);
         setCookie("access_token", responseData.data.access_token, 2);
         setCookie("refresh_token", responseData.data.refresh_token, 2);
+        console.log(responseData)
         if(responseData.data.role === "user") {
           navigate.push('/profiles/userProfile')
+          dispatch(setReduxUserData({...responseData.data}));
         }
         else {
           navigate.push('/profiles/companyProfile')
+          dispatch(setReduxUserData({...responseData.data}));
         }
+        
         // Redirect or update state to show home or profile page
       } else {
         alert(responseData.message);

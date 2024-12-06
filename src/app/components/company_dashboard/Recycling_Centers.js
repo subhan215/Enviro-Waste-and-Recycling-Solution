@@ -26,174 +26,185 @@ const RecyclingCenters = ({}) => {
     const [locationName, setLocationName] = useState('');
     const [map, setMap] = useState(null);
     const [areaNames, setAreaNames] = useState([]);
+    const[requests_area_names , set_requests_area_names] = useState([]) ; 
     const userData = useSelector((state) => state.userData.value)
     const [viewMode, setViewMode] = useState('view'); // 'view
     const [ searchResults, setSearchResults] = useState([])
     const searchResultsRef = useRef(null);
+    const [currentRequests, setCurrentRequests] = useState([]); // For displaying current requests
+    const [viewCenters, setViewCenters] = useState('requests');
+    const [arealoading , setAreaLoading] = useState(false) ; 
     const toggleView = () => {
       setViewMode(viewMode === 'view' ? 'create' : 'view');
     };
     let companyId = userData.user_id
     const fetchRecyclingCenters = async () => {
-        try {
-            const response = await axios.get(`/api/company/recycling_center/get_company_recycling_centers/${companyId}`);
-            console.log(response)
-            setRecyclingCenters(response.data.data);
-            //setLoading(false);
-        } catch (err) {
-            setError('Error fetching recycling centers');
-            //setLoading(false);
-        }
-    };
-   
-    useEffect(() => {
-        const fetchData = async () => {
-          setTimeout(async () => {
-            await fetchRecyclingCenters();
-            setLoading(false);
-          }, 1000);
-        };
-        fetchData();
-      }, []);
-
-    useEffect(() => {
-        // Fetch areas from your API when the component mounts
-        const fetchAreas = async () => {
-            try {
-                const response = await fetch(`/api/company/recycling_center/get_unassigned_areas/${companyId}`); // Adjust this URL as needed
-                const data = await response.json();
-                if (data.success) {
-                    setAreas(data.data); // Assuming the API returns an array of areas
-                } else {
-                    console.error(data.message);
-                }
-            } catch (error) {
-                console.error('Error fetching areas:', error);
-            }
-        };
-        fetchAreas();
-    }, []);
-
-    const LocationMarker = () => {
-        useMapEvents({
-            click(e) {
-                const { lat, lng } = e.latlng;
-                setNewCenter({ ...newCenter, latitude: lat, longitude: lng });
-            },
-        });
-
-        return newCenter.latitude && newCenter.longitude ? (
-            <Marker position={[newCenter.latitude, newCenter.longitude]} />
-        ) : null;
-    };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewCenter({ ...newCenter, [name]: value });
-    };
-
-    const handleCreateCenter = async (e) => {
-        e.preventDefault();
-        setError('') ; 
-        try {
-            const response = await fetch('/api/company/recycling_center/create/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    company_id: companyId,
-                    area_id: newCenter.area_id,
-                    latitude: newCenter.latitude,
-                    longitude: newCenter.longitude,
-                }),
-            }) ; 
-            console.log(response)
-            const data = await response.json();
-            console.log(data)
-            alert(data.message)
-            setRecyclingCenters([...recyclingCenters , data.data])
-            //fetchRecyclingCenters()
-            setNewCenter({ area_id: '', latitude: '', longitude: '' });
-        } catch (err) {
-            console.error(err);
-            setError('Error creating recycling center');
-        }
-    };
-    
-    const handleSearchLocation = async () => {
-      const karachiBounds = {
-        southWest: { lat: 24.774265, lon: 66.973096 },
-        northEast: { lat: 25.102974, lon: 67.192733 },
-      };
-  
       try {
-        const response = await axios.get(
-          `https://photon.komoot.io/api/?q=${encodeURIComponent(
-            locationName
-          )}&bbox=${karachiBounds.southWest.lon},${karachiBounds.southWest.lat},${karachiBounds.northEast.lon},${karachiBounds.northEast.lat}`
-        );
-        console.log(response)
-        if (response.data && response.data.features.length > 0) {
-          setSearchResults(response.data.features);
-        }
-      } catch {
-        setError("Error searching for location");
+          const response = await axios.get(`/api/company/recycling_center/get_company_recycling_centers/${companyId}`);
+          console.log(response);
+          setRecyclingCenters(response.data.data);
+      } catch (err) {
+          setError('Error fetching recycling centers');
       }
-    };
+  };
   
-    
-    // Set the map reference when the component mounts
-    const mapRef = useMapEvents({
-        load: (mapInstance) => {
-            setMap(mapInstance);
-        }
-    });
-    const fetchAreaName = async (lat, lon) => {
+  const fetchCurrentRequests = async () => {
       try {
-        // Fetching data from Nominatim API
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
-        );
-    
-        // Check if the response is okay (status 200)
-        if (!response.ok) {
-          throw new Error(`Failed to fetch data: ${response.statusText}`);
-        }
-    
-        const data = await response.json();
-        
-        // Check if the necessary data exists and return the formatted address
-        if (data?.address) {
-          const { road, neighbourhood, city } = data.address;
-          const areaName = `${road || ''} ${neighbourhood || ''} ${city || ''}`.trim() || "Unknown Area";
-          return areaName;
-        } else {
-          return "Unknown Area";
-        }
+          const response = await axios.get(`/api/company/recycling_center/get_company_recycling_center_requests/${companyId}`);
+          setCurrentRequests(response.data.data);
       } catch (error) {
-        // Handle any errors that occur during fetch or processing
-        console.error("Error fetching area name:", error);
-        return "Unknown Area"; // Return a default value in case of error
+          console.error("Error fetching current requests:", error);
       }
-    };
-    
+  };
   
-    useEffect(() => {
-      // Fetch area names for all recycling centers
-      const getAreaNames = async () => {
-        const names = await Promise.all(
-          recyclingCenters.map(async (center) => {
-            const areaName = await fetchAreaName(center.latitude, center.longitude);
-            return areaName;
-          })
-        );
-        setAreaNames(names);
-        setLoading(false); // Set loading to false when the data is fetched
+  const fetchAreas = async () => {
+      try {
+          const response = await fetch(`/api/company/recycling_center/get_unassigned_areas/${companyId}`);
+          const data = await response.json();
+          if (data.success) {
+              setAreas(data.data);
+          } else {
+              console.error(data.message);
+          }
+      } catch (error) {
+          console.error('Error fetching areas:', error);
+      }
+  };
+  
+  const LocationMarker = () => {
+      useMapEvents({
+          click(e) {
+              const { lat, lng } = e.latlng;
+              setNewCenter({ ...newCenter, latitude: lat, longitude: lng });
+          },
+      });
+  
+      return newCenter.latitude && newCenter.longitude ? (
+          <Marker position={[newCenter.latitude, newCenter.longitude]} />
+      ) : null;
+  };
+  
+  const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setNewCenter({ ...newCenter, [name]: value });
+  };
+  
+  const handleCreateCenter = async (e) => {
+      e.preventDefault();
+      setError('');
+      try {
+          const response = await fetch('/api/company/recycling_center/create/', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  company_id: companyId,
+                  area_id: newCenter.area_id,
+                  latitude: newCenter.latitude,
+                  longitude: newCenter.longitude,
+              }),
+          });
+          console.log(response);
+          const data = await response.json();
+          console.log(data);
+          alert(data.message);
+          await fetchCurrentRequests();
+      } catch (err) {
+          console.error(err);
+          setError('Error creating recycling center');
+      }
+  };
+  
+  const handleSearchLocation = async () => {
+      const karachiBounds = {
+          southWest: { lat: 24.774265, lon: 66.973096 },
+          northEast: { lat: 25.102974, lon: 67.192733 },
       };
   
-      getAreaNames();
-    }, [recyclingCenters]);
+      try {
+          const response = await axios.get(
+              `https://photon.komoot.io/api/?q=${encodeURIComponent(
+                  locationName
+              )}&bbox=${karachiBounds.southWest.lon},${karachiBounds.southWest.lat},${karachiBounds.northEast.lon},${karachiBounds.northEast.lat}`
+          );
+          console.log(response);
+          if (response.data && response.data.features.length > 0) {
+              setSearchResults(response.data.features);
+          }
+      } catch {
+          setError("Error searching for location");
+      }
+  };
+  
+  // Fetch area names using reverse geocoding
+  const fetchAreaName = async (lat, lon) => {
+      try {
+          const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
+          );
+  
+          if (!response.ok) {
+              throw new Error(`Failed to fetch data: ${response.statusText}`);
+          }
+  
+          const data = await response.json();
+  
+          if (data?.address) {
+              const { road, neighbourhood, city } = data.address;
+              const areaName = `${road || ''} ${neighbourhood || ''} ${city || ''}`.trim() || "Unknown Area";
+              return areaName;
+          } else {
+              return "Unknown Area";
+          }
+      } catch (error) {
+          console.error("Error fetching area name:", error);
+          return "Unknown Area";
+      }
+  };
+  
+  // Effect to load all data
+  useEffect(() => {
+      const fetchAll = async () => {
+          setLoading(true);
+          await Promise.all([fetchAreas(), fetchCurrentRequests(), fetchRecyclingCenters()]);
+          setLoading(false);
+      };
+  
+      fetchAll();
+  }, [companyId]); // Trigger the effect when the companyId changes
+  
+  // Fetch all area names for recycling centers and current requests
+  useEffect(() => {
+      const fetchAllAreaNames = async () => {
+          setAreaLoading(true)
+          try {
+              const recyclingCenterNames = await Promise.all(
+                  recyclingCenters.map(async (center) => {
+                      const areaName = await fetchAreaName(center.latitude, center.longitude);
+                      return areaName;
+                  })
+              );
+  
+              const requestAreaNames = await Promise.all(
+                  currentRequests.map(async (request) => {
+                      const areaName = await fetchAreaName(request.latitude, request.longitude);
+                      return areaName;
+                  })
+              );
+              setAreaNames(recyclingCenterNames);
+              set_requests_area_names(requestAreaNames);
+          } catch (error) {
+              console.error("Error fetching area names:", error);
+          }
+          finally{
+            setAreaLoading(false)
+          }
+      };
+  
+      fetchAllAreaNames();
+  }, [recyclingCenters, currentRequests]); // Re-fetch area names when recyclingCenters or currentRequests change
+  
     return (
       <div className="p-6 text-custom-black rounded-lg">
         <h2 className="text-2xl font-bold text-custom-black mb-6">Recycling Centers</h2>
@@ -213,60 +224,106 @@ const RecyclingCenters = ({}) => {
           <p className="text-lg text-red-500 text-center">{error}</p>
         ) : viewMode === 'view' ? (
           <div>
-      <h3 className="text-xl font-semibold text-custom-black mb-4">Existing Centers</h3>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {recyclingCenters.map((center, index) => (
-          <div
-            key={center.recycling_center_id}
-            className="p-4 bg-white rounded-lg shadow-md hover:scale-105 transition-transform duration-200 border-2 border-custom-green"
-          >
-            <div className="text-lg font-semibold text-custom-black">
-              <strong>Area:</strong> {loading ? "Loading..." : areaNames[index]}
-            </div>
-            <div className="text-lg text-custom-black">
-              <strong>Latitude:</strong> {center.latitude}
-            </div>
-            <div className="text-lg text-custom-black">
-              <strong>Longitude:</strong> {center.longitude}
-            </div>
-          </div>
-        ))}
+      {/* Toggle buttons to switch between views */}
+      <div className="mb-6">
+        <button
+          className={`px-4 py-2 rounded-lg ${viewCenters === 'requests' ? 'bg-custom-green text-white' : 'bg-gray-200'}`}
+          onClick={() => setViewCenters('requests')}
+        >
+          View Current Requests
+        </button>
+        <button
+          className={`px-4 py-2 ml-4 rounded-lg ${viewCenters === 'centers' ? 'bg-custom-green text-white' : 'bg-gray-200'}`}
+          onClick={() => setViewCenters('centers')}
+        >
+          View Existing Recycling Centers
+        </button>
       </div>
 
-      <div className="mt-8">
-        <h3 className="text-xl font-semibold text-custom-black mb-4">Recycling Centers on Map</h3>
-        <MapContainer
-          center={[24.8607, 67.0011]} // Default center coordinates (can be modified)
-          zoom={12}
-          style={{ height: '400px', width: '100%' }}
-        >
-          <TileLayer
-            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          />
-          {/* Loop through recycling centers and display as markers */}
-          {recyclingCenters.map((center, index) => (
-            <Marker
-              key={center.recycling_center_id}
-              position={[center.latitude, center.longitude]}
-            >
-              <Popup>
-                <div>
-                  <strong>Area:</strong> {areaNames[index] || "loading"}<br />
-                  <strong>Latitude:</strong> {center.latitude}<br />
+      {/* Conditional rendering based on the current view */}
+      {viewCenters === 'requests' && currentRequests.length > 0 && (
+        <div className="mb-6">
+          <h4 className="text-2xl font-semibold text-custom-green mb-6">Current Requests</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {currentRequests.map((request, ind) => (
+              <div
+                key={request.request_submit_material_id}
+                className="border p-6 rounded-lg bg-white shadow-lg transition-transform transform hover:scale-105 border-2 border-custom-green"
+              >
+                <div className="space-y-3">
+                  <p className="text-lg font-medium">
+                    <strong>Latitude:</strong> {request.latitude}
+                  </p>
+                  <p className="text-lg font-medium">
+                    <strong>Longitude:</strong> {request.longitude}
+                  </p>
+                  <p className="text-lg font-medium">
+                    <strong>Location:</strong> {arealoading ? "Loading..." : requests_area_names[ind]}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {viewCenters === 'centers' && (
+        <div>
+          <h3 className="text-xl font-semibold text-custom-black mb-4">Existing Centers</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recyclingCenters.map((center, index) => (
+              <div
+                key={center.recycling_center_id}
+                className="p-4 bg-white rounded-lg shadow-md hover:scale-105 transition-transform duration-200 border-2 border-custom-green"
+              >
+                <div className="text-lg font-semibold text-custom-black">
+                  <strong>Area:</strong> {loading ? "Loading..." : areaNames[index]}
+                </div>
+                <div className="text-lg text-custom-black">
+                  <strong>Latitude:</strong> {center.latitude}
+                </div>
+                <div className="text-lg text-custom-black">
                   <strong>Longitude:</strong> {center.longitude}
                 </div>
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
-      </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8">
+            <h3 className="text-xl font-semibold text-custom-black mb-4">Recycling Centers on Map</h3>
+            <MapContainer
+              center={[24.8607, 67.0011]} // Default center coordinates (can be modified)
+              zoom={12}
+              style={{ height: '400px', width: '100%' }}
+            >
+              <TileLayer
+                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              />
+              {/* Loop through recycling centers and display as markers */}
+              {recyclingCenters.map((center, index) => (
+                <Marker
+                  key={center.recycling_center_id}
+                  position={[center.latitude, center.longitude]}
+                >
+                  <Popup>
+                    <div>
+                      <strong>Area:</strong> {areaNames[index] || "loading"}<br />
+                      <strong>Latitude:</strong> {center.latitude}<br />
+                      <strong>Longitude:</strong> {center.longitude}
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
+          </div>
+        </div>
+      )}
     </div>
+
         ) : (
           // Create New Recycling Center
           <div className="mt-3">
-            <h3 className="text-xl font-semibold text-custom-black mb-4">Create a New Recycling Center</h3>
+           
             <form onSubmit={handleCreateCenter} className="space-y-4">
              
             {/* Search and Map Section */}

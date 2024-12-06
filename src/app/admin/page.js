@@ -6,7 +6,8 @@ import ComplaintsTable from "../components/admin_panel/Reports";
 import RewardConversionRequests from "../components/admin_panel/RewardConversionRequests";
 import ResignAgreements from "../components/admin_panel/ResignAgreements";
 import AreaApprovalRequests from "../components/admin_panel/AreaApprovalRequests";
-
+import SubmitMaterialRequests from "../components/admin_panel/SubmitMaterialRequests"
+import RecyclingCenterRequests from "../components/admin_panel/RecyclingCenterRequests"
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [searchTerm, setSearchTerm] = useState('');
@@ -113,7 +114,7 @@ export default function AdminPanel() {
         </div>
         <nav className="mt-4">
           <ul className="space-y-2">
-            {["Dashboard", "Complaints", "Reward conversion requests", "Resign agreements", "Area approval requests"].map((tab) => (
+            {["Dashboard", "Complaints", "Reward conversion requests", "Resign agreements", "Area approval requests" , "Submit Material Requests" , "Recycling Center Requests"].map((tab) => (
               <li key={tab}>
                 <button
                   onClick={() => setActiveTab(tab)}
@@ -182,6 +183,18 @@ export default function AdminPanel() {
           <div>
             <h2 className="text-2xl font-bold mb-4 text-custom-green">Manage Area Approval Requests</h2>
             <AreaApprovalRequests />
+          </div>
+        )}
+        {activeTab === "Submit Material Requests" && (
+          <div>
+            <h2 className="text-2xl font-bold mb-4 text-custom-green">Submit Material Requests</h2>
+            <SubmitMaterialRequests />
+          </div>
+        )}
+         {activeTab === "Recycling Center Requests" && (
+          <div>
+            <h2 className="text-2xl font-bold mb-4 text-custom-green">Recycling Center Requests</h2>
+            <RecyclingCenterRequests />
           </div>
         )}
       </main>

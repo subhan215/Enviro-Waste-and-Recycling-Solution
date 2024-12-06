@@ -65,13 +65,14 @@ const Missed_Pickups = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-
+      console.log(response)
       if (response.data.success) {
         setMissedPickups((prevPickups) =>
           prevPickups.map((pickup) =>
-            pickup.missed_pickup_id === missedPickupId ? { ...pickup, status: 'marked completed by company' } : pickup
+            pickup.missed_pickup_id === missedPickupId ? { ...response.data.data } : pickup
           )
         );
+        setSelectedImagePreview(null)
         alert('Missed pickup marked as completed.');
       } else {
         alert('Upload failed. Please try again.');
@@ -82,16 +83,16 @@ const Missed_Pickups = () => {
     }
   };
 
-  if (loading) return<><Loader></Loader></>;
+  if (loading) return <><Loader></Loader></>;
   if (error) return <p className="text-center text-lg text-red-600">{error}</p>;
 
   return (
     <div className="p-6 min-h-screen">
       <h2 className="text-2xl font-semibold text-[#00ED64] mb-4">Missed Pickups</h2>
       {missedPickups.length === 0 ? (
-       <NoDataHappyFace emptyText = "No missed pickups reported"/>
+        <NoDataHappyFace emptyText="No missed pickups reported" />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
           {missedPickups.map((pickup) => {
             const date = new Date(pickup.created_at);
             const formattedDate = date.toLocaleDateString();
@@ -99,93 +100,92 @@ const Missed_Pickups = () => {
 
             return (
               <div
-  key={pickup.missed_pickup_id}
-  className="bg-white border-l-4 border-[#00ED64] rounded-lg shadow-md transition-all hover:shadow-lg"
->
-  <div className="flex justify-between items-center mb-2 px-3 py-2">
-    <h3 className="text-lg font-semibold text-gray-800">
-      Area: {pickup.name}
-    </h3>
-    <span
-      className={`px-3 py-1 text-sm font-semibold rounded-full ${
-        pickup.status === 'pending'
-          ? 'bg-yellow-200 text-yellow-800'
-          : 'bg-gray-200 text-gray-800'
-      }`}
-    >
-      {pickup.status === 'marked completed by company'
-        ? 'Awaiting user response'
-        : pickup.status}
-    </span>
-  </div>
-  <p className="text-sm text-gray-700 mb-1 px-3 py-1">
-    <strong>Date:</strong> {formattedDate}
-  </p>
-  <p className="text-sm text-gray-700 mb-2 px-3 py-1">
-    <strong>Time:</strong> {formattedTime}
-  </p>
+                key={pickup.missed_pickup_id}
+                className="bg-white border-l-4 border-[#00ED64] rounded-lg shadow-md transition-all hover:shadow-lg"
+              >
+                <div className="flex justify-between items-center mb-2 px-3 py-2">
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    Area: {pickup.name}
+                  </h3>
+                  <span
+                    className={`px-3 py-1 text-sm font-semibold rounded-full ${pickup.status === 'pending'
+                        ? 'bg-yellow-200 text-yellow-800'
+                        : 'bg-gray-200 text-gray-800'
+                      }`}
+                  >
+                    {pickup.status === 'marked completed by company'
+                      ? 'Awaiting user response'
+                      : pickup.status}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700 mb-1 px-3 py-1">
+                  <strong>Date:</strong> {formattedDate}
+                </p>
+                <p className="text-sm text-gray-700 mb-2 px-3 py-1">
+                  <strong>Time:</strong> {formattedTime}
+                </p>
 
-  {(pickup.status === 'pending' || pickup.status === 'marked completed by user') && (
-    <div className="mt-4">
-      <label
-        htmlFor={`file-input-${pickup.missed_pickup_id}`}
-        className="mx-3 my-1 flex items-center justify-center bg-gradient-to-r from-[#00ED64] to-[#00D257] text-white py-2 px-4 rounded-lg cursor-pointer hover:scale-105 transform transition-all shadow-md"
-      >
-        <span className="mr-2">Choose File</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          strokeWidth="2"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 4v16m8-8H4"
-          />
-        </svg>
-        <input
-          id={`file-input-${pickup.missed_pickup_id}`}
-          type="file"
-          accept="image/*"
-          onChange={(e) => handleImageChange(e, pickup.missed_pickup_id)}
-          className="hidden"
-        />
-      </label>
+                {(pickup.status === 'pending' || pickup.status === 'marked completed by user') && (
+                  <div className="mt-4">
+                    <label
+                      htmlFor={`file-input-${pickup.missed_pickup_id}`}
+                      className="mx-3 my-1 flex items-center justify-center bg-gradient-to-r from-[#00ED64] to-[#00D257] text-white py-2 px-4 rounded-lg cursor-pointer hover:scale-105 transform transition-all shadow-md"
+                    >
+                      <span className="mr-2">Choose File</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        strokeWidth="2"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 4v16m8-8H4"
+                        />
+                      </svg>
+                      <input
+                        id={`file-input-${pickup.missed_pickup_id}`}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageChange(e, pickup.missed_pickup_id)}
+                        className="hidden"
+                      />
+                    </label>
 
-      {/* Display the selected image preview */}
-      {selectedImagePreview && (
-        <div className="mt-4 flex justify-center">
-          <img
-            src={selectedImagePreview}
-            alt="Selected Preview"
-            className="w-full h-48 object-cover border border-gray-300 shadow-sm"
-          />
-        </div>
-      )}
-      <div className='px-3 py-1'>
-      <button
-        onClick={() => markAsCompleted(pickup.missed_pickup_id)}
-        className=" bg-[#00ED64] hover:bg-[#00D257] text-white py-2 px-4 rounded-lg font-semibold mt-3 w-full transform transition-all hover:scale-105"
-      >
-        Mark as Completed
-      </button>
-      </div>
-    </div>
-  )}
+                    {/* Display the selected image preview */}
+                    {selectedImagePreview && (
+                      <div className="mt-4 flex justify-center">
+                        <img
+                          src={selectedImagePreview}
+                          alt="Selected Preview"
+                          className="w-full h-48 object-cover border border-gray-300 shadow-sm"
+                        />
+                      </div>
+                    )}
+                    <div className='px-3 py-1'>
+                      <button
+                        onClick={() => markAsCompleted(pickup.missed_pickup_id)}
+                        className=" bg-[#00ED64] hover:bg-[#00D257] text-white py-2 px-4 rounded-lg font-semibold mt-3 w-full transform transition-all hover:scale-105"
+                      >
+                        Mark as Completed
+                      </button>
+                    </div>
+                  </div>
+                )}
 
-  {pickup.unclean_img && !selectedImagePreview && (
-    <div className="mt-3">
-      <img
-        src={pickup.unclean_img}
-        alt="Unclean Pickup"
-        className="w-full h-48 object-cover border border-gray-300 shadow-sm"
-      />
-    </div>
-  )}
-</div>
+                {pickup.unclean_img && !selectedImagePreview && (
+                  <div className="mt-3">
+                    <img
+                      src={pickup.unclean_img}
+                      alt="Unclean Pickup"
+                      className="w-full h-48 object-cover border border-gray-300 shadow-sm"
+                    />
+                  </div>
+                )}
+              </div>
 
             );
           })}

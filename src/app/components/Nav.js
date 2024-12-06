@@ -1,19 +1,24 @@
-"use client";
 import React, { useState, useEffect, useCallback } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
-import { FaComments } from "react-icons/fa";
+import { FaComments, FaUser, FaSignOutAlt } from "react-icons/fa";
 import Notifications from "./Notifications";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
-
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter  , usePathname} from "next/navigation";
+import { removeCookie } from "@/cookies/removeCookie";
+import { setUserData } from "@/store/slices/userDataSlice";
+import { Leaf } from "lucide-react" ; 
 const ModernNavbar = () => {
+  const pathname = usePathname() ; 
+  const router = useRouter() ; 
+  console.log(pathname)
   const [isOpen, setIsOpen] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const userData = useSelector((state) => state.userData.value) || null;
-  const router = useRouter();
+ 
+  const dispatch = useDispatch();
 
   const turnNotificationsToOff = useCallback(() => {
     setShowNotifications(false);
@@ -41,20 +46,35 @@ const ModernNavbar = () => {
     };
   }, []);
 
+  const handleSignOut = async () => {
+    removeCookie("access_token");
+    removeCookie("refresh_token");
+    dispatch(setUserData({}));
+    router.push("/signin"); // Redirect to login
+  };
+
+  const handleProfileRedirect = () => {
+    if (userData?.role === "user") {
+      router.push("/profiles/userProfile");
+    } else if (userData?.role === "company") {
+      router.push("/profiles/companyProfile");
+    }
+  };
+
   return (
     <header className="bg-white shadow-md sticky top-0 z-50 border-b border-black">
       <nav className="container mx-auto flex justify-between items-center p-5">
         {/* Logo */}
-        <div className="text-2xl font-bold text-custom-green">
-          <a href="#">Enviro</a>
-        </div>
-
+        <div className="flex items-center gap-2">
+            <Leaf className="text-[#00FF00] h-8 w-8" />
+            <h2 className="text-3xl font-bold flex justify-center">Enviro</h2>
+          </div>
         {/* Full Navbar for larger screens */}
         <div className="hidden md:flex gap-8 items-center">
-          <a href="#" className="text-gray-700 hover:text-custom-green transition">
+          <a className="text-gray-700 hover:text-custom-green transition" onClick={()=> router.push("/")}>
             Home
           </a>
-          <a href="#" className="text-gray-700 hover:text-custom-green transition">
+          <a href="/about" className="text-gray-700 hover:text-custom-green transition">
             About Us
           </a>
           <a href="#" className="text-gray-700 hover:text-custom-green transition">
@@ -63,37 +83,58 @@ const ModernNavbar = () => {
           <a href="#" className="text-gray-700 hover:text-custom-green transition">
             Contact
           </a>
+          {userData.user_id && pathname !== '/admin' ? (
+  <>
+    <FontAwesomeIcon
+      icon={faBell}
+      size="lg"
+      className="text-black hover:cursor-pointer"
+      onClick={() => setShowNotifications((prev) => !prev)}
+      title="View Notifications"
+    />
+    {showNotifications && (
+      <Notifications turnNotificationsToOff={turnNotificationsToOff} />
+    )}
 
-          {userData && (
-            <>
-              <FontAwesomeIcon
-                icon={faBell}
-                size="lg"
-                className="text-black hover:cursor-pointer"
-                onClick={() => setShowNotifications((prev) => !prev)}
-                title="View Notifications"
-              />
-              {showNotifications && (
-                <Notifications turnNotificationsToOff={turnNotificationsToOff} />
-              )}
+    <FaComments
+      size={24}
+      className="text-black hover:cursor-pointer"
+      title="Chat"
+      onClick={() => router.push("/chat")}
+    />
 
-              <FaComments
-                size={24}
-                className="text-black hover:cursor-pointer"
-                title="Chat"
-                onClick={() => router.push("/chat")}
-              />
+    {/* Profile and Sign Out Icons */}
+    <div className="flex gap-4 items-center">
+      <FaUser
+        size={20}
+        className="text-black hover:cursor-pointer"
+        title="Profile"
+        onClick={handleProfileRedirect}
+      />
+      <FaSignOutAlt
+        size={20}
+        className="text-custom-green hover:cursor-pointer"
+        title="Sign Out"
+        onClick={handleSignOut}
+      />
+    </div>
+  </>
+) : pathname !== '/admin' ? (
+  <>
+    <FaUser
+      size={20}
+      className="text-custom-green hover:cursor-pointer"
+      title="Sign In"
+      onClick={() => router.push("/signin")}
+    />
+  </>
+) : null}
 
-              <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
-                Get Started
-              </button>
-            </>
-          )}
         </div>
 
         {/* Hamburger Menu for mobile screens */}
         <div className="md:hidden flex items-center">
-          {userData && (
+          {userData && pathname!='/admin'&& (
             <FontAwesomeIcon
               icon={faBell}
               size="lg"
@@ -102,12 +143,14 @@ const ModernNavbar = () => {
               title="View Notifications"
             />
           )}
+          {pathname!='/admin' &&
           <FaComments
             size={24}
             className="text-black hover:cursor-pointer mr-4"
             title="Chat"
             onClick={() => router.push("/chat")}
           />
+}
           <button onClick={toggleMenu} aria-label="Toggle Navigation">
             {isOpen ? (
               <FiX className="text-3xl text-green-600" />
@@ -125,7 +168,7 @@ const ModernNavbar = () => {
         } duration-300 ease-in-out z-40`}
       >
         <div className="flex flex-col p-5 gap-6">
-          <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition">
+          <a className="text-gray-700 text-lg hover:text-green-600 transition" onClick={()=> router.push("/")}>
             Home
           </a>
           <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition">
@@ -137,9 +180,34 @@ const ModernNavbar = () => {
           <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition">
             Contact
           </a>
-          <button className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition mt-4">
-            Get Started
-          </button>
+          {userData.user_id && pathname !== "/admin" ? (
+  <>
+    <div className="flex flex-col gap-4 mt-4">
+      <div className="flex items-center gap-4">
+        <FaUser
+          size={20}
+          className="text-black hover:cursor-pointer"
+          title="Profile"
+          onClick={handleProfileRedirect}
+        />
+        <FaSignOutAlt
+          size={20}
+          className="text-custom-green hover:cursor-pointer"
+          title="Sign Out"
+          onClick={handleSignOut}
+        />
+      </div>
+    </div>
+  </>
+) : pathname !== '/admin' ? (
+  <button
+    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+    onClick={() => router.push("/signin")}
+  >
+    Sign In
+  </button>
+) : null}
+
         </div>
       </div>
 

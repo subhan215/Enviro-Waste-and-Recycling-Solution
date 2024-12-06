@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -18,10 +20,11 @@ const GallerySection: React.FC = () => {
           {images.map((image, index) => (
             <motion.div 
               key={index} 
-              className="relative h-64 md:h-80 rounded-lg overflow-hidden shadow-lg"
+              className="relative h-64 md:h-80 rounded-lg overflow-hidden shadow-md transition-shadow duration-300 hover:shadow-2xl"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
             >
               <Image
                 src={image}

@@ -113,7 +113,7 @@ export async function POST(req) {
     const res = new NextResponse(
       JSON.stringify({
         success: true,
-        data: { access_token, refresh_token, role },
+        data: { access_token, refresh_token, role  , ...does_user_email_exist.rows[0]},
         message: "User logged in successfully!",
       }),
       { status: 200 }

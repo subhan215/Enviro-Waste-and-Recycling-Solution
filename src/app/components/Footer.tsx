@@ -1,4 +1,5 @@
 'use client'
+
 import { motion } from 'framer-motion'
 import { Leaf } from 'lucide-react'
 
@@ -54,10 +55,10 @@ export default function Footer() {
         <div className="max-w-3xl mb-16">
           <div className="flex items-center gap-2 mb-6">
             <Leaf className="text-[#00FF00] h-8 w-8" />
-            <h2 className="text-3xl font-bold">Enviro</h2>
+            <h2 className="text-3xl font-bold">Enviro Solutions</h2>
           </div>
           <p className="text-lg text-gray-300 leading-relaxed">
-            Enviro is your trusted partner in environmental sustainability. We focus on waste management,
+            Enviro Solutions is your trusted partner in environmental sustainability. We focus on waste management,
             recycling solutions, and environmental services. With over a decade of experience, we have helped
             thousands of clients achieve their sustainability goals.
           </p>

@@ -166,9 +166,10 @@ const CompanyProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen flex bg-slate-200">
-      <div className="w-64 bg-white shadow-md p-0 border-2 ">
-        <h2 className="text-2xl font-bold mb-6 pt-2">Company Dashboard</h2>
+    <div className="min-h-screen bg-slate-200 flex justify-center">
+    <div className="w-full max-w-7xl bg-white shadow-lg rounded-md flex">
+      <div className="w-64 min-w-60 bg-white shadow-md p-0 border-r-2">
+        <h2 className="text-2xl font-bold md:ml-3 mb-6 pt-2">Company Dashboard</h2>
         {contractStatus === "active" && (
           <ul>
             <li
@@ -376,6 +377,7 @@ const CompanyProfilePage = () => {
       </div>
 
       <div className="flex-grow p-6">{renderContent()}</div>
+      </div>
     </div>
   );
 };
