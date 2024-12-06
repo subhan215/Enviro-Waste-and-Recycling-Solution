@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa"; // Import Font Awesome icons
 import NoDataDisplay from "../animations/NoDataDisplay";
+import Admin_loader from "../ui/Admin_loader"
 
 // Helper function to fetch requests from the API
 const fetchRequests = async () => {
@@ -123,13 +124,7 @@ const RecyclingCenterRequests = () => {
     }, [requests]);
 
     if (loading) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <div className="spinner-border animate-spin inline-block w-16 h-16 border-4 border-solid rounded-full border-gray-600 border-t-transparent" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        );
+        return <Admin_loader></Admin_loader>
     }
 
     if (error) {

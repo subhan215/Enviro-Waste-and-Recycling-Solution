@@ -29,6 +29,7 @@ const RecyclingCenterNearby = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
+          console.log(latitude , longitude)
           setUserLocation({ latitude, longitude });
         },
         (err) => {
@@ -45,6 +46,7 @@ const RecyclingCenterNearby = () => {
 
   // Fetch recycling centers based on the user's location
   useEffect(() => {
+    console.log(userLocation) ; 
     if (userLocation.latitude && userLocation.longitude) {
       const fetchRecyclingCenters = async () => {
         try {

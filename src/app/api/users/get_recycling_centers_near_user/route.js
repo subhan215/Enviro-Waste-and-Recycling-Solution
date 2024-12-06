@@ -33,7 +33,6 @@ export async function GET(req) {
       SELECT
         recycling_center_id,
         company_id,
-        area_id,
         latitude,
         longitude
       FROM
