@@ -1,15 +1,19 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card"
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/Card";
+
 function DashboardCard({ title, value, icon }) {
-    return (
-      <Card className="bg-white border border-[#17cf42]">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-[#17cf42]">{title}</CardTitle>
+  return (
+    <Card className="bg-white border border-custom-green">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <div className="flex items-center space-x-2">
           {icon}
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-[#17cf42]">{value}</div>
-        </CardContent>
-      </Card>
-    )
-  }
-export default DashboardCard
+          <CardTitle className="text-sm font-medium text-custom-black">{title}</CardTitle>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl  text-custom-black">{value}</div>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default DashboardCard;

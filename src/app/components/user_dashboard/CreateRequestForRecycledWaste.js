@@ -6,6 +6,10 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import Loader from "../ui/Loader";
 import { FaCheck, FaTrash } from "react-icons/fa"; // Import icons from react-icons
+import Alert from '../ui/Alert'
+import Incorrect from '../ui/Incorrect'
+
+
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
   { ssr: false }
@@ -49,6 +53,17 @@ function CreateRequestForRecycledWaste() {
   });
   const [searchResults, setSearchResults] = useState([]);
   const searchResultsRef = useRef(null);
+  const [current_schedules, set_current_schedules] = useState(null)
+  const [alert, setAlert] = useState([]);
+  const showAlert = (type, message) => {
+    const id = Date.now();
+    setAlert([...alert, { id, type, message }]);
+    setTimeout(() => {
+      setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+    }, 4000);
+  };
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,7 +82,8 @@ function CreateRequestForRecycledWaste() {
 
       if (response.data.success) {
         setSuccessMessage("Request submitted successfully!");
-        alert("Request submitted successfully!");
+        //alert("Request submitted successfully!");
+        showAlert("success" , "Request submitted successfully!")
         setWaste("");
         setPreferredDate("");
         setPreferredTime("");
@@ -131,11 +147,34 @@ function CreateRequestForRecycledWaste() {
     }
   };
 
+
+  const fetch_current_schedules = async () => {
+    try{
+      const response = await axios.get(`/api/schedule/get_schedule_for_user/${userData.user_id}`)
+      console.log("REspnse ka data : ", response.data)
+      set_current_schedules(response.data);
+
+    }
+    catch(error){
+      console.log(error);
+    }
+    finally{
+      setLoading(false);
+    }
+    
+  }
+
+
+  
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         await fetchCurrentRequest(); // Call the fetch function here
+        await fetch_current_schedules();
+      console.log("Schedyke : ", current_schedules)
+
       } catch (error) {
         console.error('Error fetching current request:', error);
       } finally {
@@ -158,19 +197,22 @@ function CreateRequestForRecycledWaste() {
 
       if (response.data.success) {
         setCurrentRequest(null);
-        alert(response.data.message);
+        //alert(response.data.message);
+        showAlert("success" , response.data.message)
       } else {
         // Handle case where the server responded but with an issue (e.g., no success flag)
         console.error("Delete operation failed:", response.data);
         setError("Delete operation did not succeed.");
-        alert(
-          response.data.message ||
-          "An error occurred while deleting the request."
-        );
+        // alert(
+        //   response.data.message ||
+        //   "An error occurred while deleting the request."
+        // );
+        showAlert("error" , response.data.message || "An error occurred while deleting the request." )
       }
     } catch (err) {
       // Detailed error logging
-      console.error("Error occurred during delete request:", err);
+      //console.error("Error occurred during delete request:", err);
+      showAlert("error" , "Error occurred during delete request")
 
       if (err.response) {
         // Server responded with a status other than 2xx
@@ -178,20 +220,23 @@ function CreateRequestForRecycledWaste() {
         console.error("Error Response Status:", err.response.status);
         console.error("Error Response Headers:", err.response.headers);
         setError(err.response.data.message || "Failed to delete the request");
-        alert(
-          `Error: ${err.response.data.message || "Failed to delete the request"
-          }`
-        );
+        // alert(
+        //   `Error: ${err.response.data.message || "Failed to delete the request"
+        //   }`
+        // );
+        showAlert("error" , err.response.data.message || "Failed to delete the request" )
       } else if (err.request) {
         // Request was made but no response received
         console.error("No response received:", err.request);
         setError("No response from the server.");
-        alert("No response received from the server.");
+        //alert("No response received from the server.");
+        showAlert("error" , "No response received from the server")
       } else {
         // Other unexpected errors
         console.error("Error Message:", err.message);
         setError("Unexpected error occurred.");
-        alert(`Error: ${err.message}`);
+        //alert(`Error: ${err.message}`);
+        showAlert("error" , err.message)
       }
     }
   };
@@ -204,23 +249,27 @@ function CreateRequestForRecycledWaste() {
 
       // Handle response
       if (response.status === 201) {
-        alert(response.data.message); // Success message
+        //alert(response.data.message); // Success message
         //currentRequest(null)
-        alert("See schedule tab.A new schedule has been created!");
-        setCurrentRequest(null);
+        //alert("See schedule tab.A new schedule has been created!");
+        showAlert("success" , "New schedule has been created")
+        setCurrentRequest(null);  
         await fetchCurrentRequest();
+        await fetch_current_schedules();
         // Optionally update the UI state, e.g., reset the current request or show the schedule
       } else {
-        alert(response.data.message); // Error message if status is not 201
+        //alert(response.data.message); // Error message if status is not 201
+        showAlert("error" , response.data.message)
       }
     } catch (error) {
-      console.error("Error accepting the offer:", error);
-      alert("Failed to accept the offer, please try again.");
+      //console.error("Error accepting the offer:", error);
+      //alert("Failed to accept the offer, please try again.");
+      showAlert("error" , "Failed to accept the offer, please try again.") 
     }
   };
   useEffect(() => {
     const fetchLocationName = async () => {
-      if (currentRequest.latitude && currentRequest.longitude) {
+      if (currentRequest?.latitude && currentRequest?.longitude) {
         try {
           const response = await axios.get(
             `https://nominatim.openstreetmap.org/reverse`,
@@ -248,6 +297,7 @@ function CreateRequestForRecycledWaste() {
     fetchLocationName();
   }, [currentRequest?.latitude, currentRequest?.longitude]);
   if (loading) return <Loader></Loader>;
+  if(current_schedules) return <><Incorrect text = "Can only create 1 schedule at a time. Don't forget to Rate the service before creating a new request"/></>
   return (
     <div className="container mx-auto px-4 py-8 ">
       {!currentRequest ? (
@@ -255,6 +305,15 @@ function CreateRequestForRecycledWaste() {
           <h2 className="text-3xl font-bold text-black  p-2 mb-6 rounded">
             Create Request for Recycled Waste
           </h2>
+
+          {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}  
 
           <form
             onSubmit={handleSubmit}

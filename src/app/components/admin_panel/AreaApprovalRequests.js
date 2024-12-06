@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa"; // Import icons from react-icons
 import { ImSpinner2 } from "react-icons/im"; // Spinner icon for loading
 import NoDataDisplay from "../animations/NoDataDisplay";
+import Admin_loader from "../ui/Admin_loader"
+
 
 const AreaApprovalRequests = () => {
   const [requests, setRequests] = useState([]);
@@ -75,13 +77,11 @@ const AreaApprovalRequests = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-6">Area Approval Requests</h1>
+      <h1 className="text-2xl font-semibold mb-6 text-custom-black">Area Approval Requests</h1>
 
       {loading ? (
         // Show loading spinner
-        <div className="flex justify-center items-center">
-          <ImSpinner2 className="animate-spin text-gray-500 text-4xl" />
-        </div>
+        <Admin_loader></Admin_loader>
       ) : requests?.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {requests.map((request) => (

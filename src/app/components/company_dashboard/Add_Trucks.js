@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import Truck_loader from "../ui/Truck_loader";
+import Alert from '../ui/Alert'
 
 const Add_Trucks = () => {
     const [loading, setLoading] = useState(true)
@@ -12,6 +13,19 @@ const Add_Trucks = () => {
     });
     const [allAreas, setAllAreas] = useState([]); // State to store available areas
     const userData = useSelector((state) => state.userData.value)
+    const [alert, setAlert] = useState([]);
+
+
+    const showAlert = (type, message) => {
+      const id = Date.now();
+      setAlert([...alert, { id, type, message }]);
+      setTimeout(() => {
+        setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+      }, 4000);
+    };
+
+
+
     const getNonAssignedTruckAreas = async () => {
         try {
             console.log("Fetching non-assigned areas...");
@@ -27,11 +41,15 @@ const Add_Trucks = () => {
             if (responseData.success) {
                 setAllAreas(responseData.data); // Set the fetched areas into state
             } else {
-                alert(responseData.message);
-            }
+                //alert(responseData.message);
+        showAlert("error", responseData.message);
+              
+              }
         } catch (error) {
-            alert(error.message);
-        }
+           // alert(error.message);
+        showAlert("error", error.message);
+          
+          }
     };
 
     // Fetch areas when the component mounts
@@ -41,7 +59,8 @@ const Add_Trucks = () => {
       try {
         await getNonAssignedTruckAreas();
       } catch (error) {
-        console.error('Error getting non assigned area:', error);
+        //console.error('Error getting non assigned area:', error);
+        showAlert("error", "Error getting non assigned area");
       } finally {
         setTimeout(() => {
           setLoading(false);
@@ -68,23 +87,38 @@ const Add_Trucks = () => {
             console.log(responseData)
             if (responseData.success) {
                 setData({licensePlate: "" , capacity: "" , area_id: ""})
-                alert("Assigned truck to area successfully!");
+                //alert("");
+                //addAlert("success", "Assigned truck to area successfully!");
+                //setAlert({ type: 'success', message: 'Assigned truck to area successfully!' });
+                showAlert("success", "Assigned truck to area successfully!");
                 setAllAreas(responseData.data); // Set the fetched areas into state
             } else {
-                alert(responseData.message);
+                //alert(responseData.message);
+                showAlert("error", responseData.message);
             }
         } catch (error) {
-            alert(error.message);
+            //alert(error.message);
+            showAlert("error", error.message);
+
         }
     };
 
     if(loading) return <Truck_loader></Truck_loader>
     return (
+      <>
         <div className="container mx-auto px-4 py-8">
         <div className="bg-white p-8 shadow-lg rounded-lg ">
           <h2 className="text-3xl font-bold text-custom-black p-2 mb-6 rounded text-center">
             Add Truck Information
           </h2>
+          {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}
           <form onSubmit={handleSubmit} className="flex flex-col">
             <div className="mb-4">
               <label htmlFor="licensePlate" className="block text-lg font-semibold text-custom-black mb-2">
@@ -149,6 +183,7 @@ const Add_Trucks = () => {
           </form>
         </div>
       </div>
+      </>
     );
 };
 

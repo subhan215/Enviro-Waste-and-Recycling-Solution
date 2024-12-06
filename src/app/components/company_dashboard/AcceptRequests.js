@@ -3,6 +3,8 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import Loader from "../ui/Loader";
 import NoDataDisplay from "../animations/NoDataDisplay";
+import Alert from '../ui/Alert'
+
 
 
 function AcceptRequests() {
@@ -12,6 +14,19 @@ function AcceptRequests() {
     const [newPriceOffered, setNewPriceOffered] = useState("");
     const [loading, setLoading] = useState(true); // New state for loading
     const userData = useSelector((state) => state.userData.value);
+    const [alert, setAlert] = useState([]);
+    const showAlert = (type, message) => {
+      const id = Date.now();
+      setAlert([...alert, { id, type, message }]);
+      setTimeout(() => {
+        setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+      }, 4000);
+    };
+
+  const handle_new_price_offer = (e) => {
+    setNewPriceOffered(e.target.value);
+    showAlert('success' , 'Price offered successfully!')
+  }
 
 
     useEffect(() => {
@@ -63,8 +78,9 @@ function AcceptRequests() {
 
     const handleOfferPrice = async (requestId, oldPrice, newPrice) => {
         console.log("clicked", requestId);
-        if (oldPrice && oldPrice < newPrice) {
-            alert("Your new offered price should be less than the old one!!!");
+        if (oldPrice && oldPrice < newPrice) {   //This has some issues!
+            //alert("Your new offered price should be less than the old one!!!");
+            showAlert('error' , 'Your new offered price should be less than the old one!')
             return;
         }
         try {
@@ -75,7 +91,8 @@ function AcceptRequests() {
             });
             console.log(response);
             if (response.data.success) {
-                setSuccessMessage("Price offered successfully!");
+                //setSuccessMessage("Price offered successfully!");
+               showAlert('success' , 'Price offered successfully!')
                 setRequests((prevRequests) =>
                     prevRequests.map((req) =>
                         req.request_id === requestId ? { ...req, offered_price: newPrice } : req
@@ -83,9 +100,10 @@ function AcceptRequests() {
                 );
             }
         } catch (err) {
-            console.log(err);
-            setError("Failed to offer price");
-        }
+            //console.log(err);
+            //setError("Failed to offer price");
+            showAlert('error' , 'Failed to offer price');
+          }
     };
     if (loading) return<><Loader></Loader></>;
 
@@ -93,8 +111,17 @@ function AcceptRequests() {
 <div className="p-6 rounded-2xl">
   <h2 className="text-2xl font-bold text-custom-black  mb-6">Accept Requests</h2>
 
-  {error && <p className="text-red-500 mb-4">{error}</p>}
-  {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>}
+  {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}     
+
+  {/* {error && <p className="text-red-500 mb-4">{error}</p>}
+  {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>} */}
 
   {loading ? (
     <p className="text-lg text-center">Loading requests...</p>

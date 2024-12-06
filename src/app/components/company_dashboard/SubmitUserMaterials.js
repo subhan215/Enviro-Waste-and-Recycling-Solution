@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import Alert from '../ui/Alert'
+
 
 const SubmitUserMaterials = () => {
   const [wastePrices, setWastePrices] = useState([]);
@@ -10,6 +12,18 @@ const SubmitUserMaterials = () => {
   const [submitStatus, setSubmitStatus] = useState("");
   const [image, setImage] = useState(null); // For image upload
   const [currentRequests, setCurrentRequests] = useState([]); // For displaying current requests
+  //const [isSubmitting, setIsSubmitting] = useState(false);  // New state for loading
+  //const [submitStatus, setSubmitStatus] = useState(""); // For success or error message
+  const [alert, setAlert] = useState([]);
+  const showAlert = (type, message) => {
+    const id = Date.now();
+    setAlert([...alert, { id, type, message }]);
+    setTimeout(() => {
+      setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+    }, 4000);
+  };
+
+
 
   const userData = useSelector((state) => state.userData.value);
   const companyId = userData.user_id;
@@ -32,6 +46,9 @@ const SubmitUserMaterials = () => {
       setCurrentRequests(response.data.data);
     } catch (error) {
       console.error("Error fetching current requests:", error);
+      //alert("Error while fetching waste prices: ", error);
+      showAlert('error' , 'Error while fetching waste prices')
+      console.log(error);
     }
   };
 
@@ -62,7 +79,7 @@ const SubmitUserMaterials = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
       console.log(response)
-      alert("asasa")
+      //alert("asasa")
       if (response.status === 200) {
         setSubmitStatus("Data submitted successfully!");
         setWeights({});
@@ -80,9 +97,18 @@ const SubmitUserMaterials = () => {
   return (
     <div className="max-w-4xl mx-auto my-8">
       <div className="bg-white shadow-xl rounded-lg p-8">
-        <h3 className="text-2xl font-semibold text-custom-green mb-6">
-          Enter Received Weights
-        </h3>
+       
+        <h3 className="text-2xl font-semibold text-custom-black mb-6">Enter Received Weights</h3>
+
+        {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}  
+
 
         {submitStatus && (
           <div
@@ -105,7 +131,7 @@ const SubmitUserMaterials = () => {
               {currentRequests.map((request) => (
                 <li
                   key={request.request_submit_material_id}
-                  className="border p-4 rounded-lg"
+                  className="border border-custom-green p-4 rounded-lg"
                 >
                   <p>
                     <strong>User ID:</strong> {request.user_id}
@@ -132,9 +158,8 @@ const SubmitUserMaterials = () => {
         <form onSubmit={handleFormSubmit} className="space-y-6">
           {/* User ID Input */}
           <div>
-            <label className="block text-lg font-medium text-custom-green mb-2">
-              User ID
-            </label>
+            
+            <label className="block text-lg font-medium text-custom-black mb-2">User ID</label>
             <input
               type="text"
               value={userId}
@@ -148,7 +173,7 @@ const SubmitUserMaterials = () => {
           {/* Waste Prices and Weights */}
           {wastePrices.map((item) => (
             <div key={item.name}>
-              <label className="block text-lg font-medium text-custom-green mb-2">
+              <label className="block text-lg font-medium text-custom-black mb-2">
                 {item.name} ({item.rate_per_kg} per kg)
               </label>
               <input
@@ -166,7 +191,7 @@ const SubmitUserMaterials = () => {
 
           {/* Image Upload */}
           <div>
-            <label className="block text-lg font-medium text-custom-green mb-2">
+            <label className="block text-lg font-medium text-custom-black mb-2">
               Upload Proof Image
             </label>
             <input
@@ -181,9 +206,7 @@ const SubmitUserMaterials = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className={`w-full py-3 text-lg font-semibold rounded-lg text-white ${
-              isSubmitting ? "bg-gray-400" : "bg-custom-green hover:bg-green-700"
-            }`}
+            className={`w-full py-3 text-lg font-semibold rounded-lg text-custom-black border border-custom-black ${isSubmitting ? 'bg-gray-400' : 'bg-custom-green hover:bg-green-700'}`}
             disabled={isSubmitting}
           >
             {isSubmitting ? "Submitting..." : "Submit"}

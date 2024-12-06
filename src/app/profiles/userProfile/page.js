@@ -27,7 +27,7 @@ const UserProfilePage = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-slate-200">
+    <div className="min-h-screen flex bg-green-50">
       {/* Sidebar */}
       <div className="w-66 bg-white shadow-md p-0 border-2 ">
       <h2 className="text-2xl font-bold mb-6 pt-2 ml-2">User Dashboard</h2>

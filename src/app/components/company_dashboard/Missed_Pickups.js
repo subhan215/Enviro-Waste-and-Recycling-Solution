@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useSelector } from "react-redux";
 import Loader from "../ui/Loader";
-import NoDataHappyFace from '../animations/noDataHappyFace';
-
+import NoDataHappyFace from "../animations/noDataHappyFace";
+import Alert from '../ui/Alert'
 
 const Missed_Pickups = () => {
   const [missedPickups, setMissedPickups] = useState([]);
@@ -12,6 +12,15 @@ const Missed_Pickups = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedImagePreview, setSelectedImagePreview] = useState(null); // New state for image preview
   const [selectedPickupId, setSelectedPickupId] = useState(null);
+  const [alert, setAlert] = useState([]);
+  const showAlert = (type, message) => {
+    const id = Date.now();
+    setAlert([...alert, { id, type, message }]);
+    setTimeout(() => {
+      setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+    }, 4000);
+  };
+  
   const userData = useSelector((state) => state.userData.value);
   const companyId = userData.user_id;
 
@@ -19,13 +28,15 @@ const Missed_Pickups = () => {
     const fetchMissedPickups = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`/api/pickup/get_All_missed_pickups_for_company/${companyId}`);
+        const response = await axios.get(
+          `/api/pickup/get_All_missed_pickups_for_company/${companyId}`
+        );
         setMissedPickups(response.data.data);
       } catch (err) {
-        setError('Failed to load missed pickups.');
+        setError("Failed to load missed pickups.");
       } finally {
         setTimeout(async () => {
-          setLoading(false);  // Set loading to false after fetching is complete
+          setLoading(false); // Set loading to false after fetching is complete
         }, 1000); // 1-second delay
       }
     };
@@ -50,50 +61,84 @@ const Missed_Pickups = () => {
 
   const markAsCompleted = async (missedPickupId) => {
     if (!selectedImage || selectedPickupId !== missedPickupId) {
-      alert('Please select an image for the missed pickup.');
+      //alert("Please select an image for the missed pickup.");
+      showAlert("warning" , "Please select an image for the missed pickup.")
       return;
     }
 
     const formData = new FormData();
-    formData.append('userId', companyId);
-    formData.append('missed_pickup_id', missedPickupId);
-    formData.append('clean_or_unclean_image', selectedImage);
+    formData.append("userId", companyId);
+    formData.append("missed_pickup_id", missedPickupId);
+    formData.append("clean_or_unclean_image", selectedImage);
 
     try {
-      const response = await axios.put(`/api/pickup/completed_by_company/`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      console.log(response)
+      const response = await axios.put(
+        `/api/pickup/completed_by_company/`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
       if (response.data.success) {
         setMissedPickups((prevPickups) =>
           prevPickups.map((pickup) =>
-            pickup.missed_pickup_id === missedPickupId ? { ...response.data.data } : pickup
+            pickup.missed_pickup_id === missedPickupId
+              ? { ...pickup, status: "marked completed by company" }
+              : pickup
           )
         );
-        setSelectedImagePreview(null)
-        alert('Missed pickup marked as completed.');
+        //alert("Missed pickup marked as completed.");
+        showAlert("success" , "Missed pickup marked as completed." )
       } else {
-        alert('Upload failed. Please try again.');
+        //alert("Upload failed. Please try again.");
+        showAlert("error" , "Upload failed. Please try again.")
       }
     } catch (error) {
       console.error(error);
-      alert('Failed to update the status of the missed pickup.');
+      //alert("Failed to update the status of the missed pickup.");
+      showAlert("error" , "Failed to update the status of the missed pickup.")
     }
   };
 
-  if (loading) return <><Loader></Loader></>;
-  if (error) return <p className="text-center text-lg text-red-600">{error}</p>;
+  if (loading)
+    return (
+      <>
+        <Loader></Loader>
+      </>
+    );
+  if (error) return <><p className="text-center text-lg text-red-600">{error}</p>
+      {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}
+  </>;
 
   return (
     <div className="p-6 min-h-screen">
-      <h2 className="text-2xl font-semibold text-[#00ED64] mb-4">Missed Pickups</h2>
+      <h2 className="text-2xl font-semibold text-custom-black mb-4">
+        Missed Pickups
+      </h2>
+      {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}
+
       {missedPickups.length === 0 ? (
         <NoDataHappyFace emptyText="No missed pickups reported" />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-          {missedPickups.map((pickup) => {
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
+          { missedPickups.map((pickup) => {
             const date = new Date(pickup.created_at);
             const formattedDate = date.toLocaleDateString();
             const formattedTime = date.toLocaleTimeString();
@@ -101,20 +146,21 @@ const Missed_Pickups = () => {
             return (
               <div
                 key={pickup.missed_pickup_id}
-                className="bg-white border-l-4 border-[#00ED64] rounded-lg shadow-md transition-all hover:shadow-lg"
+                className="bg-white border-l-4  border-t-2 border-r border-b-2 border-custom-black rounded-lg transition-all hover:shadow-lg shadow-[-20px_0_15px_-5px_rgba(0,0,0,0.1)]"
               >
                 <div className="flex justify-between items-center mb-2 px-3 py-2">
                   <h3 className="text-lg font-semibold text-gray-800">
                     Area: {pickup.name}
                   </h3>
                   <span
-                    className={`px-3 py-1 text-sm font-semibold rounded-full ${pickup.status === 'pending'
-                        ? 'bg-yellow-200 text-yellow-800'
-                        : 'bg-gray-200 text-gray-800'
-                      }`}
+                    className={`px-3 py-1 text-sm font-semibold rounded-full max-w-full  ${
+                      pickup.status === "pending"
+                        ? "bg-yellow-200 text-yellow-800"
+                        : "bg-gray-200 text-gray-800"
+                    }`}
                   >
-                    {pickup.status === 'marked completed by company'
-                      ? 'Awaiting user response'
+                    {pickup.status === "marked completed by company"
+                      ? "Awaiting response"
                       : pickup.status}
                   </span>
                 </div>
@@ -125,7 +171,8 @@ const Missed_Pickups = () => {
                   <strong>Time:</strong> {formattedTime}
                 </p>
 
-                {(pickup.status === 'pending' || pickup.status === 'marked completed by user') && (
+                {(pickup.status === "pending" ||
+                  pickup.status === "marked completed by user") && (
                   <div className="mt-4">
                     <label
                       htmlFor={`file-input-${pickup.missed_pickup_id}`}
@@ -150,7 +197,9 @@ const Missed_Pickups = () => {
                         id={`file-input-${pickup.missed_pickup_id}`}
                         type="file"
                         accept="image/*"
-                        onChange={(e) => handleImageChange(e, pickup.missed_pickup_id)}
+                        onChange={(e) =>
+                          handleImageChange(e, pickup.missed_pickup_id)
+                        }
                         className="hidden"
                       />
                     </label>
@@ -165,7 +214,7 @@ const Missed_Pickups = () => {
                         />
                       </div>
                     )}
-                    <div className='px-3 py-1'>
+                    <div className="px-3 py-1">
                       <button
                         onClick={() => markAsCompleted(pickup.missed_pickup_id)}
                         className=" bg-[#00ED64] hover:bg-[#00D257] text-white py-2 px-4 rounded-lg font-semibold mt-3 w-full transform transition-all hover:scale-105"
@@ -186,7 +235,6 @@ const Missed_Pickups = () => {
                   </div>
                 )}
               </div>
-
             );
           })}
         </div>

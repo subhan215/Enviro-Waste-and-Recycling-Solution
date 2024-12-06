@@ -23,7 +23,8 @@ const NoDataHappyFace: React.FC<NoDataHappyFaceProps> = ({ emptyText }) => {
           cy="100"
           r="80"
           fill="none"
-          stroke="currentColor"
+          //stroke="currentColor"
+          stroke="green" // Black color for head
           strokeWidth="20"
           variants={{
             hidden: { pathLength: 0, opacity: 0 },
@@ -40,7 +41,8 @@ const NoDataHappyFace: React.FC<NoDataHappyFaceProps> = ({ emptyText }) => {
           cx="70"
           cy="80"
           r="10"
-          fill="currentColor"
+          //fill="currentColor"
+          fill="black"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.5 }}
@@ -51,7 +53,8 @@ const NoDataHappyFace: React.FC<NoDataHappyFaceProps> = ({ emptyText }) => {
           cx="130"
           cy="80"
           r="10"
-          fill="currentColor"
+          //fill="currentColor"
+          fill="black"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.5 }}
@@ -61,7 +64,8 @@ const NoDataHappyFace: React.FC<NoDataHappyFaceProps> = ({ emptyText }) => {
         <motion.path
           d="M 60 130 Q 100 160 140 130"
           fill="none"
-          stroke="currentColor"
+          //stroke="currentColor"
+          stroke = "black"
           strokeWidth="20"
           strokeLinecap="round"
           initial={{ opacity: 0 }}
@@ -77,7 +81,7 @@ const NoDataHappyFace: React.FC<NoDataHappyFaceProps> = ({ emptyText }) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2, duration: 0.5 }}
       >
-        <p className="text-2xl font-bold text-custom-green mb-2">
+        <p className="text-2xl font-bold text-green-700 mb-2">
           {emptyText}  {/* Dynamically rendered emptyText */}
         </p>
       </motion.div>

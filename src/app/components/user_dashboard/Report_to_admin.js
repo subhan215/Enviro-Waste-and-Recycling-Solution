@@ -4,6 +4,10 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import Loader from "../ui/Loader";
 import NoDataHappyFace from "../animations/noDataHappyFace";
+import Alert from '../ui/Alert'
+
+
+
 
 const Report_to_admin = () => {
   const [companies, setCompanies] = useState([]);
@@ -15,6 +19,15 @@ const Report_to_admin = () => {
   const [messages, setMessages] = useState([]);
   const userData = useSelector((state) => state.userData.value);
   const user_id = userData.user_id;
+  const [alert, setAlert] = useState([]);
+  const showAlert = (type, message) => {
+    const id = Date.now();
+    setAlert([...alert, { id, type, message }]);
+    setTimeout(() => {
+      setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+    }, 4000);
+  };
+
 
   console.log("In user ID : ", user_id);
 
@@ -96,12 +109,16 @@ const Report_to_admin = () => {
         setCompanyId("");
         setDescription("");
   
-        alert("Reported successfully!");
+        //alert("Reported successfully!");
+        showAlert("success" , "Reported successfully!")
       } else {
-        setError("Failed to submit the report. Please try again.");
+        //setError("Failed to submit the report. Please try again.");
+        showAlert("error" , "Failed to submit the report. Please try again.")
       }
     } catch (err) {
-      setError(`Error submitting report: ${err.message}`);
+      //setError(`Error submitting report: ${err.message}`);
+      showAlert("error" , "Error submitting report")
+    
     }
     finally{
       setLoading(false) ; 
@@ -140,7 +157,14 @@ const Report_to_admin = () => {
         <>
 
 <div className="min-h-screen text-custom-black p-6">
-  
+{alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}  
   {/* Messages Section */}
    {/* Messages Section */}
    <div className="mb-8">
@@ -166,7 +190,7 @@ const Report_to_admin = () => {
             ))}
           </div>
         ) : (
-          <p>No messages found.</p>
+          <p>No messages found</p>
         )}
       </div>
 

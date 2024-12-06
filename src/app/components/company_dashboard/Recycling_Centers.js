@@ -6,6 +6,11 @@ import 'leaflet/dist/leaflet.css';
 import { useSelector } from 'react-redux';
 import Loader from "../ui/Loader";
 import { Popup } from 'react-leaflet';
+import Alert from '../ui/Alert'
+import Recycle_loader from '../ui/Recycle_loader'
+
+
+
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
@@ -22,6 +27,8 @@ const RecyclingCenters = ({}) => {
     const [recyclingCenters, setRecyclingCenters] = useState([]);
     const [newCenter, setNewCenter] = useState({ area_id: '', latitude: '', longitude: '' });
     const [loading, setLoading] = useState(true);
+    const [recycle_loading, set_recycleLoading] = useState(true);
+    const [current_req_loading, set_current_req_loading] = useState(true);
     const [error, setError] = useState(null);
     const [locationName, setLocationName] = useState('');
     const [map, setMap] = useState(null);
@@ -31,22 +38,140 @@ const RecyclingCenters = ({}) => {
     const [viewMode, setViewMode] = useState('view'); // 'view
     const [ searchResults, setSearchResults] = useState([])
     const searchResultsRef = useRef(null);
-    const [currentRequests, setCurrentRequests] = useState([]); // For displaying current requests
-    const [viewCenters, setViewCenters] = useState('requests');
+    const [alert, setAlert] = useState([]);
     const [arealoading , setAreaLoading] = useState(false) ; 
+    const [currentRequests , setCurrentRequests] = useState([])
+    const [viewCenters , setViewCenters] = useState('requests') ; 
+  const showAlert = (type, message) => {
+    const id = Date.now();
+    setAlert([...alert, { id, type, message }]);
+    setTimeout(() => {
+      setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+    }, 4000);
+  };
+
+
     const toggleView = () => {
       setViewMode(viewMode === 'view' ? 'create' : 'view');
     };
     let companyId = userData.user_id
     const fetchRecyclingCenters = async () => {
+      set_recycleLoading(true);
+        try {
+            const response = await axios.get(`/api/company/recycling_center/get_company_recycling_centers/${companyId}`);
+            console.log(response)
+            setRecyclingCenters(response.data.data);
+            //setLoading(false);
+        } catch (err) {
+            setError('Error fetching recycling centers');
+            //setLoading(false);
+        }
+        finally{
+          set_recycleLoading(false);
+        }
+    };
+   
+    useEffect(() => {
+        const fetchData = async () => {
+          setTimeout(async () => {
+            await fetchRecyclingCenters();
+            setLoading(false);
+          }, 1000);
+        };
+        fetchData();
+      }, []);
+
+    useEffect(() => {
+        // Fetch areas from your API when the component mounts
+        const fetchAreas = async () => {
+            try {
+                const response = await fetch(`/api/company/recycling_center/get_unassigned_areas/${companyId}`); // Adjust this URL as needed
+                const data = await response.json();
+                if (data.success) {
+                    setAreas(data.data); // Assuming the API returns an array of areas
+                } else {
+                    console.error(data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching areas:', error);
+            }
+        };
+        fetchAreas();
+    }, []);
+
+    const LocationMarker = () => {
+        useMapEvents({
+            click(e) {
+                const { lat, lng } = e.latlng;
+                setNewCenter({ ...newCenter, latitude: lat, longitude: lng });
+            },
+        });
+
+        return newCenter.latitude && newCenter.longitude ? (
+            <Marker position={[newCenter.latitude, newCenter.longitude]} />
+        ) : null;
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewCenter({ ...newCenter, [name]: value });
+    };
+
+    const handleCreateCenter = async (e) => {
+        e.preventDefault();
+        setError('') ; 
+        try {
+            const response = await fetch('/api/company/recycling_center/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    company_id: companyId,
+                    area_id: newCenter.area_id,
+                    latitude: newCenter.latitude,
+                    longitude: newCenter.longitude,
+                }),
+            }) ; 
+            console.log(response)
+            const data = await response.json();
+            console.log(data)
+            //alert(data.message)
+            showAlert("success" , "Recycle center created!")
+            setRecyclingCenters([...recyclingCenters , data.data])
+            //fetchRecyclingCenters()
+            setNewCenter({ area_id: '', latitude: '', longitude: '' });
+
+        } catch (err) {
+            //console.error(err);
+            showAlert("error" , err);
+            setError('Error creating recycling center');
+        }
+
+    };
+    
+    const handleSearchLocation = async () => {
+      const karachiBounds = {
+          southWest: { lat: 24.774265, lon: 66.973096 },
+          northEast: { lat: 25.102974, lon: 67.192733 },
+      };
+  
       try {
-          const response = await axios.get(`/api/company/recycling_center/get_company_recycling_centers/${companyId}`);
+          const response = await axios.get(
+              `https://photon.komoot.io/api/?q=${encodeURIComponent(
+                  locationName
+              )}&bbox=${karachiBounds.southWest.lon},${karachiBounds.southWest.lat},${karachiBounds.northEast.lon},${karachiBounds.northEast.lat}`
+          );
           console.log(response);
-          setRecyclingCenters(response.data.data);
-      } catch (err) {
-          setError('Error fetching recycling centers');
+          if (response.data && response.data.features.length > 0) {
+              setSearchResults(response.data.features);
+          }
+      } catch {
+          setError("Error searching for location");
       }
   };
+  
+      
   
   const fetchCurrentRequests = async () => {
       try {
@@ -71,71 +196,9 @@ const RecyclingCenters = ({}) => {
       }
   };
   
-  const LocationMarker = () => {
-      useMapEvents({
-          click(e) {
-              const { lat, lng } = e.latlng;
-              setNewCenter({ ...newCenter, latitude: lat, longitude: lng });
-          },
-      });
   
-      return newCenter.latitude && newCenter.longitude ? (
-          <Marker position={[newCenter.latitude, newCenter.longitude]} />
-      ) : null;
-  };
   
-  const handleInputChange = (e) => {
-      const { name, value } = e.target;
-      setNewCenter({ ...newCenter, [name]: value });
-  };
   
-  const handleCreateCenter = async (e) => {
-      e.preventDefault();
-      setError('');
-      try {
-          const response = await fetch('/api/company/recycling_center/create/', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                  company_id: companyId,
-                  area_id: newCenter.area_id,
-                  latitude: newCenter.latitude,
-                  longitude: newCenter.longitude,
-              }),
-          });
-          console.log(response);
-          const data = await response.json();
-          console.log(data);
-          alert(data.message);
-          await fetchCurrentRequests();
-      } catch (err) {
-          console.error(err);
-          setError('Error creating recycling center');
-      }
-  };
-  
-  const handleSearchLocation = async () => {
-      const karachiBounds = {
-          southWest: { lat: 24.774265, lon: 66.973096 },
-          northEast: { lat: 25.102974, lon: 67.192733 },
-      };
-  
-      try {
-          const response = await axios.get(
-              `https://photon.komoot.io/api/?q=${encodeURIComponent(
-                  locationName
-              )}&bbox=${karachiBounds.southWest.lon},${karachiBounds.southWest.lat},${karachiBounds.northEast.lon},${karachiBounds.northEast.lat}`
-          );
-          console.log(response);
-          if (response.data && response.data.features.length > 0) {
-              setSearchResults(response.data.features);
-          }
-      } catch {
-          setError("Error searching for location");
-      }
-  };
   
   // Fetch area names using reverse geocoding
   const fetchAreaName = async (lat, lon) => {
@@ -205,10 +268,26 @@ const RecyclingCenters = ({}) => {
       fetchAllAreaNames();
   }, [recyclingCenters, currentRequests]); // Re-fetch area names when recyclingCenters or currentRequests change
   
-    return (
+  const handleButtonClick = (view) => {
+    set_recycleLoading(true); // Show the loader (assuming `setLoader` updates the loader state)
+    setTimeout(() => {
+      setViewCenters(view); // Update the view after 1 second
+      set_recycleLoading(false); // Hide the loader
+    }, 1000);
+  };
+    
+  
+  return (
       <div className="p-6 text-custom-black rounded-lg">
         <h2 className="text-2xl font-bold text-custom-black mb-6">Recycling Centers</h2>
-        
+        {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}        
         {/* Toggle View Button */}
         <button
           onClick={toggleView}
@@ -227,14 +306,14 @@ const RecyclingCenters = ({}) => {
       {/* Toggle buttons to switch between views */}
       <div className="mb-6">
         <button
-          className={`px-4 py-2 rounded-lg ${viewCenters === 'requests' ? 'bg-custom-green text-white' : 'bg-gray-200'}`}
-          onClick={() => setViewCenters('requests')}
+          className={`px-4 py-2 rounded-lg  border border-custom-black  ${viewCenters === 'requests' ? 'bg-custom-green text-custom black' : 'bg-gray-200'}`}
+          onClick={() => {handleButtonClick('requests') ; setViewCenters('requests')}}
         >
           View Current Requests
         </button>
         <button
-          className={`px-4 py-2 ml-4 rounded-lg ${viewCenters === 'centers' ? 'bg-custom-green text-white' : 'bg-gray-200'}`}
-          onClick={() => setViewCenters('centers')}
+          className={`px-4 py-2 ml-4 rounded-lg  border border-custom-black ${viewCenters === 'centers' ? 'bg-custom-green text-custom black' : 'bg-gray-200 text-custom-black'}`}
+          onClick={() => {handleButtonClick('centers') ; setViewCenters('centers')}}
         >
           View Existing Recycling Centers
         </button>
@@ -243,12 +322,14 @@ const RecyclingCenters = ({}) => {
       {/* Conditional rendering based on the current view */}
       {viewCenters === 'requests' && currentRequests.length > 0 && (
         <div className="mb-6">
-          <h4 className="text-2xl font-semibold text-custom-green mb-6">Current Requests</h4>
+          <h4 className="text-xl font-semibold text-custom-black mb-4">Current Requests</h4>
+          {recycle_loading && <Recycle_loader />}
+          
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentRequests.map((request, ind) => (
+            {!recycle_loading && currentRequests.map((request, ind) => (
               <div
                 key={request.request_submit_material_id}
-                className="border p-6 rounded-lg bg-white shadow-lg transition-transform transform hover:scale-105 border-2 border-custom-green"
+                className="p-6 rounded-lg bg-white shadow-lg transition-transform transform hover:scale-105 border-2 border-custom-green"
               >
                 <div className="space-y-3">
                   <p className="text-lg font-medium">
@@ -269,8 +350,9 @@ const RecyclingCenters = ({}) => {
       {viewCenters === 'centers' && (
         <div>
           <h3 className="text-xl font-semibold text-custom-black mb-4">Existing Centers</h3>
+          {recycle_loading && <Recycle_loader />}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recyclingCenters.map((center, index) => (
+            { !recycle_loading && recyclingCenters.map((center, index) => (
               <div
                 key={center.recycling_center_id}
                 className="p-4 bg-white rounded-lg shadow-md hover:scale-105 transition-transform duration-200 border-2 border-custom-green"

@@ -3,6 +3,9 @@ import { useSelector } from "react-redux";
 import Loader from "../ui/Loader";
 import Truck_loader from "../ui/Truck_loader";
 import NoDataHappyFace from "../animations/noDataHappyFace";
+import Alert from '../ui/Alert'
+
+
 
 const ReportMissedPickups = () => {
   const [allMissedPickups, setAllMissedPickups] = useState([]);
@@ -10,6 +13,16 @@ const ReportMissedPickups = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedImagePreview, setSelectedImagePreview] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [alert, setAlert] = useState([]);
+  const showAlert = (type, message) => {
+    const id = Date.now();
+    setAlert([...alert, { id, type, message }]);
+    setTimeout(() => {
+      setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+    }, 4000);
+  };
+
+
 
   let userId = userData?.user_id;
   let areaId = userData?.area_id;
@@ -35,9 +48,10 @@ const ReportMissedPickups = () => {
       const twentyFourHours = 24 * 60 * 60 * 1000;
 
       if (timeDifference < twentyFourHours) {
-        alert(
-          "You cannot report another missed pickup within 24 hours of the previous report."
-        );
+        // alert(
+        //   "You cannot report another missed pickup within 24 hours of the previous report."
+        // );
+        showAlert("error" , "You cannot report another missed pickup within 24 hours of the previous report")
         return;
       }
     }
@@ -58,14 +72,18 @@ const ReportMissedPickups = () => {
       const responseData = await response.json();
       if (responseData.success) {
         getAllMissedPickups();
-        alert("Missed pickup reported successfully.");
+        //alert("Missed pickup reported successfully.");
+        showAlert("success" , "Missed pickup reported successfully")
         setSelectedImagePreview(null)
         setSelectedImage(null)
       } else {
-        alert(responseData.message);
+        //alert(responseData.message);
+        showAlert("error" , responseData.message)
+        
       }
     } catch (error) {
-      alert(error.message);
+      //alert(error.message);
+      showAlert("error" , error.message)
     }
   };
 
@@ -86,7 +104,8 @@ const ReportMissedPickups = () => {
         setAllMissedPickups(responseData.data);
       }
     } catch (error) {
-      console.log(error.message);
+      //console.log(error.message);
+      showAlert("error" , error.message)
     }
   };
 
@@ -107,12 +126,16 @@ const ReportMissedPickups = () => {
       const responseData = await response.json();
       if (responseData.success) {
         getAllMissedPickups();
-        alert("Missed pickup status updated successfully.");
+       // alert("Missed pickup status updated successfully.");
+        showAlert("success" , "Missed pickup status updated successfully")
       } else {
-        alert(responseData.message);
+        //alert(responseData.message);
+        showAlert("error" , responseData.message);
       }
     } catch (error) {
-      alert(error.message);
+      //alert(error.message);
+      showAlert("error" , error.message);
+      
     }
   };
 
@@ -141,6 +164,16 @@ return (
     Report Missed Pickups
   </h2>
 
+  {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}
+
+
   {/* Grid layout for missed pickups */}
  
   {allMissedPickups.length > 0 ? ( <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8"> 
@@ -148,7 +181,7 @@ return (
     {allMissedPickups.map((pickup, index) => (
       <div
       key={pickup.missed_pickup_id}
-      className="border-l-4 border-[#00ED64] bg-gray-100 rounded-lg shadow-lg hover:shadow-xl transition duration-200 ease-in-out"
+      className="border-l-4  border-t-2 border-r border-custom-black border-b-2 bg-gray-100 rounded-lg transition duration-200 ease-in-out shadow-[-20px_0_15px_-5px_rgba(0,0,0,0.1)]"
     >
       {/* Company, Date, and Status */}
       <div className="mb-4 px-3 py-1">
@@ -187,7 +220,7 @@ return (
             onClick={() =>
               updateMissedPickupStatus(pickup.missed_pickup_id, "completed")
             }
-            className="bg-custom-green text-white py-2 px-6 rounded-lg hover:bg-custom-green-600 transition duration-300"
+            className="bg-custom-green text-custom-black border border-custom-black hover:bg-green-600 py-2 px-6 rounded-lg hover:bg-custom-green-600 transition duration-300"
           >
             Mark as Completed
           </button>
@@ -195,7 +228,7 @@ return (
             onClick={() =>
               updateMissedPickupStatus(pickup.missed_pickup_id, "pending")
             }
-            className="bg-custom-green text-white py-2 px-6 rounded-lg hover:bg-custom-green-600 transition duration-300"
+            className="bg-custom-green text-custom-black border border-custom-black hover:bg-green-600 py-2 px-6 rounded-lg hover:bg-custom-green-600 transition duration-300"
           >
             Mark as Pending
           </button>
