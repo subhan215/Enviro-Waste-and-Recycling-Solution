@@ -4,6 +4,9 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import Loader from '../ui/Loader'; // Assume you have a loader component
+import Alert from '../ui/Alert'
+
+
 
 const RecyclingCenterNearby = () => {
   const [userLocation, setUserLocation] = useState({ latitude: null, longitude: null });
@@ -11,6 +14,14 @@ const RecyclingCenterNearby = () => {
   const [error, setError] = useState(null);
   const [viewMap, setViewMap] = useState(true);
   const [loading, setLoading] = useState(true); // Loading state
+  const [alert, setAlert] = useState([]);
+  const showAlert = (type, message) => {
+    const id = Date.now();
+    setAlert([...alert, { id, type, message }]);
+    setTimeout(() => {
+      setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+    }, 4000);
+  }; 
 
   // Fetch user's location when component mounts
   useEffect(() => {
@@ -22,11 +33,13 @@ const RecyclingCenterNearby = () => {
         },
         (err) => {
           setError('Unable to retrieve your location');
-          console.error(err);
+          showAlert("error" , "Unable to retrieve your location" )
+          //console.error(err);
         }
       );
     } else {
       setError('Geolocation is not supported by this browser');
+      showAlert("error" , "Geolocation is not supported by this browser")
     }
   }, []);
 
@@ -60,7 +73,8 @@ const RecyclingCenterNearby = () => {
         } catch (err) {
           setError('Failed to fetch recycling centers');
           setLoading(false); // Stop loading in case of error
-          console.error(err);
+          //console.error(err);
+          showAlert("error" , "Failed to fetch recycling centers")
         }
       };
       fetchRecyclingCenters();
@@ -87,13 +101,29 @@ const RecyclingCenterNearby = () => {
   };
 
   if (error) {
-    return <div className="text-red-500 text-center mt-4">{error}</div>;
+    return <>
+{alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}     
+    </>;
   }
 
   return (
     <div className="container mx-auto px-4 py-6">
       <h1 className="text-4xl font-semibold text-center text-gray-800 mb-6">Recycling Centers Near You</h1>
-
+      {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))} 
       <button
         className="bg-custom-green text-custom-black px-6 py-2 rounded-lg mb-4 block mx-auto hover:bg-green-600 transition duration-300 transform hover:scale-105 border border-custom-black"
         onClick={handleToggleView}

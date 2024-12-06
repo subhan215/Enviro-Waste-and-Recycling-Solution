@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckCircle, faTimesCircle } from "@fortawesome/free-solid-svg-icons";
 import NoDataDisplay from "../animations/NoDataDisplay";
+import Admin_loader from "../ui/Admin_loader"
+
+
 
 const ResignAgreements = () => {
   const [pendingAgreements, setPendingAgreements] = useState([]);
@@ -69,11 +72,7 @@ const ResignAgreements = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center ">
-        <div className="loader border-t-[#17cf42] w-12 h-12 border-4 border-gray-300 rounded-full animate-spin"></div>
-      </div>
-    );
+    return <Admin_loader></Admin_loader>
   }
 
   return (

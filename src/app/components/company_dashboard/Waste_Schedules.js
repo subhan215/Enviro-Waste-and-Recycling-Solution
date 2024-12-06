@@ -8,6 +8,7 @@ import { setCurrentChat } from "../../../store/slices/currentChatSlice";
 import axios from "axios";
 import Loader from "../ui/Loader";
 import NoDataDisplay from "../animations/NoDataDisplay";
+import Alert from '../ui/Alert'
 
 
 const Waste_Schedules = ({}) => {
@@ -25,6 +26,14 @@ const Waste_Schedules = ({}) => {
   const [weights, setWeights] = useState({});
   const [wastePrices, setWastePrices] = useState([]);
   const [Rating, setRating] = useState();
+  const [alert, setAlert] = useState([]);
+  const showAlert = (type, message) => {
+    const id = Date.now();
+    setAlert([...alert, { id, type, message }]);
+    setTimeout(() => {
+      setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+    }, 4000);
+  };
 
   let companyId = userData.user_id;
 
@@ -38,7 +47,8 @@ const Waste_Schedules = ({}) => {
         console.log("Company rating : ", response);
         setRating(response.data.data);
       } catch (error) {
-        console.log("Error fetching company rating:", error);
+        //console.log("Error fetching company rating:", error);
+        showAlert('error' , 'Error fetching company rating')
       }
     };
 
@@ -80,7 +90,8 @@ const Waste_Schedules = ({}) => {
         const response = await axios.get("/api/requests/get_waste_price");
         setWastePrices(response.data.data);
       } catch (error) {
-        alert("Error while fetching waste prices: ", error);
+        //alert("Error while fetching waste prices: ", error);
+        showAlert('error' , 'Error while fetching waste prices')
         console.log(error);
       }
     };
@@ -100,7 +111,8 @@ const Waste_Schedules = ({}) => {
 
   const handleAssignTruck = async (scheduleId) => {
     if (!selectedTruck) {
-      alert("Please select a truck to assign.");
+      //alert("Please select a truck to assign.");
+      showAlert('info' , 'Please select a truck to assign')
       return;
     }
 
@@ -121,7 +133,8 @@ const Waste_Schedules = ({}) => {
       const result = await response.json();
 
       if (response.ok) {
-        alert("Truck assigned successfully!");
+        //alert("Truck assigned successfully!");
+        showAlert('success' , 'Truck assigned successfully!');
         setSchedules((prevSchedules) =>
           prevSchedules.map((schedule) =>
             schedule.schedule_id == result.schedule.schedule_id
@@ -130,11 +143,14 @@ const Waste_Schedules = ({}) => {
           )
         );
       } else {
-        alert(`Failed to assign truck: ${result.message}`);
+        //alert(`Failed to assign truck: ${result.message}`);
+        showAlert('error' , 'Failed to assign truck');
       }
     } catch (err) {
       console.error("Error assigning truck:", err);
-      alert("An error occurred while assigning the truck.");
+      //alert("An error occurred while assigning the truck.");
+      showAlert('error' , 'Error assigning truck');
+      
     } finally {
       setAssigning(false);
     }
@@ -152,14 +168,18 @@ const Waste_Schedules = ({}) => {
       const result = await response.json();
       if (response.ok) {
         dispatch(setCurrentChat(result.data.chat_id));
-        alert("Chat initiated successfully!");
+        //alert("Chat initiated successfully!");
+        showAlert('success' , 'Chat initiated successfully!')
         navigate.push("/chat");
       } else {
-        alert(`Failed to initiate chat: ${result.message}`);
+        //alert(`Failed to initiate chat: ${result.message}`);
+        showAlert('error' , 'Failed to initiate chat')
       }
     } catch (err) {
       console.error("Error initiating chat:", err);
-      alert("An error occurred while initiating the chat.");
+      //alert("An error occurred while initiating the chat.");
+      showAlert('error' , 'An error occurred while initiating the chat')
+      
     }
   };
 
@@ -181,7 +201,8 @@ const Waste_Schedules = ({}) => {
         weights: weightsData,
       });
       if (response.status === 200) {
-        alert("Schedule marked as done successfully!");
+        //alert("Schedule marked as done successfully!");
+        showAlert('success' , 'Schedule marked as done successfully!')
         setShowForm(false);
         setSelectedSchedule(null);
         const { updatedSchedule } = response.data;
@@ -195,7 +216,8 @@ const Waste_Schedules = ({}) => {
       }
     } catch (error) {
       console.error("Error marking schedule as done:", error);
-      alert("An error occurred while marking the schedule as done.");
+      //alert("An error occurred while marking the schedule as done.");
+      showAlert('error' , 'An error occurred while marking the schedule as done.');
     }
   };
 
@@ -203,6 +225,14 @@ const Waste_Schedules = ({}) => {
   if (schedules.length === 0)
     return (
       <>
+      {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}        
         <div className="flex items-center gap-2">
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -230,6 +260,14 @@ const Waste_Schedules = ({}) => {
       <h1 className="text-3xl font-bold mb-2  text-custom-black ">
         Company Schedules
       </h1>
+      {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}         
       <div className="p-6 rounded-lg">
         {/* <p className="text-lg font-semibold mb-4 text-custom-black">Current rating: {Rating}</p> */}
         <div style={{ display: "flex" }} className="mb-2">
@@ -362,13 +400,13 @@ const Waste_Schedules = ({}) => {
                   onChange={(e) =>
                     setWeights({ ...weights, [item.name]: e.target.value })
                   }
-                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-custom-black"
                 />
               </div>
             ))}
             <button
               type="submit"
-              className="mt-4 px-4 py-2 bg-blue-600 text-custom-black rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              className="mt-4 px-4 py-2 bg-custom-green text-cusiom-black border border-custom-black hover:bg-green-600 hover:text-white focus:ring-custom-green rounded-lg"
             >
               Submit
             </button>

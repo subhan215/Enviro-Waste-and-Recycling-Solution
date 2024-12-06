@@ -3,20 +3,35 @@ import { Button } from "../ui/Button";
 import { AlertTriangle } from 'lucide-react';
 import axios from "axios";
 import NoDataDisplay from "../animations/NoDataDisplay"; // Import the NoDataAnimation component
+import Alert from '../ui/Alert'
+import Admin_loader from "../ui/Admin_loader"
+
 
 function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFilter }) {
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [alert, setAlert] = useState([]);
+  const showAlert = (type, message) => {
+    const id = Date.now();
+    setAlert([...alert, { id, type, message }]);
+    setTimeout(() => {
+      setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+    }, 4000);
+  };
+
 
   useEffect(() => {
     const fetchReports = async () => {
       try {
         const response = await axios.get("/api/report/get_all_reports");
         setComplaints(response.data.data);
-        alert(response.data.message || "Reports fetched successfully!");
+        //alert(response.data.message || "Reports fetched successfully!");
+        showAlert('success' , 'Reports fetched successfully!')
       } catch (error) {
-        console.error("Error fetching reports:", error);
-        alert(error.response?.data?.message || "Failed to fetch reports.");
+        //console.error("Error fetching reports:", error);
+        //alert(error.response?.data?.message || "Failed to fetch reports.");
+        showAlert('error' , 'Failed to fetch reports')
+        
       } finally {
         setLoading(false);
       }
@@ -32,11 +47,13 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
         setComplaints(complaints.map(complaint =>
           complaint.report_id === reportId ? { ...complaint, status: true } : complaint
         ));
-        alert("Report marked as resolved successfully!");
+        //alert("Report marked as resolved successfully!");
+        showAlert('success' , 'Report marked as resolved successfully!')
       }
     } catch (error) {
-      console.error("Error marking report as resolved:", error);
-      alert(error.response?.data?.message || "Failed to mark report as resolved.");
+      //console.error("Error marking report as resolved:", error);
+      //alert(error.response?.data?.message || "Failed to mark report as resolved.");
+      showAlert('error' , 'Failed to mark report as resolved')
     }
   };
 
@@ -44,10 +61,13 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
     try {
       const response = await axios.post("/api/report/remove_company_agreement", { company_id });
       setComplaints(complaints.filter(complaint => complaint.company_id !== company_id));
-      alert(response.data.message || "Company agreement removed successfully!");
+      //alert(response.data.message || "Company agreement removed successfully!");
+      showAlert('success' , 'Company agreement removed successfully!')
     } catch (error) {
-      console.error("Error removing company:", error);
-      alert(error.response?.data?.message || "Failed to remove company agreement.");
+      //console.error("Error removing company:", error);
+      //alert(error.response?.data?.message || "Failed to remove company agreement.");
+      showAlert('error' , 'Failed to remove company agreement')
+    
     }
   };
 
@@ -57,19 +77,22 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
   );
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="loader border-t-[#17cf42] w-12 h-12 border-4 border-gray-300 rounded-full animate-spin"></div>
-      </div>
-    );
+    return <Admin_loader></Admin_loader>
   }
 
   if (filteredComplaints?.length === 0) {
     // No data, show animation
     return (
-      <div className="flex justify-center items-center h-full">
-        <NoDataDisplay emptyText='No reports available' /> {/* Pass message to the animation */}
-      </div>
+    <>
+    {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}    
+    </>
     );
   }
 
@@ -81,13 +104,20 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
       <p className="text-gray-700 text-sm mb-2">Description: {complaint.description}</p>
       <p className="text-gray-700 text-sm mb-2">Sentiment Rating: <span className="font-semibold">{complaint.sentiment_rating}</span></p>
       <p className="text-gray-700 text-sm mb-4">Company Name: {complaint.company_name}</p>
-
+      {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}  
       {/* Ensure buttons don't overflow */}
       <div className="mt-4 flex flex-wrap gap-4 justify-start">
         <Button
           variant="outline"
           size="sm"
-          className="border-custom-green text-custom-green hover:bg-custom-green hover:text-white transition w-full sm:w-auto"
+          className="border border-custom-black text-custom-black bg-custom-green  hover:bg-green-700 hover:text-white transition w-full sm:w-auto"
           onClick={() => markAsResolved(complaint.report_id)}
         >
           Mark as Resolved
@@ -95,7 +125,7 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
         <Button
           variant="outline"
           size="sm"
-          className="border-custom-green text-custom-green hover:bg-custom-green hover:text-white transition w-full sm:w-auto"
+          className="border border-custom-black text-custom-black bg-custom-green hover:bg-green-700 hover:text-white transition w-full sm:w-auto"
           onClick={() => removeCompany(complaint.company_id)}
         >
           Terminate Agreement

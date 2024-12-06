@@ -5,6 +5,10 @@ import { setCurrentChat } from '../../../store/slices/currentChatSlice';
 import Loader from '../ui/Loader';
 import NoDataDisplay from '../animations/NoDataDisplay';
 import { FaComment } from 'react-icons/fa';
+import Alert from '../ui/Alert'
+
+
+
 const SchedulesList = () => {
   const userData = useSelector((state) => state.userData.value);
   const [schedules, setSchedules] = useState([]);
@@ -19,8 +23,19 @@ const SchedulesList = () => {
   });
   const [activeRequest, setActiveRequest] = useState(null);
   const [rating, setRating] = useState(0);
+  const [alert, setAlert] = useState([]);
+  const showAlert = (type, message) => {
+    const id = Date.now();
+    setAlert([...alert, { id, type, message }]);
+    setTimeout(() => {
+      setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+    }, 4000);
+  };  
+  
   const navigate = useRouter();
   const dispatch = useDispatch();
+
+
 
   const user_id = userData.user_id;
   const rewards = userData.rewards;
@@ -36,12 +51,17 @@ const SchedulesList = () => {
     e.preventDefault();
     const { accountType, accountDetails, rewardAmount, wallet_Bank_name } = formData;
     if (!accountType || !accountDetails || !rewardAmount || !wallet_Bank_name) {
-      alert('Please fill in all fields.');
+      //alert('Please fill in all fields.');
+      showAlert("info" , "Please fill in all fields")
       return;
     }
-    alert("Reward Amount: " + rewardAmount); 
+    //alert("Reward Amount: " + rewardAmount); 
+    showAlert("info" , `Reward Amount : ${rewardAmount}`)
+    
     if (formData.rewardAmount > rewards) {
-      alert('You cannot convert more rewards than you have.');
+      //alert('You cannot convert more rewards than you have.');
+    showAlert("warning" , 'You cannot convert more rewards than you have')
+      
       return;
     }
 
@@ -62,7 +82,8 @@ const SchedulesList = () => {
 
       const result = await response.json();
       if (response.ok) {
-        alert('Transaction request created successfully!');
+        //alert('Transaction request created successfully!');
+        showAlert("success" , "Transaction request created successfully!")
         setFormData({
           accountType: '',
           accountDetails: '',
@@ -71,11 +92,13 @@ const SchedulesList = () => {
         });
         fetchActiveRequest()
       } else {
-        alert(`Failed to create transaction request: ${result.message}`);
+        //alert(`Failed to create transaction request: ${result.message}`);
+        showAlert("error" , "Failed to create transaction request")
       }
     } catch (err) {
-      console.error('Error creating transaction request:', err);
-      alert('An error occurred while creating the transaction request.');
+      //console.error('Error creating transaction request:', err);
+      //alert('An error occurred while creating the transaction request.');
+      showAlert("error" , "An error occurred while creating the transaction request")
     }
   };
   const handleRating = async(e , schedule_id) => {
@@ -90,17 +113,22 @@ const SchedulesList = () => {
       })
       const result = await response.json();
       if (response.ok) {
-        alert('Schedule completed!');
+        //alert('Schedule completed!');
+        showAlert("success" , "Schedule completed!")
         setSchedules(schedules.filter(schedule => schedule.schedule_id != schedule_id))
         
         //navigate.push('/profiles/userProfile') ;
         
       } else {
-        alert("Failed to provide Rating");
+        //alert("Failed to provide Rating");
+        showAlert("error" , "Failed to provide Rating")
+        
       }      
     } catch (error) {
-      console.error('Error initiating chat:', error);
-      alert('An error occurred while Marking schedule as done');      
+      //console.error('Error initiating chat:', error);
+      //alert('An error occurred while Marking schedule as done');      
+      showAlert("error" , "An error occurred while Marking schedule as done")
+      
     }
     
     
@@ -119,14 +147,17 @@ const SchedulesList = () => {
       const result = await response.json();
       if (response.ok) {
         dispatch(setCurrentChat(result.data.chat_id));
-        alert('Chat initiated successfully!');
+        //alert('Chat initiated successfully!');
+        showAlert("success" , "Chat initiated successfully!")
         navigate.push('/chat');
       } else {
-        alert(`Failed to initiate chat: ${result.message}`);
+        //alert(`Failed to initiate chat: ${result.message}`);
+        showAlert("error" , "Failed to initiate chat" )
       }
     } catch (err) {
-      console.error('Error initiating chat:', err);
-      alert('An error occurred while initiating the chat.');
+      //console.error('Error initiating chat:', err);
+      //alert('An error occurred while initiating the chat.');
+      showAlert("error" , "An error occurred while initiating the chat")
     }
   };
 
@@ -139,13 +170,16 @@ const SchedulesList = () => {
       const result = await response.json();
       if (response.ok) {
         setActiveRequest(null);
-        alert('Your request has been canceled successfully!');
+        //alert('Your request has been canceled successfully!');
+        showAlert('successfully' , "An error occurred while initiating the chat")
       } else {
-        alert(`Failed to cancel the request: ${result.message}`);
+        //alert(`Failed to cancel the request: ${result.message}`);
+        showAlert("error" , "Failed to cancel the request")
       }
     } catch (err) {
-      console.error('Error canceling the request:', err);
-      alert('An error occurred while canceling the request.');
+      //console.error('Error canceling the request:', err);
+      //alert('An error occurred while canceling the request.');
+      showAlert("error" , "An error occurred while canceling the request")
     }
   };
 
@@ -160,14 +194,17 @@ const SchedulesList = () => {
 
       const result = await response.json();
       if (response.ok) {
-        alert('Request marked as seen.');
+        //alert('Request marked as seen.');
+        showAlert("success" , "Request marked as seen")
         fetchActiveRequest()
       } else {
-        alert(`Failed to mark request as seen: ${result.message}`);
+        //alert(`Failed to mark request as seen: ${result.message}`);
+        showAlert("error" , "Failed to mark request as seen" )
       }
     } catch (err) {
-      console.error('Error marking request as seen:', err);
-      alert('An error occurred while marking the request as seen.');
+      //console.error('Error marking request as seen:', err);
+      //alert('An error occurred while marking the request as seen.');
+      showAlert("An error occurred while marking the request as seen")
     }
   };
   const fetchActiveRequest = async () => {
@@ -181,10 +218,12 @@ const SchedulesList = () => {
       if (data.success) {
         setActiveRequest(data.data); // Only set if success
       } else {
-        console.log('No active request found.');
+        //console.log('No active request found.');
+        showAlert("info" , "No active request found")
       }
     } catch (err) {
-      console.error('Error fetching active request:', err);
+      //console.error('Error fetching active request:', err);
+      showAlert("error" , "Error fetching active request")
     }
   };
   
@@ -196,6 +235,7 @@ const SchedulesList = () => {
       }
       const data = await response.json();
       setSchedules(data);
+      console.log("Sch : ", data)
     } catch (err) {
       setError(err.message);
     }
@@ -232,6 +272,14 @@ const SchedulesList = () => {
   return (
     <>
 <div className="max-w-6xl mx-auto p-6 rounded-lg">
+{alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}  
   {/* Rewards Section */}
   <div className="mb-8 text-center">
     <h2 className="text-4xl font-bold text-black mb-2">Rewards Earned: {rewards}</h2>

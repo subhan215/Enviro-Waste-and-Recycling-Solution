@@ -6,6 +6,11 @@ import 'leaflet/dist/leaflet.css';
 import { useSelector } from 'react-redux';
 import Loader from "../ui/Loader";
 import { Popup } from 'react-leaflet';
+import Alert from '../ui/Alert'
+import Recycle_loader from '../ui/Recycle_loader'
+
+
+
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
@@ -22,6 +27,7 @@ const RecyclingCenters = ({}) => {
     const [recyclingCenters, setRecyclingCenters] = useState([]);
     const [newCenter, setNewCenter] = useState({ area_id: '', latitude: '', longitude: '' });
     const [loading, setLoading] = useState(true);
+    const [recycle_loading, set_recycleLoading] = useState(true);
     const [error, setError] = useState(null);
     const [locationName, setLocationName] = useState('');
     const [map, setMap] = useState(null);
@@ -30,11 +36,22 @@ const RecyclingCenters = ({}) => {
     const [viewMode, setViewMode] = useState('view'); // 'view
     const [ searchResults, setSearchResults] = useState([])
     const searchResultsRef = useRef(null);
+    const [alert, setAlert] = useState([]);
+  const showAlert = (type, message) => {
+    const id = Date.now();
+    setAlert([...alert, { id, type, message }]);
+    setTimeout(() => {
+      setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+    }, 4000);
+  };
+
+
     const toggleView = () => {
       setViewMode(viewMode === 'view' ? 'create' : 'view');
     };
     let companyId = userData.user_id
     const fetchRecyclingCenters = async () => {
+      set_recycleLoading(true);
         try {
             const response = await axios.get(`/api/company/recycling_center/get_company_recycling_centers/${companyId}`);
             console.log(response)
@@ -43,6 +60,9 @@ const RecyclingCenters = ({}) => {
         } catch (err) {
             setError('Error fetching recycling centers');
             //setLoading(false);
+        }
+        finally{
+          set_recycleLoading(false);
         }
     };
    
@@ -111,14 +131,18 @@ const RecyclingCenters = ({}) => {
             console.log(response)
             const data = await response.json();
             console.log(data)
-            alert(data.message)
+            //alert(data.message)
+            showAlert("success" , "Recycle center created!")
             setRecyclingCenters([...recyclingCenters , data.data])
             //fetchRecyclingCenters()
             setNewCenter({ area_id: '', latitude: '', longitude: '' });
+
         } catch (err) {
-            console.error(err);
+            //console.error(err);
+            showAlert("error" , err);
             setError('Error creating recycling center');
         }
+
     };
     
     const handleSearchLocation = async () => {
@@ -197,7 +221,14 @@ const RecyclingCenters = ({}) => {
     return (
       <div className="p-6 text-custom-black rounded-lg">
         <h2 className="text-2xl font-bold text-custom-black mb-6">Recycling Centers</h2>
-        
+        {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}        
         {/* Toggle View Button */}
         <button
           onClick={toggleView}
@@ -214,6 +245,8 @@ const RecyclingCenters = ({}) => {
         ) : viewMode === 'view' ? (
           <div>
       <h3 className="text-xl font-semibold text-custom-black mb-4">Existing Centers</h3>
+
+          {recycle_loading && <Recycle_loader></Recycle_loader>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {recyclingCenters.map((center, index) => (

@@ -3,6 +3,9 @@ import { Button } from "../ui/Button";
 import NoDataDisplay from "../animations/NoDataDisplay";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
+import Admin_loader from "../ui/Admin_loader"
+
+
 const RewardConversionRequests = () => {
   const [rewardConversions, setRewardConversions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -51,11 +54,7 @@ const RewardConversionRequests = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="loader border-t-[#17cf42] w-12 h-12 border-4 border-gray-300 rounded-full animate-spin"></div>
-      </div>
-    );
+    return <Admin_loader></Admin_loader>
   }
 
   return (

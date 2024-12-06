@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Loader from '../ui/Loader';
 import NoDataDisplay from "../../components/animations/NoDataDisplay"
+import Alert from '../ui/Alert'
+
 const ManageAndViewAreas = () => {
   const [areas, setAreas] = useState([]);
   const [nonAssignedAreas, setNonAssignedAreas] = useState([]);
@@ -11,7 +13,19 @@ const ManageAndViewAreas = () => {
   const userData = useSelector((state) => state.userData.value);
   const [areaRequests , setAreaRequests] = useState([])
   const [loading, setLoading] = useState(true) ; 
+  const [alert, setAlert] = useState([]);
+
+
   let companyId = userData.user_id;
+
+  const showAlert = (type, message) => {
+    const id = Date.now();
+    setAlert([...alert, { id, type, message }]);
+    setTimeout(() => {
+      setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+    }, 4000);
+  };
+
   const fetchAreas = async () => {
     try {
       const response = await fetch(`/api/area/get_all_assigned_areas/${companyId}`);
@@ -74,17 +88,23 @@ const ManageAndViewAreas = () => {
 
         const responseData = await response.json();
         if (responseData.success) {
-          alert("Assigned areas to company!");
+          //alert("Assigned areas to company!");
+          showAlert("success", "Assigned areas to company!");
+          
           fetchAreas(); // Re-fetch areas after assignment
           setIsAddingArea(false);
           setSelectedAreas([]); // Clear the selected areas after assigning
           setViewMode(true) ; 
           setNonAssignedAreas([])
         } else {
-          alert(responseData.message);
+          //alert(responseData.message);
+          showAlert("error", responseData.message);
+          
         }
       } catch (error) {
-        alert(error.message);
+        //alert(error.message);
+        showAlert("error", error.message);
+        
       }
     }
   };
@@ -112,6 +132,15 @@ const ManageAndViewAreas = () => {
     <div className="p-6 min-h-screen">
       <div className="rounded p-6">
         <h2 className="text-2xl font-bold mb-4">Manage and View Areas</h2>
+
+        {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}
   
         {/* Toggle between view and manage modes */}
         <button
@@ -141,9 +170,9 @@ const ManageAndViewAreas = () => {
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {areaRequests.map((req, index) => (
         <div key={index} className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
-          <p className="font-semibold text-custom-green">Request {index + 1}</p>
-          <p className="text-sm text-custom-green mb-2">Area Name: {req.name}</p>
-          <p className="text-sm text-custom-green">Status: {req.status}</p>
+          <p className="font-semibold text-custom-black">Request {index + 1}</p>
+          <p className="text-sm text-custom-black mb-2">Area Name: {req.name}</p>
+          <p className="text-sm text-custom-black">Status: {req.status}</p>
         </div>
       ))}
     </div>
@@ -162,8 +191,8 @@ const ManageAndViewAreas = () => {
                     key={index}
                     className="bg-gray-50 p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out"
                   >
-                    <h4 className="text-lg  text-custom-green font-semibold mb-2">{area.name}</h4>
-                    <p className="text-sm text-custom-green mb-2">License Plate: {area.licenseplate || "null"}</p>
+                    <h4 className="text-lg  text-custom-black font-semibold mb-2">{area.name}</h4>
+                    <p className="text-sm text-custom-black mb-2">License Plate: {area.licenseplate || "null"}</p>
                   </div>
                 ))
               ) : (
