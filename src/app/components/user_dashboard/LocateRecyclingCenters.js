@@ -117,91 +117,93 @@ const RecyclingCenterNearby = () => {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <h1 className="text-4xl font-semibold text-center text-gray-800 mb-6">Recycling Centers Near You</h1>
-      {alert.map((alert) => (
-        <Alert
-          key={alert.id}
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
-        />
-      ))} 
-      <button
-        className="bg-custom-green text-custom-black px-6 py-2 rounded-lg mb-4 block mx-auto hover:bg-green-600 transition duration-300 transform hover:scale-105 border border-custom-black"
-        onClick={handleToggleView}
-      >
-        {viewMap ? 'View as List' : 'View on Map'}
-      </button>
-
-      {userLocation.latitude && userLocation.longitude ? (
-        loading ? (
-          <div className="flex justify-center items-center py-6">
-            <Loader /> {/* Loader component */}
-          </div>
-        ) : (
-          viewMap ? (
-            <MapContainer
-              center={[userLocation.latitude, userLocation.longitude]}
-              zoom={13}
-              style={{ width: '100%', height: '400px', borderRadius: '12px' }}
-            >
-              <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-              />
-              <Marker position={[userLocation.latitude, userLocation.longitude]}>
-                <Popup className="text-gray-700 font-semibold">You are here</Popup>
-              </Marker>
-
-              {recyclingCenters.map((center) => (
-                <Marker
-                  key={center.recycling_center_id}
-                  position={[center.latitude, center.longitude]}
-                  icon={new L.Icon({
-                    iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png',
-                    iconSize: [35, 35],
-                    iconAnchor: [17, 17],
-                    popupAnchor: [0, -15],
-                  })}
-                >
-                  <Popup>{center.name}</Popup>
-                </Marker>
-              ))}
-            </MapContainer>
-          ) : (
-            <div className="rounded-lg p-4 border-l-4 ">
-  <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-    {recyclingCenters.map((center) => {
-      const distance = calculateDistance(
-        userLocation.latitude,
-        userLocation.longitude,
-        center.latitude,
-        center.longitude
-      ).toFixed(2);
-
-      return (
-        <div
-          key={center.recycling_center_id}
-          className="p-6 border rounded-lg shadow-sm bg-gray-50 hover:bg-green-50 hover:shadow-md transition-all duration-300 border-[#00ED64]" 
-        >
-          <strong className="text-lg text-gray-800">{center.name}</strong>
-          <p className="text-gray-600">Distance: {distance} km</p>
-          <p className="text-gray-600">Area: {center.area}</p>
-          <p className="text-gray-600">Street: {center.street}</p>
-        </div>
-      );
-    })}
-  </div>
-</div>
-
-          )
-        )
-      ) : (
+    <h1 className="sm:text-2xl md:text-4xl font-semibold text-center text-gray-800 mb-6">
+      Recycling Centers Near You
+    </h1>
+    {alert.map((alert) => (
+      <Alert
+        key={alert.id}
+        type={alert.type}
+        message={alert.message}
+        onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+      />
+    ))}
+    <button
+      className="bg-custom-green text-custom-black px-6 py-2 rounded-lg mb-4 block mx-auto hover:bg-green-600 transition duration-300 transform hover:scale-105 border border-custom-black"
+      onClick={handleToggleView}
+    >
+      {viewMap ? 'View as List' : 'View on Map'}
+    </button>
+  
+    {userLocation.latitude && userLocation.longitude ? (
+      loading ? (
         <div className="flex justify-center items-center py-6">
-          <Loader />
+          <Loader /> {/* Loader component */}
         </div>
-      )}
-    </div>
+      ) : (
+        viewMap ? (
+          <MapContainer
+            center={[userLocation.latitude, userLocation.longitude]}
+            zoom={13}
+            style={{ width: '100%', height: '400px', borderRadius: '12px' }}
+          >
+            <TileLayer
+              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            />
+            <Marker position={[userLocation.latitude, userLocation.longitude]}>
+              <Popup className="text-gray-700 font-semibold">You are here</Popup>
+            </Marker>
+  
+            {recyclingCenters.map((center) => (
+              <Marker
+                key={center.recycling_center_id}
+                position={[center.latitude, center.longitude]}
+                icon={new L.Icon({
+                  iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png',
+                  iconSize: [35, 35],
+                  iconAnchor: [17, 17],
+                  popupAnchor: [0, -15],
+                })}
+              >
+                <Popup>{center.name}</Popup>
+              </Marker>
+            ))}
+          </MapContainer>
+        ) : (
+          <div className="rounded-lg p-4">
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+              {recyclingCenters.map((center) => {
+                const distance = calculateDistance(
+                  userLocation.latitude,
+                  userLocation.longitude,
+                  center.latitude,
+                  center.longitude
+                ).toFixed(2);
+  
+                return (
+                  <div
+                    key={center.recycling_center_id}
+                    className="p-6 border rounded-lg shadow-sm bg-gray-50 hover:bg-green-50 hover:shadow-md transition-all duration-300 border-[#00ED64]"
+                  >
+                    <strong className="md:text-lg sm:text-base text-gray-800">{center.name}</strong>
+                    <p className="md:text-sm sm:text-xs text-gray-600">Distance: {distance} km</p>
+                    <p className="md:text-sm sm:text-xs text-gray-600">Area: {center.area}</p>
+                    <p className="md:text-sm sm:text-xs text-gray-600">Street: {center.street}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )
+      )
+    ) : (
+      <div className="flex justify-center items-center py-6">
+        <Loader />
+      </div>
+    )}
+  </div>
+  
   );
 };
 

@@ -23,6 +23,11 @@ const config: Config = {
           '50%': { transform: 'rotate(3deg)' },
         },
       },
+      fontSize: {
+        'custom-sm': '15px',
+        'custom-md': '17px',
+        'custom-lg': '20px',
+      },
     },
   },
   plugins: [],

@@ -34,7 +34,7 @@ const SubmitUserMaterials = () => {
       const response = await axios.get("/api/requests/get_waste_price");
       setWastePrices(response.data.data);
     } catch (error) {
-      alert("Error while fetching waste prices: ", error);
+      showAlert('error' , 'Error while fetching waste prices!')
       console.error(error);
     }
   };
@@ -47,7 +47,7 @@ const SubmitUserMaterials = () => {
     } catch (error) {
       console.error("Error fetching current requests:", error);
       //alert("Error while fetching waste prices: ", error);
-      showAlert('error' , 'Error while fetching waste prices')
+      showAlert('error' , 'Error fetching current requests!')
       console.log(error);
     }
   };
@@ -96,124 +96,124 @@ const SubmitUserMaterials = () => {
 
   return (
     <div className="max-w-4xl mx-auto my-8">
-      <div className="bg-white shadow-xl rounded-lg p-8">
-       
-        <h3 className="text-2xl font-semibold text-custom-black mb-6">Enter Received Weights</h3>
+  <div className=" shadow-xl rounded-lg p-8">
+    <h3 className="text-xl sm:text-xl md:text-2xl font-semibold text-custom-black mb-6">
+      Enter Received Weights
+    </h3>
 
-        {alert.map((alert) => (
-        <Alert
-          key={alert.id}
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
-        />
-      ))}  
+    {alert.map((alert) => (
+      <Alert
+        key={alert.id}
+        type={alert.type}
+        message={alert.message}
+        onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+      />
+    ))}
 
-
-        {submitStatus && (
-          <div
-            className={`mb-4 p-3 rounded-lg text-center ${
-              submitStatus.includes("success")
-                ? "bg-green-200 text-green-800"
-                : "bg-red-200 text-red-800"
-            }`}
-          >
-            {submitStatus}
-          </div>
-        )}
-
-        {currentRequests.length > 0 && (
-          <div className="mb-6">
-            <h4 className="text-lg font-semibold text-custom-green mb-4">
-              Current Requests
-            </h4>
-            <ul className="space-y-4">
-              {currentRequests.map((request) => (
-                <li
-                  key={request.request_submit_material_id}
-                  className="border border-custom-green p-4 rounded-lg"
-                >
-                  <p>
-                    <strong>User ID:</strong> {request.user_id}
-                  </p>
-                  <p>
-                    <strong>Status:</strong> {request.status}
-                  </p>
-                  <p>
-                    <strong>Paper and Cardboard:</strong>{" "}
-                    {request.paper_cardboard_total} kg
-                  </p>
-                  <p>
-                    <strong>Plastics:</strong> {request.plastics_total} kg
-                  </p>
-                  <p>
-                    <strong>Metals:</strong> {request.metals_total} kg
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        <form onSubmit={handleFormSubmit} className="space-y-6">
-          {/* User ID Input */}
-          <div>
-            
-            <label className="block text-lg font-medium text-custom-black mb-2">User ID</label>
-            <input
-              type="text"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-              placeholder="Enter your user ID"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-green"
-              required
-            />
-          </div>
-
-          {/* Waste Prices and Weights */}
-          {wastePrices.map((item) => (
-            <div key={item.name}>
-              <label className="block text-lg font-medium text-custom-black mb-2">
-                {item.name} ({item.rate_per_kg} per kg)
-              </label>
-              <input
-                type="number"
-                value={weights[item.name] || ""}
-                onChange={(e) =>
-                  setWeights({ ...weights, [item.name]: e.target.value })
-                }
-                placeholder={`Enter weight for ${item.name}`}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-green"
-                required
-              />
-            </div>
-          ))}
-
-          {/* Image Upload */}
-          <div>
-            <label className="block text-lg font-medium text-custom-black mb-2">
-              Upload Proof Image
-            </label>
-            <input
-              type="file"
-              onChange={(e) => setImage(e.target.files[0])}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-green"
-              accept="image/*"
-              required
-            />
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className={`w-full py-3 text-lg font-semibold rounded-lg text-custom-black border border-custom-black ${isSubmitting ? 'bg-gray-400' : 'bg-custom-green hover:bg-green-700'}`}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </button>
-        </form>
+    {submitStatus && (
+      <div
+        className={`mb-4 p-3 rounded-lg text-center ${
+          submitStatus.includes("success")
+            ? "bg-green-200 text-green-800"
+            : "bg-red-200 text-red-800"
+        }`}
+      >
+        {submitStatus}
       </div>
-    </div>
+    )}
+
+    {currentRequests.length > 0 && (
+      <div className="mb-6">
+        <h4 className="text-base sm:text-base md:text-lg font-semibold text-custom-green mb-4">
+          Current Requests
+        </h4>
+        <ul className="space-y-4">
+          {currentRequests.map((request) => (
+            <li
+              key={request.request_submit_material_id}
+              className="border border-custom-green p-4 rounded-lg"
+            >
+              <p className="text-sm sm:text-sm md:text-base">
+                <strong>User ID:</strong> {request.user_id}
+              </p>
+              <p className="text-sm sm:text-sm md:text-base">
+                <strong>Status:</strong> {request.status}
+              </p>
+              <p className="text-sm sm:text-sm md:text-base">
+                <strong>Paper and Cardboard:</strong> {request.paper_cardboard_total} kg
+              </p>
+              <p className="text-sm sm:text-sm md:text-base">
+                <strong>Plastics:</strong> {request.plastics_total} kg
+              </p>
+              <p className="text-sm sm:text-sm md:text-base">
+                <strong>Metals:</strong> {request.metals_total} kg
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    <form onSubmit={handleFormSubmit} className="space-y-6">
+      {/* User ID Input */}
+      <div>
+        <label className="block text-base sm:text-base md:text-lg font-medium text-custom-black mb-2">
+          User ID
+        </label>
+        <input
+          type="text"
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
+          placeholder="Enter your user ID"
+          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-green"
+          required
+        />
+      </div>
+
+      {/* Waste Prices and Weights */}
+      {wastePrices.map((item) => (
+        <div key={item.name}>
+          <label className="block text-base sm:text-base md:text-lg font-medium text-custom-black mb-2">
+            {item.name} ({item.rate_per_kg} per kg)
+          </label>
+          <input
+            type="number"
+            value={weights[item.name] || ""}
+            onChange={(e) =>
+              setWeights({ ...weights, [item.name]: e.target.value })
+            }
+            placeholder={`Enter weight for ${item.name}`}
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-green"
+            required
+          />
+        </div>
+      ))}
+
+      {/* Image Upload */}
+      <div>
+        <label className="block text-base sm:text-base md:text-lg font-medium text-custom-black mb-2">
+          Upload Proof Image
+        </label>
+        <input
+          type="file"
+          onChange={(e) => setImage(e.target.files[0])}
+          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-green"
+          accept="image/*"
+          required
+        />
+      </div>
+
+      {/* Submit Button */}
+      <button
+        type="submit"
+        className={`w-full py-3 text-base sm:text-base md:text-lg font-semibold rounded-lg text-custom-black border border-custom-black ${isSubmitting ? 'bg-gray-400' : 'bg-custom-green hover:bg-green-700'}`}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? "Submitting..." : "Submit"}
+      </button>
+    </form>
+  </div>
+</div>
   );
 };
 

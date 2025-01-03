@@ -65,12 +65,12 @@ const Truck_Information = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        alert("Truck updated successfully");
+        showAlert("success", "Truck updated successfully!");
         setShowModal(false);
         await fetchTrucksInfo(); // Refresh the truck list
       } else {
         console.error(data.message);
-        alert("Failed to update truck");
+        showAlert("error", "Failed to update truck");
       }
     } catch (error) {
       console.error("Error updating truck:", error);
@@ -87,92 +87,95 @@ const Truck_Information = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold text-custom-black">Truck Information</h2>
-      {alert.map((alert) => (
-        <Alert
-          key={alert.id}
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
-        />
-      ))}
-      {trucksInfo.length === 0 ? (
-        <NoDataDisplay emptyText="You haven't assigned any trucks yet!" />
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
-          {trucksInfo.map((truck, index) => (
-            <div
-              key={index}
-              className="p-6 bg-white rounded-lg shadow-lg flex flex-col space-y-4 transition-transform transform hover:scale-105"
-            >
-              <div className="text-lg font-semibold text-custom-black">
-                License Plate: <span className="font-normal">{truck.licenseplate}</span>
-              </div>
-              <div className="text-lg text-custom-black">
-                Capacity: <span className="font-normal">{truck.capacity}</span>
-              </div>
-              <button
-                onClick={() => handleEditClick(truck)}
-                className="mt-auto px-6 py-3 bg-custom-green text-black rounded-lg transition duration-200 hover:rounded-2xl border border-black"
-              >
-                Edit Truck Info
-              </button>
-            </div>
-          ))}
+  <h2 className="text-xl sm:text-sm md:text-xl lg:text-2xl font-bold text-custom-black">
+    Truck Information
+  </h2>
+  {alert.map((alert) => (
+    <Alert
+      key={alert.id}
+      type={alert.type}
+      message={alert.message}
+      onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+    />
+  ))}
+  {trucksInfo.length === 0 ? (
+    <NoDataDisplay emptyText="You haven't assigned any trucks yet!" />
+  ) : (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+      {trucksInfo.map((truck, index) => (
+        <div
+          key={index}
+          className="p-6 bg-white rounded-lg shadow-lg flex flex-col space-y-4 transition-transform transform hover:scale-105"
+        >
+          <div className="text-base font-semibold text-custom-black">
+            License Plate: <span className="font-normal">{truck.licenseplate}</span>
+          </div>
+          <div className="text-base text-custom-black">
+            Capacity: <span className="font-normal">{truck.capacity}</span>
+          </div>
+          <button
+            onClick={() => handleEditClick(truck)}
+            className="text-sm mt-auto px-6 py-3 bg-custom-green text-black rounded-lg transition duration-200 hover:rounded-2xl border border-black"
+          >
+            Edit Truck Info
+          </button>
         </div>
-      )}
+      ))}
+    </div>
+  )}
 
-      {/* Custom Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white w-full max-w-lg p-6 rounded-lg shadow-lg relative">
-            <h3 className="text-lg font-semibold mb-4">Edit Truck Information</h3>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="licenseplate" className="block text-sm font-medium text-gray-700">
-                  License Plate
-                </label>
-                <input
-                  type="text"
-                  id="licenseplate"
-                  name="licenseplate"
-                  value={formValues.licenseplate}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
-                />
-              </div>
-              <div>
-                <label htmlFor="capacity" className="block text-sm font-medium text-gray-700">
-                  Capacity
-                </label>
-                <input
-                  type="number"
-                  id="capacity"
-                  name="capacity"
-                  value={formValues.capacity}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
-                />
-              </div>
-            </div>
-            <div className="mt-6 flex justify-end space-x-4">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleFormSubmit}
-                className="px-4 py-2 bg-custom-green text-white rounded-lg hover:bg-green-400"
-              >
-                Save Changes
-              </button>
-            </div>
+  {/* Custom Modal */}
+  {showModal && (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center" style={{zIndex: 10001}}>
+      <div className="bg-white w-full max-w-lg p-6 mx-4 rounded-lg shadow-lg relative">
+        <h3 className="text-lg sm:text-sm md:text-xl font-semibold mb-4">Edit Truck Information</h3>
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="licenseplate" className="block text-sm font-medium text-gray-700">
+              License Plate
+            </label>
+            <input
+              type="text"
+              id="licenseplate"
+              name="licenseplate"
+              value={formValues.licenseplate}
+              onChange={handleInputChange}
+              className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2"
+            />
+          </div>
+          <div>
+            <label htmlFor="capacity" className="block text-sm font-medium text-gray-700">
+              Capacity
+            </label>
+            <input
+              type="number"
+              id="capacity"
+              name="capacity"
+              value={formValues.capacity}
+              onChange={handleInputChange}
+              className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm p-2"
+            />
           </div>
         </div>
-      )}
+        <div className="mt-6 flex justify-end space-x-4">
+          <button
+            onClick={() => setShowModal(false)}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleFormSubmit}
+            className="px-4 py-2 bg-custom-green text-white rounded-lg hover:bg-green-400"
+          >
+            Save Changes
+          </button>
+        </div>
+      </div>
     </div>
+  )}
+</div>
+
   );
 };
 

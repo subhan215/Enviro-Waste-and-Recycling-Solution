@@ -62,7 +62,7 @@ const ModernNavbar = () => {
   };
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50 border-b border-black">
+    <header className="bg-white shadow-md sticky top-0 border-b border-black" style={{zIndex:10000}}>
       <nav className="container mx-auto flex justify-between items-center p-5">
         {/* Logo */}
         <div className="flex items-center gap-2">
@@ -134,7 +134,7 @@ const ModernNavbar = () => {
 
         {/* Hamburger Menu for mobile screens */}
         <div className="md:hidden flex items-center">
-          {userData && pathname!='/admin'&& (
+          {userData.user_id && pathname!='/admin'&& (
             <FontAwesomeIcon
               icon={faBell}
               size="lg"
@@ -143,7 +143,7 @@ const ModernNavbar = () => {
               title="View Notifications"
             />
           )}
-          {pathname!='/admin' &&
+          {userData.user_id && pathname!='/admin' &&
           <FaComments
             size={24}
             className="text-black hover:cursor-pointer mr-4"

@@ -430,91 +430,89 @@ function CreateRequestForRecycledWaste() {
           </form>
         </div>
       ) : (
-        <div className="py-10">
-           <h3 className="text-xl font-bold text-black mb-4">Request Details</h3>
+<div className="py-10">
+  <h3 className="text-xl sm:text-lg md:text-base lg:text-xl font-bold text-black mb-4">
+    Request Details
+  </h3>
 
-           <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="bg-white p-6 shadow-lg rounded-lg relative"> {/* Add relative positioning here */}
-        
-        {/* Icon Buttons Section - Top Right Corner */}
-        
-        <div className="absolute top-2 right-2 flex gap-4">
-        {currentRequest.offered_price &&
+  <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="bg-white p-6 shadow-lg rounded-lg relative text-sm sm:text-xs md:text-xs lg:text-sm">
+      {/* Icon Buttons Section - Top Right Corner */}
+      <div className="absolute top-2 right-2 flex gap-4">
+        {currentRequest.offered_price && (
           <button
             onClick={() => acceptOffer(currentRequest.request_id)}
             className="text-green-500 hover:text-green-700"
           >
             <FaCheck size={24} />
           </button>
-}
-          <button
-            onClick={() => deleteRequest(currentRequest.request_id)}
-            className="text-red-500 hover:text-red-700"
-          >
-            <FaTrash size={24} />
-          </button>
-        </div>
-
-        {/* Request Details Section */}
-        <div className="grid grid-cols-2 gap-y-4 text-lg text-gray-700">
-          {currentRequest.user_id && (
-            <>
-              <strong className="text-black">User Name:</strong>
-              <span>{currentRequest.name}</span>
-            </>
-          )}
-          {currentRequest.weight && (
-            <>
-              <strong className="text-black">Weight:</strong>
-              <span>{currentRequest.weight} kg</span>
-            </>
-          )}
-          {currentRequest.latitude && currentRequest.longitude && (
-            <>
-              <strong className="text-black">Location:</strong>
-              <span>{locationName || "Loading..."}</span>
-            </>
-          )}
-          {currentRequest.date && (
-            <>
-              <strong className="text-black">Date:</strong>
-              <span>
-                {`${new Date(currentRequest.date).getMonth() + 1}/${new Date(
-                  currentRequest.date
-                ).getDate()}/${new Date(currentRequest.date).getFullYear()}`}
-              </span>
-            </>
-          )}
-          {currentRequest.time && (
-            <>
-              <strong className="text-black">Time:</strong>
-              <span>{currentRequest.time}</span>
-            </>
-          )}
-          {currentRequest.offered_price && (
-            <>
-              <strong className="text-black">Offered Price:</strong>
-              <span>{currentRequest.offered_price}</span>
-            </>
-          )}
-          {currentRequest.offered_by && (
-            <>
-              <strong className="text-black">Offered By:</strong>
-              <span>{currentRequest.offered_by}</span>
-            </>
-          )}
-        </div>
-
-        {/* Success or Error Messages */}
-        {successMessage && (
-          <p className="text-custom-green mt-4 text-center">{successMessage}</p>
         )}
-        {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
+        <button
+          onClick={() => deleteRequest(currentRequest.request_id)}
+          className="text-red-500 hover:text-red-700"
+        >
+          <FaTrash size={24} />
+        </button>
       </div>
+
+      {/* Request Details Section */}
+      <div className="grid grid-cols-2 gap-y-4 text-sm sm:text-xs md:text-xs lg:text-sm text-gray-700">
+        {currentRequest.user_id && (
+          <>
+            <strong className="text-black">User Name:</strong>
+            <span>{currentRequest.name}</span>
+          </>
+        )}
+        {currentRequest.weight && (
+          <>
+            <strong className="text-black">Weight:</strong>
+            <span>{currentRequest.weight} kg</span>
+          </>
+        )}
+        {currentRequest.latitude && currentRequest.longitude && (
+          <>
+            <strong className="text-black">Location:</strong>
+            <span>{locationName || "Loading..."}</span>
+          </>
+        )}
+        {currentRequest.date && (
+          <>
+            <strong className="text-black">Date:</strong>
+            <span>
+              {`${new Date(currentRequest.date).getMonth() + 1}/${new Date(
+                currentRequest.date
+              ).getDate()}/${new Date(currentRequest.date).getFullYear()}`}
+            </span>
+          </>
+        )}
+        {currentRequest.time && (
+          <>
+            <strong className="text-black">Time:</strong>
+            <span>{currentRequest.time}</span>
+          </>
+        )}
+        {currentRequest.offered_price && (
+          <>
+            <strong className="text-black">Offered Price:</strong>
+            <span>{currentRequest.offered_price}</span>
+          </>
+        )}
+        {currentRequest.offered_by && (
+          <>
+            <strong className="text-black">Offered By:</strong>
+            <span>{currentRequest.offered_by}</span>
+          </>
+        )}
+      </div>
+
+      {/* Success or Error Messages */}
+      {successMessage && (
+        <p className="text-custom-green mt-4 text-center">{successMessage}</p>
+      )}
+      {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
     </div>
-
+  </div>
 </div>
-
       )
       }
     </div >

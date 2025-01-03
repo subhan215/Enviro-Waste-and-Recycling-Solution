@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import Alert from "../ui/Alert";
 const Manage_Areas = () => {
+  const [alert, setAlert] = useState([]);
+    const showAlert = (type, message) => {
+      const id = Date.now();
+      setAlert([...alert, { id, type, message }]);
+      setTimeout(() => {
+        setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+      }, 4000);
+    };
   const [areas, setAreas] = useState(["Area 1", "Area 2", "Area 3"]);
   const [nonAssignedAreas, setNonAssignedAreas] = useState([]);
   const [selectedAreas, setSelectedAreas] = useState([]);
@@ -48,7 +57,7 @@ const Manage_Areas = () => {
         console.log(responseData);
 
         if (responseData.success) {
-          alert("Assigned areas to company!");
+          showAlert("success" , "Assigned areas to company!")
           // Optionally, update the existing areas after assigning
           /*setAreas((prevAreas) => [
             ...prevAreas,
@@ -57,16 +66,24 @@ const Manage_Areas = () => {
           setIsAddingArea(false);
           setSelectedAreas([]); // Clear the selected areas after assigning
         } else {
-          alert(responseData.message);
+          showAlert("info" , responseData.message)
         }
       } catch (error) {
-        alert(error.message);
+        showAlert("error" , error.message)
       }
     }
   };
 
   return (
     <div className="p-4">
+      {alert.map((alert) => (
+        <Alert
+          key={alert.id}
+          type={alert.type}
+          message={alert.message}
+          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+        />
+      ))}
       <h2 className="text-xl font-bold">Manage Areas</h2>
       <p>Select or manage service areas for your company.</p>
 

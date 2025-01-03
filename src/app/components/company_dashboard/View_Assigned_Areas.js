@@ -129,125 +129,140 @@ const ManageAndViewAreas = () => {
 
   if (loading) return<><Loader></Loader></>;
   return (
-    <div className="p-6 min-h-screen">
-      <div className="rounded p-6">
-        <h2 className="text-2xl font-bold mb-4">Manage and View Areas</h2>
+    <div className="p-6 min-h-screen relative">
+  <div className="rounded p-6">
+    <h2 className="text-2xl font-bold mb-4">Manage and View Areas</h2>
 
-        {alert.map((alert) => (
-        <Alert
-          key={alert.id}
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
-        />
-      ))}
-  
-        {/* Toggle between view and manage modes */}
-        <button
-          className="mb-6 px-4 py-2 bg-custom-green text-black rounded hover:rounded-2xl border border-custom-black"
-          onClick={() => setViewMode((prev) => !prev)}
-        >
-          {viewMode ? "Add new area" : "View Assigned Areas"}
-        </button>
-  
-       {/* Fetch Area Requests */}
-<div className="mb-8">
-  <div className="flex justify-between items-center mb-4">
-    {loading ? (
-      <p className="text-gray-600">Loading....</p>
-    ) : null}
-    {areaRequests.length === 0 && (
-    <button
-      className="mb-6 px-4 py-2 bg-custom-green text-black rounded hover:rounded-2xl border border-custom-black"
-      onClick={fetchAreaRequests}
-    >
-      Fetch Area Requests
-    </button>
-)}
-  </div>
+    {alert.map((alert) => (
+      <Alert
+        key={alert.id}
+        type={alert.type}
+        message={alert.message}
+        onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+      />
+    ))}
 
-  {areaRequests.length > 0 ?  (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {areaRequests.map((req, index) => (
-        <div key={index} className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
-          <p className="font-semibold text-custom-black">Request {index + 1}</p>
-          <p className="text-sm text-custom-black mb-2">Area Name: {req.name}</p>
-          <p className="text-sm text-custom-black">Status: {req.status}</p>
-        </div>
-      ))}
-    </div>
-  ): <NoDataDisplay emptyText = "No requests Fetched"/>}
+   {/* Floating Action Buttons */}
+<div className="fixed bottom-6 right-4 flex flex-col space-y-2 ">
+  {/* Add New Area */}
+  <button
+    className="h-10 w-12 text-xs md:w-16 md:h-16 sm:w-12 sm:h-10 md:text-sm sm:text-xs bg-custom-green text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-600 transition"
+    onClick={() => setViewMode((prev) => !prev)}
+    title={viewMode ? "Add New Area" : "View Assigned Areas"}
+  >
+    {viewMode ? (
+      <span className="material-icons">add</span>
+    ) : (
+      <span className="material-icons">view_list</span>
+    )}
+  </button>
+
+  {/* Fetch Area Requests */}
+  <button
+    className="h-10 w-12 text-xs md:w-16 md:h-16 sm:w-12 sm:h-10 md:text-sm sm:text-xs bg-custom-green text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-600 transition"
+    onClick={fetchAreaRequests}
+    title="Fetch Area Requests"
+  >
+    <span className="material-icons">refresh</span>
+  </button>
 </div>
 
-  
-        {/* View Assigned Areas */}
-        {viewMode && (
-          <div className="mt-6">
-            <h3 className="text-xl font-bold mb-4">Assigned Areas</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-              {areas.length > 0 ? (
-                areas.map((area, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-50 p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out"
-                  >
-                    <h4 className="text-lg  text-custom-black font-semibold mb-2">{area.name}</h4>
-                    <p className="text-sm text-custom-black mb-2">License Plate: {area.licenseplate || "null"}</p>
-                  </div>
-                ))
-              ) : (
-                <noDataDisplay emptyText= "No Assigned Areas Found"/>
-              )}
+
+    {/* Fetch Area Requests Section */}
+    <div className="mb-8 mt-4">
+      {loading ? (
+        <p className="text-gray-600">Loading...</p>
+      ) : areaRequests.length === 0 ? (
+        <NoDataDisplay emptyText="No requests Fetched" />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {areaRequests.map((req, index) => (
+            <div
+              key={index}
+              className="bg-gray-50 p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300"
+            >
+              <p className="font-semibold text-custom-black">Request {index + 1}</p>
+              <p className="text-sm text-custom-black mb-2">Area Name: {req.name}</p>
+              <p className="text-sm text-custom-black">Status: {req.status}</p>
             </div>
-          </div>
-        )}
-  
-        {/* Manage Areas */}
-        {!viewMode && (
-          <div className="mt-6">
-            <label className="block mb-4 text-lg font-semibold">Select Non-Assigned Areas:</label>
-            <div className="mb-6">
-              {nonAssignedAreas.length > 0 ? (
-                nonAssignedAreas.map((area, index) => (
-                  <div key={index} className="flex items-center mb-2">
-                    <input
-                      type="checkbox"
-                      id={`area-${area.area_id}`}
-                      value={area.area_id}
-                      onChange={handleAreaSelect}
-                      className="mr-2"
-                    />
-                    <label htmlFor={`area-${area.area_id}`}>{area.name}</label>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-600">No non-assigned areas available.</p>
-              )}
-            </div>
-  
-            {selectedAreas.length > 0 && (
-              <div>
-                <button
-                  className="px-4 py-2 bg-custom-green text-black rounded hover:bg-green-600 hover:rounded-2xl border border-custom-black"
-                  onClick={handleAssignArea}
-                >
-                  Click to send the add area request for approval
-                </button>
-                <button
-                  className="ml-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                  onClick={() => {
-                    setIsAddingArea(false);
-                    setSelectedAreas([]); // Reset selection if canceled
-                  }}
-                >
-                  Cancel
-                </button>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {/* View Assigned Areas */}
+    {viewMode && (
+      <div className="mt-6">
+        <h3 className="text-xl font-bold mb-4">Assigned Areas</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+          {areas.length > 0 && (
+            areas.map((area, index) => (
+              <div
+                key={index}
+                className="bg-gray-50 p-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 ease-in-out"
+              >
+                <h4 className="text-lg text-custom-black font-semibold mb-2">{area.name}</h4>
+                <p className="text-sm text-custom-black mb-2">
+                  License Plate: {area.licenseplate || "null"}
+                </p>
               </div>
-            )}
+            ))
+          ) }
+        </div>
+        {areas.length == 0 && (
+            <div className="flex justify-center items-center h-40">
+              <NoDataDisplay emptyText="No Assigned Areas Found" />
+            </div>
+          )}
+      </div>
+    )}
+
+    {/* Manage Areas */}
+    {!viewMode && (
+      <div className="mt-6">
+        <label className="block mb-4 text-lg font-semibold">Select Non-Assigned Areas:</label>
+        <div className="mb-6">
+          {nonAssignedAreas.length > 0 ? (
+            nonAssignedAreas.map((area, index) => (
+              <div key={index} className="flex items-center mb-2">
+                <input
+                  type="checkbox"
+                  id={`area-${area.area_id}`}
+                  value={area.area_id}
+                  onChange={handleAreaSelect}
+                  className="mr-2"
+                />
+                <label htmlFor={`area-${area.area_id}`}>{area.name}</label>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-600">No non-assigned areas available.</p>
+          )}
+        </div>
+
+        {selectedAreas.length > 0 && (
+          <div>
+            <button
+              className="px-4 py-2 bg-custom-green text-black rounded hover:bg-green-600 hover:rounded-2xl border border-custom-black"
+              onClick={handleAssignArea}
+            >
+              Click to send the add area request for approval
+            </button>
+            <button
+              className="ml-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              onClick={() => {
+                setIsAddingArea(false);
+                setSelectedAreas([]); // Reset selection if canceled
+              }}
+            >
+              Cancel
+            </button>
           </div>
         )}
       </div>
-    </div>
+    )}
+  </div>
+</div>
   );
   };
 

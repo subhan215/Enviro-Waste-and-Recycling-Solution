@@ -23,12 +23,6 @@ function AcceptRequests() {
       }, 4000);
     };
 
-  const handle_new_price_offer = (e) => {
-    setNewPriceOffered(e.target.value);
-    showAlert('success' , 'Price offered successfully!')
-  }
-
-
     useEffect(() => {
         const fetchRequests = async () => {
           setLoading(true); // Start loading
@@ -109,62 +103,75 @@ function AcceptRequests() {
 
     return (
 <div className="p-6 rounded-2xl">
-  <h2 className="text-2xl font-bold text-custom-black  mb-6">Accept Requests</h2>
+  <h2 className="text-xl sm:text-xl md:text-2xl font-bold text-custom-black mb-6">
+    Accept Requests
+  </h2>
 
   {alert.map((alert) => (
-        <Alert
-          key={alert.id}
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
-        />
-      ))}     
-
-  {/* {error && <p className="text-red-500 mb-4">{error}</p>}
-  {successMessage && <p className="text-green-500 mb-4">{successMessage}</p>} */}
+    <Alert
+      key={alert.id}
+      type={alert.type}
+      message={alert.message}
+      onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+    />
+  ))}
 
   {loading ? (
-    <p className="text-lg text-center">Loading requests...</p>
-  ) : requests.length === 0 ? ( <>
-    <NoDataDisplay emptyText="No requests Found"/>
-    <p className="text-lg text-center">If you haven't locate a recycling center, locate them you will see request
-      for wastes if any available
-    </p>
-    </>) : (
+    <p className="text-base sm:text-lg md:text-xl text-center">Loading requests...</p>
+  ) : requests.length === 0 ? (
+    <>
+      <NoDataDisplay emptyText="No requests Found" />
+      <p className="text-sm sm:text-base md:text-lg text-center">
+        If you haven't located a recycling center, locate one to see requests for wastes, if any are available.
+      </p>
+    </>
+  ) : (
     <ul className="space-y-4">
       {requests.map((request) => (
-        <li key={request.request_id} className="p-4 bg-white rounded-lg shadow-md border border-custom-green">
-          <div className="text-lg font-semibold text-custom-black mb-2">
+        <li
+          key={request.request_id}
+          className="p-4 bg-white rounded-lg shadow-md border border-custom-green"
+        >
+          <div className="text-sm sm:text-base font-semibold text-custom-black mb-2">
             Waste Weight: <span className="font-normal">{request.weight}</span>
           </div>
-          <div className="text-lg font-semibold text-custom-black mb-2">
-            Preferred Date: <span className="font-normal"> {`${new Date(request.date).getMonth() + 1}/${new Date(
+          <div className="text-sm sm:text-base font-semibold text-custom-black mb-2">
+            Preferred Date:{" "}
+            <span className="font-normal">
+              {`${new Date(request.date).getMonth() + 1}/${new Date(
                 request.date
-              ).getDate()}/${new Date(request.date).getFullYear()}`}</span>
+              ).getDate()}/${new Date(request.date).getFullYear()}`}
+            </span>
           </div>
-          <div className="text-lg font-semibold text-custom-black mb-2">
+          <div className="text-sm sm:text-base font-semibold text-custom-black mb-2">
             Preferred Time: <span className="font-normal">{request.time}</span>
           </div>
-          <div className="text-lg font-semibold text-custom-black mb-2">
-            Location: <span className="font-normal">{request.locationName || `${request.latitude}, ${request.longitude}`}</span>
+          <div className="text-sm sm:text-base font-semibold text-custom-black mb-2">
+            Location:{" "}
+            <span className="font-normal">
+              {request.locationName || `${request.latitude}, ${request.longitude}`}
+            </span>
           </div>
-          <div className="text-lg font-semibold text-custom-black mb-2">
+          <div className="text-sm sm:text-base font-semibold text-custom-black mb-2">
             Distance: <span className="font-normal">{request.distance}</span>
           </div>
-          <div className="text-lg font-semibold text-custom-black mb-2">
-            Minimum price offered till now: <span className="font-normal">{request.offered_price ? request.offered_price : " "}</span>
+          <div className="text-sm sm:text-base font-semibold text-custom-black mb-2">
+            Minimum price offered till now:{" "}
+            <span className="font-normal">{request.offered_price || " "}</span>
           </div>
           <div className="mt-4">
             <input
               type="text"
               placeholder="Enter your price"
-              className="px-4 py-2 w-full rounded-lg border text-custom-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-custom-black mb-2"
-              value = {newPriceOffered}
+              className="px-4 py-2 w-full rounded-lg border text-sm sm:text-base text-custom-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-custom-black mb-2"
+              value={newPriceOffered}
               onChange={(e) => setNewPriceOffered(e.target.value)}
             />
             <button
-              onClick={() => handleOfferPrice(request.request_id, request.offered_price, newPriceOffered)}
-              className="px-6 py-3 bg-custom-green text-black rounded-lg hover:rounded-2xl transition duration-200 border border-black mt-2"
+              onClick={() =>
+                handleOfferPrice(request.request_id, request.offered_price, newPriceOffered)
+              }
+              className="text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3 bg-custom-green text-black rounded-lg hover:rounded-2xl transition duration-200 border border-black mt-2"
             >
               Offer Price
             </button>

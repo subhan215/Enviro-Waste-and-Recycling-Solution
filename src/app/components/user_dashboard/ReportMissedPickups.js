@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import Loader from "../ui/Loader";
+//import Loader from "../ui/Loader";
 import Truck_loader from "../ui/Truck_loader";
 import NoDataHappyFace from "../animations/noDataHappyFace";
 import Alert from '../ui/Alert'
@@ -159,111 +159,103 @@ const ReportMissedPickups = () => {
   if (loading) return <Truck_loader></Truck_loader>;
 
 return (
-  <div className="max-w-4xl mx-auto p-6 rounded-lg">
-  <h2 className="text-3xl font-bold text-custom-black p-2 mb-6 rounded">
+<div className="w-full p-6 rounded-lg mx-auto sm:mx-0">
+  <h2 className="text-2xl sm:text-3xl font-bold text-custom-black p-2 mb-6 rounded text-center">
     Report Missed Pickups
   </h2>
 
   {alert.map((alert) => (
-        <Alert
-          key={alert.id}
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
-        />
-      ))}
-
+    <Alert
+      key={alert.id}
+      type={alert.type}
+      message={alert.message}
+      onClose={() => setAlert((alerts) => alerts.filter((a) => a.id !== alert.id))}
+    />
+  ))}
 
   {/* Grid layout for missed pickups */}
- 
-  {allMissedPickups.length > 0 ? ( <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-8"> 
-    
-    {allMissedPickups.map((pickup, index) => (
-      <div
-      key={pickup.missed_pickup_id}
-      className="border-l-4  border-t-2 border-r border-custom-black border-b-2 bg-gray-100 rounded-lg transition duration-200 ease-in-out shadow-[-20px_0_15px_-5px_rgba(0,0,0,0.1)]"
-    >
-      {/* Company, Date, and Status */}
-      <div className="mb-4 px-3 py-1">
-        <div className="mb-2">
-          <strong className="text-gray-700 block">Against Company:</strong>
-          <span className="text-gray-900">{pickup.name}</span>
+  {allMissedPickups.length > 0 ? (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {allMissedPickups.map((pickup) => (
+        <div
+          key={pickup.missed_pickup_id}
+          className="border-l-4 border-custom-black border-t-2 border-r border-b-2 bg-gray-100 rounded-lg shadow-lg p-4"
+        >
+          <div className="mb-4">
+            <div className="mb-2">
+              <strong className="text-gray-700 block">Against Company:</strong>
+              <span className="text-gray-900">{pickup.name}</span>
+            </div>
+            <div className="mb-1">
+              <strong className="text-gray-700 block">Date:</strong>
+              <span className="text-gray-900">
+                {new Date(pickup.created_at).toLocaleDateString()}
+              </span>
+            </div>
+            <div>
+              <strong className="text-gray-700 block">Status:</strong>
+              <span className="text-gray-900">{pickup.status}</span>
+            </div>
+          </div>
+
+          {pickup.clean_img && (
+            <div className="mt-1">
+              <strong className="block text-gray-700">Clean Image:</strong>
+              <img
+                src={pickup.clean_img}
+                alt="Clean Pickup"
+                className="w-full h-auto max-h-48 object-cover border border-gray-300 shadow-sm rounded-lg"
+              />
+            </div>
+          )}
+
+          <div className="mt-4 space-y-2">
+            {pickup.status === "marked completed by company" && (
+              <>
+                <button
+                  onClick={() =>
+                    updateMissedPickupStatus(pickup.missed_pickup_id, "completed")
+                  }
+                  className="w-full bg-custom-green text-black border border-custom-black py-2 px-4 rounded-lg hover:bg-green-600 transition"
+                >
+                  Mark as Completed
+                </button>
+                <button
+                  onClick={() =>
+                    updateMissedPickupStatus(pickup.missed_pickup_id, "pending")
+                  }
+                  className="w-full bg-custom-green text-black border border-custom-black py-2 px-4 rounded-lg hover:bg-green-600 transition"
+                >
+                  Mark as Pending
+                </button>
+              </>
+            )}
+            {pickup.status === "pending" && (
+              <button
+                onClick={() =>
+                  updateMissedPickupStatus(pickup.missed_pickup_id, "marked completed by user")
+                }
+                className="w-full bg-[#00ED64] text-white py-2 px-4 rounded-lg hover:bg-green-600 transition"
+              >
+                Mark as Completed From Your Side
+              </button>
+            )}
+          </div>
         </div>
-        <div className="mb-1">
-          <strong className="text-gray-700 block">Date:</strong>
-          <span className="text-gray-900">
-            {new Date(pickup.created_at).toLocaleDateString()}
-          </span>
-        </div>
-        <div>
-          <strong className="text-gray-700 block">Status:</strong>
-          <span className="text-gray-900">{pickup.status}</span>
-        </div>
-      </div>
-  
-      {/* Display Clean Image */}
-      {pickup.clean_img && (
-        <div className="mt-1">
-          <strong className="block text-gray-700 mx-3">Clean Image:</strong>
-          <img
-            src={pickup.clean_img}
-            alt="Clean Pickup"
-            className="w-full h-48 object-cover border border-gray-300 shadow-sm mt-2"
-          />
-        </div>
-      )}
-  
-      {/* Conditional Buttons */}
-      {pickup.status === "marked completed by company" && (
-        <div className="flex space-x-2 mt-4 p-4">
-          <button
-            onClick={() =>
-              updateMissedPickupStatus(pickup.missed_pickup_id, "completed")
-            }
-            className="bg-custom-green text-custom-black border border-custom-black hover:bg-green-600 py-2 px-6 rounded-lg hover:bg-custom-green-600 transition duration-300"
-          >
-            Mark as Completed
-          </button>
-          <button
-            onClick={() =>
-              updateMissedPickupStatus(pickup.missed_pickup_id, "pending")
-            }
-            className="bg-custom-green text-custom-black border border-custom-black hover:bg-green-600 py-2 px-6 rounded-lg hover:bg-custom-green-600 transition duration-300"
-          >
-            Mark as Pending
-          </button>
-        </div>
-      )}
-  
-      {pickup.status === "pending" && (
-        <div className="mt-4 p-4">
-          <button
-            onClick={() =>
-              updateMissedPickupStatus(
-                pickup.missed_pickup_id,
-                "marked completed by user"
-              )
-            }
-            className="bg-[#00ED64] text-white py-2 px-6 rounded-lg hover:bg-green-600 transition duration-300"
-          >
-            Mark as Completed From Your Side
-          </button>
-        </div>
-      )}
-    </div>
-    )) }
+      ))}
     </div>
   ) : (
-    <NoDataHappyFace emptyText="No missed pickups reported yet!" />
+    <div className="flex justify-center items-center h-40">
+      <NoDataHappyFace emptyText="No missed pickups reported yet!" />
+    </div>
   )}
 
-
   {/* Form for Reporting Missed Pickup */}
-  <form onSubmit={reportMissedPickup} className="mt-6">
-    <div className="mb-4">
+  <form onSubmit={reportMissedPickup} className="mt-6 w-full">
+    <div className="mb-4 w-full">
       <label
         htmlFor="file-input"
-        className="flex items-center justify-center bg-gradient-to-r from-[#00ED64] to-[#00D257] text-black py-2 px-4 cursor-pointer hover:scale-105 transform transition-all shadow-md border border-black border-3 p-4 rounded-lg"
+        className="w-full flex items-center justify-center bg-gradient-to-r from-[#00ED64] to-[#00D257] text-black py-2 px-4 cursor-pointer hover:scale-105 transform transition-all shadow-md border border-black rounded-lg"
       >
         <span className="mr-2">Choose File</span>
         <svg
@@ -274,11 +266,7 @@ return (
           viewBox="0 0 24 24"
           strokeWidth="2"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M12 4v16m8-8H4"
-          />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
         </svg>
         <input
           id="file-input"
@@ -290,10 +278,9 @@ return (
       </label>
     </div>
 
-    {/* Display the selected image preview */}
     {selectedImagePreview && (
-      <div className="mt-4 flex justify-center items-center mb-4">
-        <div className="relative w-40 h-40">
+      <div className="mt-4 flex justify-center mb-4">
+        <div className="w-40 h-40">
           <img
             src={selectedImagePreview}
             alt="Selected Preview"
@@ -305,12 +292,14 @@ return (
 
     <button
       type="submit"
-      className="w-full py-3 bg-[#00ED64] text-black hover:bg-green-600 transition duration-300 ease-in-out border-2 border-black p-4 rounded-lg"
+      className="w-full bg-[#00ED64] text-black py-3 px-4 rounded-lg hover:bg-green-600 transition"
     >
       Report Missed Pickup
     </button>
   </form>
 </div>
+
+
 );
 
 };

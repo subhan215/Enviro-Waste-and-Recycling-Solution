@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Button } from "../ui/Button";
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import axios from "axios";
 import NoDataDisplay from "../animations/NoDataDisplay"; // Import the NoDataAnimation component
 import Alert from '../ui/Alert'
 import Admin_loader from "../ui/Admin_loader"
-
+XCircle
 
 function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFilter }) {
   const [complaints, setComplaints] = useState([]);
@@ -97,13 +97,21 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-8 max-w-full">
+<div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-8 max-w-full">
   {filteredComplaints?.map((complaint) => (
-    <div key={complaint.report_id} className="p-8 border rounded-lg shadow-lg bg-gray-50 hover:shadow-xl transition duration-300 ease-in-out w-full max-w-[500px] mx-auto">
-      <p className="text-gray-700 text-sm mb-2">User Name/Id: <span className="font-semibold">{complaint.name} / {complaint.user_id}</span></p>
-      <p className="text-gray-700 text-sm mb-2">Description: {complaint.description}</p>
-      <p className="text-gray-700 text-sm mb-2">Sentiment Rating: <span className="font-semibold">{complaint.sentiment_rating}</span></p>
-      <p className="text-gray-700 text-sm mb-4">Company Name: {complaint.company_name}</p>
+    <div key={complaint.report_id} className="relative p-8 border rounded-lg shadow-lg bg-gray-50 hover:shadow-xl transition duration-300 ease-in-out w-full max-w-[500px] mx-auto">
+      <p className="text-gray-700 text-xs sm:text-sm md:text-sm lg:text-base mb-2">
+        User Name/Id: <span className="font-semibold">{complaint.name} / {complaint.user_id}</span>
+      </p>
+      <p className="text-gray-700 text-xs sm:text-sm md:text-sm lg:text-base mb-2">
+        Description: {complaint.description}
+      </p>
+      <p className="text-gray-700 text-xs sm:text-sm md:text-sm lg:text-base mb-2">
+        Sentiment Rating: <span className="font-semibold">{complaint.sentiment_rating}</span>
+      </p>
+      <p className="text-gray-700 text-xs sm:text-sm md:text-sm lg:text-base mb-4">
+        Company Name: {complaint.company_name}
+      </p>
       {alert.map((alert) => (
         <Alert
           key={alert.id}
@@ -111,30 +119,29 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
           message={alert.message}
           onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
         />
-      ))}  
-      {/* Ensure buttons don't overflow */}
-      <div className="mt-4 flex flex-wrap gap-4 justify-start">
-        <Button
-          variant="outline"
-          size="sm"
-          className="border border-custom-black text-custom-black bg-custom-green  hover:bg-green-700 hover:text-white transition w-full sm:w-auto"
+      ))}
+
+      {/* Icons Section at Top Right */}
+      <div className="absolute top-2 right-2 flex flex-col items-end gap-2">
+        <div 
+          className="flex items-center gap-2 cursor-pointer hover:text-green-700"
           onClick={() => markAsResolved(complaint.report_id)}
         >
-          Mark as Resolved
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="border border-custom-black text-custom-black bg-custom-green hover:bg-green-700 hover:text-white transition w-full sm:w-auto"
+          <CheckCircle className="h-6 w-6" />
+         
+        </div>
+
+        <div 
+          className="flex items-center gap-2 cursor-pointer hover:text-red-700"
           onClick={() => removeCompany(complaint.company_id)}
         >
-          Terminate Agreement
-        </Button>
+          <XCircle className="h-6 w-6" />
+          
+        </div>
       </div>
     </div>
   ))}
 </div>
-
      
   );
 }

@@ -249,48 +249,48 @@ const Waste_Schedules = ({}) => {
               d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-1.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
             />
           </svg>
-          <span className="text-lg font-semibold">{Rating}</span>
+          <span className=" font-semibold">{Rating}</span>
         </div>
         <NoDataDisplay emptyText="No schedules Found!" />
       </>
     );
     
   return (
-    <>
-      <h1 className="text-3xl font-bold mb-2  text-custom-black ">
-        Company Schedules
-      </h1>
-      {alert.map((alert) => (
-        <Alert
-          key={alert.id}
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
-        />
-      ))}         
-      <div className="p-6 rounded-lg">
-        {/* <p className="text-lg font-semibold mb-4 text-custom-black">Current rating: {Rating}</p> */}
-        <div style={{ display: "flex" }} className="mb-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="1.5"
-            stroke="currentColor"
-            className="size-6"
-            style={{ fill: "#FFAA00", marginRight: "8px" }} // Adjust the margin as needed
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-1.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
-            />
-          </svg>
-          Rating:&nbsp;
-          {Rating}
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
+    <div>
+    <h1 className="text-xl sm:text-xl md:text-2xl lg:text-3xl font-bold mb-2 text-custom-black">
+      Company Schedules
+    </h1>
+    {alert.map((alert) => (
+      <Alert
+        key={alert.id}
+        type={alert.type}
+        message={alert.message}
+        onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+      />
+    ))}
+    <div className="p-6 rounded-lg">
+      <div style={{ display: "flex" }} className="mb-2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth="1.5"
+          stroke="currentColor"
+          className="size-6"
+          style={{ fill: "#FFAA00", marginRight: "8px" }} // Adjust the margin as needed
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-1.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+          />
+        </svg>
+        <span className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold">
+          &nbsp;{Rating}
+        </span>
+      </div>
+  
+      <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
         {schedules.map((schedule) =>
           schedule.status !== "done" ? (
             <div
@@ -316,30 +316,25 @@ const Waste_Schedules = ({}) => {
                   />
                 </svg>
               </button>
-
+  
               <div className="space-y-3 mb-6">
-                <p className="text-lg font-semibold">
-                  <strong>Date:</strong>      {`${new Date(schedule.date).getMonth() + 1}/${new Date(
-                schedule.date
-              ).getDate()}/${new Date(schedule.date).getFullYear()}`}
+                <p className="text-sm sm:text-sm md:text-base font-semibold">
+                  <strong>Date:</strong> {`${new Date(schedule.date).getMonth() + 1}/${new Date(schedule.date).getDate()}/${new Date(schedule.date).getFullYear()}`}
                 </p>
-                <p className="text-lg font-semibold">
+                <p className="text-sm sm:text-sm md:text-base font-semibold">
                   <strong>Time:</strong> {schedule.time}
                 </p>
-                <p className="text-lg font-semibold">
+                <p className="text-sm sm:text-sm md:text-base font-semibold">
                   <strong>Status:</strong> {schedule.status}
                 </p>
-                <p className="text-lg font-semibold">
-                  <strong>Truck Assigned:</strong>{" "}
-                  {schedule.licenseplate || "None"}
+                <p className="text-sm sm:text-sm md:text-base font-semibold">
+                  <strong>Truck Assigned:</strong> {schedule.licenseplate || "None"}
                 </p>
               </div>
-
-              
-
+  
               {schedule.status === "Scheduled" && !schedule.truckid && (
                 <div className="mt-6 p-6 rounded-lg">
-                  <label className="block mb-4 text-sm font-medium text-gray-700">
+                  <label className="block mb-4 text-sm sm:text-base font-medium text-gray-700">
                     Select Truck:
                     <select
                       value={selectedTruck}
@@ -367,7 +362,7 @@ const Waste_Schedules = ({}) => {
                   </button>
                 </div>
               )}
-
+  
               {schedule.truckid && (
                 <button
                   onClick={() => {
@@ -381,39 +376,41 @@ const Waste_Schedules = ({}) => {
             </div>
           ) : null
         )}
-      </div>{showForm && (
-          <form
-            onSubmit={handleFormSubmit}
-            className="mt-6 p-6 bg-gray-100 border border-gray-300 rounded-lg"
-          >
-            <h3 className="text-xl font-semibold mb-4">
-              Enter received weights
-            </h3>
-            {wastePrices.map((item) => (
-              <div key={item.name} className="mb-4">
-                <label className="block mb-1 font-medium">
-                  {item.name} ({item.rate_per_kg} per kg):
-                </label>
-                <input
-                  type="number"
-                  value={weights[item.name] || ""}
-                  onChange={(e) =>
-                    setWeights({ ...weights, [item.name]: e.target.value })
-                  }
-                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-custom-black"
-                />
-              </div>
-            ))}
-            <button
-              type="submit"
-              className="mt-4 px-4 py-2 bg-custom-green text-cusiom-black border border-custom-black hover:bg-green-600 hover:text-white focus:ring-custom-green rounded-lg"
-            >
-              Submit
-            </button>
-          </form>
-        )}
       </div>
-    </>
+      {showForm && (
+        <form
+          onSubmit={handleFormSubmit}
+          className="mt-6 p-6 bg-gray-100 border border-gray-300 rounded-lg"
+        >
+          <h3 className="text-xl sm:text-lg md:text-xl font-semibold mb-4">
+            Enter received weights
+          </h3>
+          {wastePrices.map((item) => (
+            <div key={item.name} className="mb-4">
+              <label className="block mb-1 font-medium">
+                {item.name} ({item.rate_per_kg} per kg):
+              </label>
+              <input
+                type="number"
+                value={weights[item.name] || ""}
+                onChange={(e) =>
+                  setWeights({ ...weights, [item.name]: e.target.value })
+                }
+                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-custom-black"
+              />
+            </div>
+          ))}
+          <button
+            type="submit"
+            className="mt-4 px-4 py-2 bg-custom-green text-cusiom-black border border-custom-black hover:bg-green-600 hover:text-white focus:ring-custom-green rounded-lg"
+          >
+            Submit
+          </button>
+        </form>
+      )}
+    </div>
+  </div>
+  
   );
 };
 

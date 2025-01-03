@@ -155,73 +155,70 @@ const Report_to_admin = () => {
 
   return (
         <>
-
 <div className="min-h-screen text-custom-black p-6">
-{alert.map((alert) => (
-        <Alert
-          key={alert.id}
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
-        />
-      ))}  
+  {alert.map((alert) => (
+    <Alert
+      key={alert.id}
+      type={alert.type}
+      message={alert.message}
+      onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+    />
+  ))}  
+
   {/* Messages Section */}
-   {/* Messages Section */}
-   <div className="mb-8">
-        <h2 className="text-3xl font-bold text-custom-black mb-4">Messages from Admin Panel</h2>
-        {messages.length > 0 ? (
-          <div>
-            {messages.map((message) => (
-              <div
-                key={message.report_id}
-                className="message-box bg-white text-black p-4 mb-4 rounded-lg shadow-md hover:scale-105 transition-all relative"
-              >
-                {/* Cross icon button at the top-right corner */}
-                <button
-                  onClick={() => handleMarkAsRead(message.report_id)}
-                  className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-                >
-                  &times; {/* This is the cross icon */}
-                </button>
-                <p>
-                  {message.message} against company -- <strong>{message.name}</strong>
-                </p>
-              </div>
-            ))}
+  <div className="mb-8">
+    <h2 className="sm:text-2xl md:text-3xl font-bold text-custom-black mb-4">Messages from Admin Panel</h2>
+    {messages.length > 0 ? (
+      <div>
+        {messages.map((message) => (
+          <div
+            key={message.report_id}
+            className="message-box bg-white text-black p-4 mb-4 rounded-lg shadow-md hover:scale-105 transition-all relative"
+          >
+            {/* Cross icon button at the top-right corner */}
+            <button
+              onClick={() => handleMarkAsRead(message.report_id)}
+              className="absolute top-2 right-2 text-red-500 hover:text-red-700"
+            >
+              &times; {/* This is the cross icon */}
+            </button>
+            <p>
+              {message.message} against company -- <strong>{message.name}</strong>
+            </p>
           </div>
-        ) : (
-          <p>No messages found</p>
-        )}
+        ))}
       </div>
+    ) : (
+      <p>No messages found</p>
+    )}
+  </div>
 
- 
-
- {/* Existing Reports Section */}
-<div className="mb-8">
-  <h3 className="text-2xl font-semibold text-custom-black mb-4">Your Existing Reports</h3>
-  {existingReports.length > 0 ? (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {existingReports.map((report) => (
-        <div
-          key={report.report_id}
-          className="report-box bg-white text-black p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-lg transition-all duration-300"
-        >
-          <p><strong>Company:</strong> {report.name}</p>
-          <p><strong>Description:</strong> {report.description}</p>
-        </div>
-      ))}
-    </div>
-  ) : (
-    <NoDataHappyFace emptyText = "No existing Reports Found"/>
-  )}
-</div>
-
+  {/* Existing Reports Section */}
+  <div className="mb-8">
+    <h3 className="sm:text-xl md:text-2xl font-semibold text-custom-black mb-4">Your Existing Reports</h3>
+    {existingReports.length > 0 ? (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {existingReports.map((report) => (
+          <div
+            key={report.report_id}
+            className="report-box bg-white text-black p-4 rounded-lg shadow-md hover:scale-105 hover:shadow-lg transition-all duration-300"
+            style={{ border: "1px solid #00ed64" }}
+          >
+            <p><strong>Company:</strong> {report.name}</p>
+            <p><strong>Description:</strong> {report.description}</p>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <NoDataHappyFace emptyText="No existing Reports Found" />
+    )}
+  </div>
 
   {/* New Report Form Section */}
   <div>
-    <h3 className="text-2xl font-semibold text-custom-black mb-4">Submit a New Report</h3>
+    <h3 className="sm:text-xl md:text-2xl font-semibold text-custom-black mb-4">Submit a New Report</h3>
     {companies.length > 0 ? (
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md max-w-lg">
+      <form onSubmit={handleSubmit} className="p-6 rounded-lg w-100">
         <div className="mb-4">
           <label htmlFor="companyId" className="block text-custom-black font-semibold mb-2">Select Company:</label>
           <select

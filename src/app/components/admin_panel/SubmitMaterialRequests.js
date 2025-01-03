@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa"; // Import Font Awesome icons
 import NoDataHappyFace from "../animations/noDataHappyFace";
 import NoDataDisplay from "../animations/NoDataDisplay";
-
+import Admin_loader from "../ui/Admin_loader";
+import Alert from "../ui/Alert";
 // Helper function to fetch requests from the API
 const fetchRequests = async () => {
   const response = await fetch("/api/admin/get_request_submit_materials/");
@@ -33,6 +34,14 @@ const updateRequestStatus = async (requestId, status) => {
 };
 
 const SubmitMaterialRequests = () => {
+  const [alert, setAlert] = useState([]);
+      const showAlert = (type, message) => {
+        const id = Date.now();
+        setAlert([...alert, { id, type, message }]);
+        setTimeout(() => {
+          setAlert((alerts) => alerts.filter((alert) => alert.id !== id));
+        }, 4000);
+      };
   const [requests, setRequests] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true); // State to manage loading
@@ -63,22 +72,15 @@ const SubmitMaterialRequests = () => {
       setRequests((prevRequests) =>
         prevRequests.filter((request) => request.request_id !== requestId)
       );
-  
-      alert(`Request has been ${status}`);
+      showAlert('success' , `Request has been ${status}`)
     } catch (err) {
-      alert(err.message);
+      showAlert('error' , err.message)
     }
   };
   
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="spinner-border animate-spin inline-block w-16 h-16 border-4 border-solid rounded-full border-gray-600 border-t-transparent" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
+    return <Admin_loader></Admin_loader>
   }
 
   if (error) {
@@ -86,67 +88,89 @@ const SubmitMaterialRequests = () => {
   }
 
   return (
-    <>
-      {requests.length > 0 ? (
-        <div className="submit-material-requests grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-6">
-          {requests?.map((request) => (
-            <div
-              key={request?.request_id}
-              className="card bg-white shadow-lg rounded-lg overflow-hidden border relative"
+<div>
+{alert.map((alert) => (
+    <Alert
+      key={alert.id}
+      type={alert.type}
+      message={alert.message}
+      onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+    />
+  ))}
+
+  {requests.length > 0 ? (
+    <div className="submit-material-requests grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {requests?.map((request) => (
+        <div
+          key={request?.request_id}
+          className="card bg-white shadow-md rounded-lg border relative overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg"
+        >
+          {/* Buttons Positioned at the Top Right */}
+          <div className="absolute top-4 right-4 flex space-x-2">
+            <button
+              className="bg-green-500 text-white p-1 sm:p-2 rounded-full hover:bg-green-600 transition duration-200"
+              onClick={() => handleStatusChange(request?.request_id, "Approved")}
+              title="Approve"
             >
-              {/* Position the buttons at the top right corner */}
-              <div className="absolute top-4 right-4 flex space-x-2">
-                <button
-                  className="bg-green-500 text-white p-2 rounded-full"
-                  onClick={() => handleStatusChange(request?.request_id, "Approved")}
-                >
-                  <FaCheck />
-                </button>
-                <button
-                  className="bg-red-500 text-white p-2 rounded-full"
-                  onClick={() => handleStatusChange(request?.request_id, "Rejected")}
-                >
-                  <FaTimes />
-                </button>
-              </div>
-  
-              {/* Image positioned below the buttons */}
-              <img
-                src={request?.image_url}
-                alt="Request Image"
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <p className="text-sm text-gray-600">Company ID: {request?.company_id}</p>
-                <p className="text-sm text-gray-600">User ID: {request?.user_id}</p>
-                <p className="mt-2 text-sm">Status: {request?.status}</p>
-  
-                {/* Material Totals */}
-                <div className="mt-4">
-                  <div className="text-lg font-semibold">Material Totals:</div>
-                  <div className="mt-2">
-                    <div className="total-item">
-                      <span className="text-md text-gray-500">Paper/Cardboard:</span>
-                      <span className="text-md ml-3">{request?.paper_cardboard_total}</span>
-                    </div>
-                    <div className="total-item">
-                      <span className="text-md text-gray-500">Plastics:</span>
-                      <span className="text-md ml-3">{request?.plastics_total}</span>
-                    </div>
-                    <div className="total-item">
-                      <span className="text-md text-gray-500">Metals:</span>
-                      <span className="ml-3 text-md">{request?.metals_total}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <FaCheck  className="sm:text-[1rem] text-[0.875rem]" />
+            </button>
+            <button
+              className="bg-red-500 text-white p-1 sm:p-2 rounded-full hover:bg-red-600 transition duration-200"
+              onClick={() => handleStatusChange(request?.request_id, "Rejected")}
+              title="Reject"
+            >
+              <FaTimes  className="sm:text-[1rem] text-[0.875rem]" />
+            </button>
+          </div>
+
+          {/* Image */}
+          <img
+            src={request?.image_url}
+            alt="Request"
+            className="w-full h-48 sm:h-52 object-cover"
+          />
+
+          {/* Card Content */}
+          <div className="p-5">
+            <p className="text-xs sm:text-sm text-gray-500 mb-1">
+              <strong>Company ID:</strong> {request?.company_id}
+            </p>
+            <p className="text-xs sm:text-sm text-gray-500 mb-1">
+              <strong>User ID:</strong> {request?.user_id}
+            </p>
+            <p className="text-xs sm:text-sm text-gray-600 font-medium mt-3">
+              <strong>Status:</strong> {request?.status}
+            </p>
+
+            {/* Material Totals */}
+            <div className="mt-4">
+              <h3 className="text-sm sm:text-base font-semibold text-gray-800 mb-2">
+                Material Totals:
+              </h3>
+              <ul className="space-y-1">
+                <li className="flex justify-between text-xs sm:text-sm text-gray-600">
+                  <span>Paper/Cardboard:</span>
+                  <span>{request?.paper_cardboard_total}</span>
+                </li>
+                <li className="flex justify-between text-xs sm:text-sm text-gray-600">
+                  <span>Plastics:</span>
+                  <span>{request?.plastics_total}</span>
+                </li>
+                <li className="flex justify-between text-xs sm:text-sm text-gray-600">
+                  <span>Metals:</span>
+                  <span>{request?.metals_total}</span>
+                </li>
+              </ul>
             </div>
-          ))}
+          </div>
         </div>
-      ) : (
-        <NoDataDisplay emptyText="No submit material requests Found!" />
-      )}
-    </>
+      ))}
+    </div>
+  ) : (
+    <NoDataDisplay emptyText="No submit material requests found!" />
+  )}
+</div>
+
   );
   
 };

@@ -11,8 +11,8 @@ const NoDataDisplay: React.FC<NoDataDisplayProps> = ({ emptyText }) => {
   return (
     <div className="flex flex-col items-center justify-center h-[250px] w-full p-6 rounded-xl">
       <motion.svg
-        width="200"
-        height="200"
+        className="w-32 sm:w-35 md:w-48 lg:w-56 xl:w-64" // Resize the SVG at different breakpoints
+        height="auto"
         viewBox="0 0 200 200"
         initial="hidden"
         animate="visible"
@@ -62,7 +62,7 @@ const NoDataDisplay: React.FC<NoDataDisplayProps> = ({ emptyText }) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 3.5, duration: 0.5 }}
       >
-        <p className="text-2xl font-bold text-custom-black mb-2">
+        <p className="text-lg sm:text-xl md:text-2xl font-bold text-custom-black mb-2">
           {emptyText} {/* Dynamically rendered emptyText */}
         </p>
       </motion.div>

@@ -23,6 +23,11 @@ const CompanyProfilePage = () => {
   const [isSigning, setIsSigning] = useState(false);
   const [pendingAgreement, setPendingAgreement] = useState(null);
   const [agreementChecked, setAgreementChecked] = useState(false); // Flag to track agreement check
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
   let contractStatus =
     useSelector((state) => state.agreementStatus.value) || "active";
   let companyId = userData.user_id;
@@ -169,17 +174,30 @@ const CompanyProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen flex bg-green-50">
-      <div className="w-64 min-w-64 bg-white shadow-md p-0 border-2 ">
-        <h2 className="text-2xl font-bold mb-6 pt-2">Company Dashboard</h2>
-        {contractStatus === "active" && (
-          <ul>
+    
+    <div className="relative min-h-screen flex bg-green-50">
+    {/* Sidebar */}
+    <div
+      className={`absolute top-0 left-0 min-h-screen bg-white shadow-lg border-r transform transition-transform duration-300 ase-in-out md:relative md:translate-x-0  ${
+        isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+      }`}
+      style={{ width: "250px" , zIndex: 9999, borderRight: "1px solid black"}}
+    >
+      <div className="flex justify-between items-center p-4 border-b">
+        <h2 className="text-xl font-bold">Company Dashboard</h2>
+        <button
+          onClick={toggleSidebar}
+          className="text-xl font-bold text-custom-green md:hidden"
+        >
+          &times;
+        </button>
+      </div>
+      <ul>
             <li
-              className={` flex items-center py-2 px-4 mb-2 cursor-pointer ${
-                selectedOption === "assignTrucks"
-                  ? "bg-custom-green text-custom-black "
-                  : ""
-              }`}
+              className={` flex items-center py-2 px-4 mb-2 cursor-pointer ${selectedOption === "assignTrucks"
+                  ? "bg-custom-green text-custom-black font-semibold"
+                  : "hover:bg-custom-green"
+                }`}
               onClick={() => setSelectedOption("assignTrucks")}
             >
               <svg
@@ -199,11 +217,10 @@ const CompanyProfilePage = () => {
               &nbsp; Assign Trucks
             </li>
             <li
-              className={`flex items-center py-2 px-4 mb-2 cursor-pointer ${
-                selectedOption === "viewAssignedAreas"
+              className={`flex items-center py-2 px-4 mb-2 cursor-pointer ${selectedOption === "viewAssignedAreas"
                   ? "bg-custom-green text-custom-custom-black"
                   : ""
-              }`}
+                }`}
               onClick={() => setSelectedOption("viewAssignedAreas")}
             >
               <svg
@@ -223,11 +240,10 @@ const CompanyProfilePage = () => {
               &nbsp; View Assigned Areas
             </li>
             <li
-              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${
-                selectedOption === "truckInformation"
-                  ? "bg-custom-green text-custom-custom-black"
-                  : ""
-              }`}
+              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${selectedOption === "truckInformation"
+                 ? "bg-custom-green text-custom-black font-semibold"
+                  : "hover:bg-custom-green"
+                }`}
               onClick={() => setSelectedOption("truckInformation")}
             >
               <svg
@@ -247,11 +263,10 @@ const CompanyProfilePage = () => {
               &nbsp; Truck Information
             </li>
             <li
-              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${
-                selectedOption === "missedPickups"
+              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${selectedOption === "missedPickups"
                   ? "bg-custom-green text-custom-custom-black"
                   : ""
-              }`}
+                }`}
               onClick={() => setSelectedOption("missedPickups")}
             >
               <svg
@@ -271,11 +286,10 @@ const CompanyProfilePage = () => {
               &nbsp; Missed Pickups
             </li>
             <li
-              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${
-                selectedOption === "recyclingCenters"
-                  ? "bg-custom-green text-custom-custom-black"
-                  : ""
-              }`}
+              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${selectedOption === "recyclingCenters"
+                 ? "bg-custom-green text-custom-black font-semibold"
+                  : "hover:bg-custom-green"
+                }`}
               onClick={() => setSelectedOption("recyclingCenters")}
             >
               <svg
@@ -295,11 +309,10 @@ const CompanyProfilePage = () => {
               &nbsp; Recycling Centers
             </li>
             <li
-              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${
-                selectedOption === "requests"
-                  ? "bg-custom-green text-custom-custom-black"
-                  : ""
-              }`}
+              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${selectedOption === "requests"
+                  ? "bg-custom-green text-custom-black font-semibold"
+                  : "hover:bg-custom-green"
+                }`}
               onClick={() => setSelectedOption("requests")}
             >
               <svg
@@ -319,11 +332,10 @@ const CompanyProfilePage = () => {
               &nbsp; Accept Requests
             </li>
             <li
-              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${
-                selectedOption === "waste_schedules"
-                  ? "bg-custom-green text-custom-custom-black"
-                  : ""
-              }`}
+              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${selectedOption === "waste_schedules"
+                 ? "bg-custom-green text-custom-black font-semibold"
+                  : "hover:bg-custom-green"
+                }`}
               onClick={() => setSelectedOption("waste_schedules")}
             >
               <svg
@@ -343,11 +355,10 @@ const CompanyProfilePage = () => {
               &nbsp; Waste Schedules
             </li>
             <li
-              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${
-                selectedOption === "submit_materials"
-                  ? "bg-custom-green text-custom-custom-black"
-                  : ""
-              }`}
+              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${selectedOption === "submit_materials"
+                  ? "bg-custom-green text-custom-black font-semibold"
+                  : "hover:bg-custom-green"
+                }`}
               onClick={() => setSelectedOption("submit_materials")}
             >
               <svg
@@ -367,11 +378,23 @@ const CompanyProfilePage = () => {
               &nbsp; Submit User Materials
             </li>
           </ul>
-        )}
-      </div>
+    </div>
 
-      <div className="flex-grow p-6">{renderContent()}</div>
+    {/* Sidebar Toggle Button */}
+    <button
+      onClick={toggleSidebar}
+      className={`fixed z-30 left-0 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-custom-green text-white flex items-center justify-center rounded-r-full shadow-lg md:hidden ${
+          isSidebarOpen ? "hidden" : "block"
+        }`}
+    >
+ →
+    </button>
+    <div
+        className={`flex-grow p-6 transition-all duration-300 ease-in-out`}
+      >
+        {renderContent()}
       </div>
+  </div>
   );
 };
 

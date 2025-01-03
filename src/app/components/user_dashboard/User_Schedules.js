@@ -271,79 +271,102 @@ const SchedulesList = () => {
 
   return (
     <>
-<div className="max-w-6xl mx-auto p-6 rounded-lg">
-{alert.map((alert) => (
-        <Alert
-          key={alert.id}
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
-        />
-      ))}  
+<div className="w-full mx-auto p-6 sm:p-4 md:p-6 rounded-lg">
+  {alert.map((alert) => (
+    <Alert
+      key={alert.id}
+      type={alert.type}
+      message={alert.message}
+      onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+    />
+  ))}
+
   {/* Rewards Section */}
   <div className="mb-8 text-center">
-    <h2 className="text-4xl font-bold text-black mb-2">Rewards Earned: {rewards}</h2>
-    <h3 className="text-xl text-gray-600">Equivalent in PKR: {equivalentPKR} PKR</h3>
+    <h2 className="sm:text-2xl md:text-3xl font-bold text-black mb-2">
+      Rewards Earned: {rewards}
+    </h2>
+    <h3 className="sm:text-base md:text-xl text-gray-600">
+      Equivalent in PKR: {equivalentPKR} PKR
+    </h3>
   </div>
 
   {/* Active Request Section */}
   {activeRequest ? (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-    <div className="relative col-span-1 bg-white p-6 rounded-lg shadow-md">
-      {/* Cross Icon for Cancel */}
-      {activeRequest.status === 'Pending' && (
-        <button
-          onClick={handleCancelRequest}
-          className="absolute top-2 right-2 text-3xl text-red-500 hover:text-red-700 transition duration-300"
-          aria-label="Cancel Current Request"
-        >
-          &times; {/* Unicode for cross symbol */}
-        </button>
-      )}
-  
-      <h3 className="text-xl font-bold text-black mb-4">Active Request Details</h3>
-      <p><strong>Account Type:</strong> {activeRequest.account_type}</p>
-      <p><strong>{activeRequest.account_type === 'wallet' ? 'Wallet' : 'Bank'}:</strong> {activeRequest.wallet_bank_name}</p>
-      <p><strong>Account Details:</strong> {activeRequest.account_details}</p>
-      <p><strong>Rewards to Convert:</strong> {activeRequest.conversion_amount}</p>
-      <p><strong>Equivalent PKR:</strong> {activeRequest.equivalent_pkr}</p>
-  
-      {/* Show Approve/Rejection or Mark as Seen Buttons based on Request Status */}
-      {activeRequest.status === 'Approved' && (
-        <div className="mt-4">
-          <p className="text-lg font-semibold text-green-600">Request Approved</p>
-          {!activeRequest.is_seen && (
-            <button
-              onClick={handleMarkAsSeen}
-              className="mt-2 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300"
-            >
-              Mark as Seen
-            </button>
-          )}
-        </div>
-      )}
-  
-      {activeRequest.status === 'Rejected' && (
-        <div className="mt-4">
-          <p className="text-lg font-semibold text-red-600">Request Rejected</p>
-        </div>
-      )}
+      <div className="relative col-span-1 bg-white p-6 sm:p-4 rounded-lg shadow-md">
+        {activeRequest.status === "Pending" && (
+          <button
+            onClick={handleCancelRequest}
+            className="absolute top-2 right-2 md:text-2xl sm:text-xl text-red-500 hover:text-red-700 transition duration-300"
+            aria-label="Cancel Current Request"
+          >
+            &times;
+          </button>
+        )}
+
+        <h3 className="sm:text-md md:text-xl font-bold text-black mb-4">
+          Active Request Details
+        </h3>
+        <p>
+          <strong>Account Type:</strong> {activeRequest.account_type}
+        </p>
+        <p>
+          <strong>
+            {activeRequest.account_type === "wallet" ? "Wallet" : "Bank"}:
+          </strong>{" "}
+          {activeRequest.wallet_bank_name}
+        </p>
+        <p>
+          <strong>Account Details:</strong> {activeRequest.account_details}
+        </p>
+        <p>
+          <strong>Rewards to Convert:</strong> {activeRequest.conversion_amount}
+        </p>
+        <p>
+          <strong>Equivalent PKR:</strong> {activeRequest.equivalent_pkr}
+        </p>
+        {/* Conditional Rendering for Request Status */}
+        {activeRequest.status === "Approved" && (
+          <div className="mt-4">
+            <p className="md:text-base sm:text-sm font-semibold text-green-600">
+              Request Approved
+            </p>
+            {!activeRequest.is_seen && (
+              <button
+                onClick={handleMarkAsSeen}
+                className="mt-2 bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition duration-300"
+              >
+                Mark as Seen
+              </button>
+            )}
+          </div>
+        )}
+        {activeRequest.status === "Rejected" && (
+          <div className="mt-4">
+            <p className="md:text-base sm:text-sm font-semibold text-red-600">
+              Request Rejected
+            </p>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-  
   ) : (
-    <div className="mb-8">
+    <div className="mb-8 w-full">
       <button
         onClick={() => setShowForm(!showForm)}
         className="w-full bg-custom-green text-black py-3 px-6 rounded-lg hover:bg-white transition duration-300"
       >
-        {showForm ? 'Cancel Conversion' : 'Convert Rewards into Account'}
+        {showForm ? "Cancel Conversion" : "Convert Rewards into Account"}
       </button>
 
       {showForm && (
-        <form onSubmit={handleFormSubmit} className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <form
+          onSubmit={handleFormSubmit}
+          className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6"
+        >
           <div>
-            <label className="block text-lg font-semibold text-gray-700 mb-2">
+            <label className="block md:text-lg sm:text-base font-semibold text-gray-700 mb-2">
               Account Type
             </label>
             <select
@@ -358,7 +381,7 @@ const SchedulesList = () => {
             </select>
           </div>
           <div>
-            <label className="block text-lg font-semibold text-gray-700 mb-2">
+            <label className="block md:text-lg sm:text-base font-semibold text-gray-700 mb-2">
               Wallet or Bank Name
             </label>
             <input
@@ -370,8 +393,9 @@ const SchedulesList = () => {
               className="w-full p-3 border rounded-lg"
             />
           </div>
+          {/* Additional Form Fields */}
           <div>
-            <label className="block text-lg font-semibold text-gray-700 mb-2">
+            <label className="block md:text-lg sm:text-base font-semibold text-gray-700 mb-2">
               Account Details
             </label>
             <input
@@ -384,14 +408,16 @@ const SchedulesList = () => {
             />
           </div>
           <div>
-            <label className="block text-lg font-semibold text-gray-700 mb-2">
+            <label className="block md:text-lg sm:text-base font-semibold text-gray-700 mb-2">
               Reward Amount to Convert
             </label>
             <input
               type="number"
               name="rewardAmount"
               value={formData.rewardAmount}
-              onChange={(e)=> setFormData({...formData , rewardAmount: e.target.value})}
+              onChange={(e) =>
+                setFormData({ ...formData, rewardAmount: e.target.value })
+              }
               placeholder="Enter amount"
               max={rewards}
               className="w-full p-3 border rounded-lg"
@@ -412,76 +438,30 @@ const SchedulesList = () => {
 
   {/* Schedules Section */}
   <div>
-    <h2 className="text-3xl font-bold text-black mb-6">Schedules</h2>
+    <h2 className="sm:text-xl md:text-2xl font-bold text-black mb-6">
+      Schedules
+    </h2>
     {schedules.length === 0 ? (
       <NoDataDisplay emptyText="No Schedules Found" />
     ) : (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {schedules.map((schedule) => (
           <div
-          key={schedule.schedule_id}
-          className="p-6 bg-white border border-gray-200 rounded-lg shadow hover:shadow-md transition duration-200 relative"
-        >
-          {/* Chat Icon Button - Positioned at Top Right */}
-          <div className="absolute top-2 right-2">
-            <button
-              onClick={() => handleInitiateChat(schedule.company_id, user_id)}
-              className="text-custom-green hover:text-green-700"
-            >
-             <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="h-5 w-5 text-black"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M4.848 2.771A49.144 49.144 0 0 1 12 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 0 1-3.476.383.39.39 0 0 0-.297.17l-2.755 4.133a.75.75 0 0 1-1.248 0l-2.755-4.133a.39.39 0 0 0-.297-.17 48.9 48.9 0 0 1-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97ZM6.75 8.25a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H7.5Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-            </button>
+            key={schedule.schedule_id}
+            className="p-6 sm:p-4 bg-white border border-custom-green rounded-lg shadow hover:shadow-md transition duration-200"
+          >
+            {/* Schedule Information */}
+            <p className="md:text-lg sm:text-md font-semibold mb-2">
+              Date:{" "}
+              {`${new Date(schedule.date).toLocaleDateString()}`}
+            </p>
+            <p>
+              <strong>Time:</strong> {schedule.time}
+            </p>
+            <p>
+              <strong>Status:</strong> {schedule.status}
+            </p>
           </div>
-    
-          {/* Schedule Information */}
-          <p className="text-lg font-semibold mb-2">
-            Date:{" "}
-            {`${new Date(schedule.date).getMonth() + 1}/${new Date(
-              schedule.date
-            ).getDate()}/${new Date(schedule.date).getFullYear()}`}
-          </p>
-          <p>
-            <strong>Time:</strong> {schedule.time}
-          </p>
-          <p>
-            <strong>Status:</strong> {schedule.status}
-          </p>
-          {!schedule.price && <p><strong>No Price Offered</strong> </p>}
-          {schedule.price && <p><strong>Price:</strong> {schedule.price}</p>}
-          {schedule.status === 'RatingRequired' && (
-            <form
-              onSubmit={(e) => handleRating(e, schedule.schedule_id)}
-              className="mt-4"
-            >
-              <input
-                type="number"
-                step="0.1"
-                value={rating}
-                onChange={(e) => setRating(e.target.value)}
-                className="w-full p-2 border rounded-lg"
-              />
-              <button
-                type="submit"
-                className="w-full bg-yellow-500 text-white py-2 px-4 rounded-lg mt-2 hover:bg-yellow-700 transition duration-300"
-              >
-                Submit Rating
-              </button>
-            </form>
-          )}
-          {schedule.truckid && (
-            <p><strong>Truck Assigned:</strong> {schedule.licenseplate}</p>
-          )}
-        </div>
         ))}
       </div>
     )}

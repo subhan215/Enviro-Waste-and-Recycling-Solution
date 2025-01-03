@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import fs from 'fs'
-const genAI = new GoogleGenerativeAI("AIzaSyBeKqOs2JDgxctso-x_2BwL7bI2rPb6OG0");
+const genAI = new GoogleGenerativeAI("AIzaSyBuo7VzH1mOKgdGjGwoS4uKNc9rNuSdey0");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
 
 const clean_or_unclean = async(local_file_path)=>{
