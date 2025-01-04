@@ -170,7 +170,7 @@ const SignIn = () => {
         </button>
       </div>
       <p className="text-custom-black text-sm font-normal leading-normal pb-3 pt-1 px-4 text-center">
-        Don't have an account? <Link href="/signup">Create one</Link>
+        Don&apos;t have an account? <Link href="/signup">Create one</Link>
       </p>
     </div>
   </div>

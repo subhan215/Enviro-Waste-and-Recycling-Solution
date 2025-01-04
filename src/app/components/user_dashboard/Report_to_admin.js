@@ -5,10 +5,6 @@ import axios from "axios";
 import Loader from "../ui/Loader";
 import NoDataHappyFace from "../animations/noDataHappyFace";
 import Alert from '../ui/Alert'
-
-
-
-
 const Report_to_admin = () => {
   const [companies, setCompanies] = useState([]);
   const [companyId, setCompanyId] = useState("");
@@ -115,7 +111,7 @@ const Report_to_admin = () => {
         //setError("Failed to submit the report. Please try again.");
         showAlert("error" , "Failed to submit the report. Please try again.")
       }
-    } catch (err) {
+    } catch {
       //setError(`Error submitting report: ${err.message}`);
       showAlert("error" , "Error submitting report")
     

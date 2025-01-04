@@ -31,7 +31,7 @@ const Truck_Information = () => {
         showAlert("error", data.message);
         
       }
-    } catch (error) {
+    } catch {
       //console.error("Error fetching truck information:", error);
       showAlert("error", "Error fetching truck information");
 

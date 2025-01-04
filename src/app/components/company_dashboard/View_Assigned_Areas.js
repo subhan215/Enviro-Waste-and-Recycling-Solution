@@ -8,7 +8,7 @@ const ManageAndViewAreas = () => {
   const [areas, setAreas] = useState([]);
   const [nonAssignedAreas, setNonAssignedAreas] = useState([]);
   const [selectedAreas, setSelectedAreas] = useState([]);
-  const [isAddingArea, setIsAddingArea] = useState(false);
+ // const [isAddingArea, setIsAddingArea] = useState(false);
   const [viewMode, setViewMode] = useState(true); // true for viewing, false for managing
   const userData = useSelector((state) => state.userData.value);
   const [areaRequests , setAreaRequests] = useState([])
@@ -62,9 +62,9 @@ const ManageAndViewAreas = () => {
     fetchData();
   }, []); // Fetch areas on component mount
 
-  const handleAddAreaClick = () => {
+  /*const handleAddAreaClick = () => {
     setIsAddingArea(true);  // Open the area selection form
-  };
+  }; */
 
   const handleAreaSelect = (e) => {
     const areaId = parseInt(e.target.value);

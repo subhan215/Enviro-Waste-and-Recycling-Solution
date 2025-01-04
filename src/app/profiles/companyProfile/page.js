@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import Add_Trucks from "../../components/company_dashboard/Add_Trucks";
-import Manage_Areas from "../../components/company_dashboard/Manage_Areas";
 import View_Assigned_Areas from "../../components/company_dashboard/View_Assigned_Areas";
 import Trucks_Information from "../../components/company_dashboard/Trucks_Information";
 import MissedPickups from "../../components/company_dashboard/Missed_Pickups";
@@ -9,12 +8,10 @@ import RecyclingCenters from "../../components/company_dashboard/Recycling_Cente
 import AcceptRequests from "../../components/company_dashboard/AcceptRequests";
 import Waste_Schedules from "../../components/company_dashboard/Waste_Schedules";
 import SubmitUserMaterials from "../../components/company_dashboard/SubmitUserMaterials";
-import { setUserData } from "@/store/slices/userDataSlice";
+//import { setUserData } from "@/store/slices/userDataSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { setAgreementStatus } from "@/store/slices/agreementStatusSlice";
 import Loader from "../../components/ui/Loader"
-
-
 const CompanyProfilePage = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.userData.value);

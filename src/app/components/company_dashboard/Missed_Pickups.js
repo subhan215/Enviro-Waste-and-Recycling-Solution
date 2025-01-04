@@ -32,7 +32,7 @@ const Missed_Pickups = () => {
           `/api/pickup/get_All_missed_pickups_for_company/${companyId}`
         );
         setMissedPickups(response.data.data);
-      } catch (err) {
+      } catch {
         setError("Failed to load missed pickups.");
       } finally {
         setTimeout(async () => {

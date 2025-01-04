@@ -25,13 +25,13 @@ L.Icon.Default.mergeOptions({
 
 const RecyclingCenters = ({ }) => {
   const [recyclingCenters, setRecyclingCenters] = useState([]);
-  const [newCenter, setNewCenter] = useState({ area_id: '', latitude: '', longitude: '' });
+  const [newCenter, setNewCenter] = useState({ latitude: '', longitude: '' });
   const [loading, setLoading] = useState(true);
   const [recycle_loading, set_recycleLoading] = useState(true);
-  const [current_req_loading, set_current_req_loading] = useState(true);
+ // const [current_req_loading, set_current_req_loading] = useState(true);
   const [error, setError] = useState(null);
   const [locationName, setLocationName] = useState('');
-  const [map, setMap] = useState(null);
+  //const [map, setMap] = useState(null);
   const [areaNames, setAreaNames] = useState([]);
   const [requests_area_names, set_requests_area_names] = useState([]);
   const userData = useSelector((state) => state.userData.value)
@@ -62,7 +62,7 @@ const RecyclingCenters = ({ }) => {
       console.log(response)
       setRecyclingCenters(response.data.data);
       //setLoading(false);
-    } catch (err) {
+    } catch {
       setError('Error fetching recycling centers');
       //setLoading(false);
     }
@@ -99,7 +99,7 @@ const RecyclingCenters = ({ }) => {
     fetchAreas();
   }, []);
 
-  const LocationMarker = () => {
+ /* const LocationMarker = () => {
     useMapEvents({
       click(e) {
         const { lat, lng } = e.latlng;
@@ -110,12 +110,12 @@ const RecyclingCenters = ({ }) => {
     return newCenter.latitude && newCenter.longitude ? (
       <Marker position={[newCenter.latitude, newCenter.longitude]} />
     ) : null;
-  };
+  }; */
 
-  const handleInputChange = (e) => {
+  /*const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewCenter({ ...newCenter, [name]: value });
-  };
+  }; */
 
   const handleCreateCenter = async (e) => {
     e.preventDefault();
@@ -459,7 +459,7 @@ const RecyclingCenters = ({ }) => {
             url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           />
-          <Marker position={[24.8607, 67.0011]} draggable={true}>
+          <Marker position={[newCenter.latitude , newCenter.longitude]} draggable={true}>
             <Popup>Drag to select your center's location</Popup>
           </Marker>
         </MapContainer>

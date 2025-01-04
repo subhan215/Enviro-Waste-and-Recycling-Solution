@@ -1,8 +1,6 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const { pool } = require("../database/database");
-
-
+import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
+import {pool} from "../database/database"
 //For checking password
 const check_password = async function (existing_pass, input_pass) {
     console.log("In check pass");

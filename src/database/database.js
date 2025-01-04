@@ -1,6 +1,5 @@
 
-const { Pool } = require('pg');
-
+import {Pool} from "pg"
 // PostgreSQL pool setup
 const pool = new Pool({
     user: process.env.DB_USER,

@@ -32,7 +32,7 @@ const RecyclingCenterNearby = () => {
           console.log(latitude , longitude)
           setUserLocation({ latitude, longitude });
         },
-        (err) => {
+        () => {
           setError('Unable to retrieve your location');
           showAlert("error" , "Unable to retrieve your location" )
           //console.error(err);
@@ -72,7 +72,7 @@ const RecyclingCenterNearby = () => {
           );
           setRecyclingCenters(updatedCenters);
           setLoading(false); // Set loading to false once the data is fetched
-        } catch (err) {
+        } catch{
           setError('Failed to fetch recycling centers');
           setLoading(false); // Stop loading in case of error
           //console.error(err);

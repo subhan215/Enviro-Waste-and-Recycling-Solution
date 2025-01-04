@@ -42,7 +42,7 @@ function CreateRequestForRecycledWaste() {
   const [preferredDate, setPreferredDate] = useState("");
   const [preferredTime, setPreferredTime] = useState("");
   const [locationName, setLocationName] = useState("");
-  const [map, setMap] = useState(null);
+  //const [map, setMap] = useState(null);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [currentRequest, setCurrentRequest] = useState(null);
@@ -261,7 +261,7 @@ function CreateRequestForRecycledWaste() {
         //alert(response.data.message); // Error message if status is not 201
         showAlert("error" , response.data.message)
       }
-    } catch (error) {
+    } catch{
       //console.error("Error accepting the offer:", error);
       //alert("Failed to accept the offer, please try again.");
       showAlert("error" , "Failed to accept the offer, please try again.") 
@@ -419,7 +419,7 @@ function CreateRequestForRecycledWaste() {
               center={[24.8607, 67.0011]}
               zoom={12}
               style={{ height: "400px", width: "100%" }}
-              whenCreated={setMap}
+              //whenCreated={setMap}
             >
               <TileLayer
                 url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"

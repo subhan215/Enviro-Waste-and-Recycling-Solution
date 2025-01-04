@@ -11,12 +11,13 @@ export function Tabs({ value, onChange, children }) {
 
   return (
     <div>
-      {children.map((child) =>
+      {children.map((child , ind) =>
         child.type.name === 'TabsList' ? (
           <child.type
             {...child.props}
             activeTab={activeTab}
             onTabClick={handleTabClick}
+            key={ind}
           />
         ) : (
           child
@@ -41,7 +42,7 @@ export function TabsList({ children, activeTab, onTabClick }) {
   );
 }
 
-export function TabsTrigger({ value, isActive, children, onClick }) {
+export function TabsTrigger({ isActive, children, onClick }) {
   return (
     <button
       className={`p-3 ${isActive ? 'bg-[#17cf42] text-white' : 'text-[#17cf42]'}`}
@@ -52,6 +53,6 @@ export function TabsTrigger({ value, isActive, children, onClick }) {
   );
 }
 
-export function TabsContent({ value, children }) {
+export function TabsContent({ children }) {
   return <div>{children}</div>;
 }

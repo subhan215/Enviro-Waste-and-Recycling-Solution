@@ -1,6 +1,6 @@
 "use client"; // Ensure the component is treated as a client component
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
+//import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Alert from "../components/ui/Alert";
 
@@ -50,7 +50,6 @@ const CompanyRegistrationForm = () => {
         e.preventDefault();
         if (!agreementChecked) {
             showAlert('warning' , 'You must agree to the terms and conditions to register.')
-
             return;
         }
 
@@ -235,14 +234,14 @@ const CompanyRegistrationForm = () => {
                                 <input
                                     type="checkbox"
                                     name="agreement"
-                                    checked={selectedServices.agreement}
-                                    onChange={handleCheckboxChange}
+                                    checked={agreementChecked}
+                                    onChange={()=> setAgreementChecked(!agreementChecked)}
                                     className="form-checkbox hidden"
                                     required
                                 />
                                 <div className="relative flex items-center cursor-pointer">
                                     <div className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 max-w-5 max-h-5 flex justify-center items-center border-2 border-[#4e975f] bg-[#e7f3ea] rounded-lg transition-all duration-300 ease-in-out hover:border-[#00ed64] focus:outline-none focus:ring-2 focus:ring-[#00ed64]">
-                                        {selectedServices.agreement && (
+                                        {agreementChecked && (
                                             <svg
                                                 xmlns="http://www.w3.org/2000/svg"
                                                 className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#00ed64] absolute"
@@ -272,9 +271,6 @@ const CompanyRegistrationForm = () => {
                             >
                                 Register Company
                             </button>
-
-
-
                         </form>
                     </div>
                 </div>

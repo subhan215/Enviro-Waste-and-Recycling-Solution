@@ -16,7 +16,7 @@ const Waste_Schedules = ({}) => {
   const [trucks, setTrucks] = useState([]);
   const [selectedTruck, setSelectedTruck] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  //const [error, setError] = useState(null);
   const [assigning, setAssigning] = useState(false);
   const navigate = useRouter();
   const dispatch = useDispatch();
@@ -46,7 +46,8 @@ const Waste_Schedules = ({}) => {
         );
         console.log("Company rating : ", response);
         setRating(response.data.data);
-      } catch (error) {
+      } catch (err){
+        console.log('error' , err)
         //console.log("Error fetching company rating:", error);
         showAlert('error' , 'Error fetching company rating')
       }
@@ -62,8 +63,9 @@ const Waste_Schedules = ({}) => {
         }
         const data = await response.json();
         setSchedules(data);
-      } catch (err) {
-        setError(err.message);
+      } catch (error){
+        console.log(error)
+        //setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -80,8 +82,9 @@ const Waste_Schedules = ({}) => {
         const data = await response.json();
         console.log(data);
         setTrucks(data.data);
-      } catch (err) {
-        setError(err.message);
+      } catch (error){
+        console.log(error)
+        //setError(err.message);
       }
     };
 
