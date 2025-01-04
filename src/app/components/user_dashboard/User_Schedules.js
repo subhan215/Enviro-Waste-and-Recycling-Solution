@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentChat } from '../../../store/slices/currentChatSlice';
 import Loader from '../ui/Loader';
 import NoDataDisplay from '../animations/NoDataDisplay';
-import { FaComment } from 'react-icons/fa';
+//import { FaComment } from 'react-icons/fa';
 import Alert from '../ui/Alert'
 
 
@@ -165,7 +165,7 @@ const SchedulesList = () => {
         method: 'DELETE',
       });
 
-      const result = await response.json();
+      await response.json();
       if (response.ok) {
         setActiveRequest(null);
         //alert('Your request has been canceled successfully!');

@@ -34,7 +34,7 @@ const MapComponent = ({ setCoordinates }) => {
             } else {
                 alert('Location not found');
             }
-        } catch (err) {
+        } catch {
             alert('Error searching for location');
         }
     };

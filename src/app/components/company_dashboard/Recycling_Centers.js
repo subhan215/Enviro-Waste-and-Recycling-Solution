@@ -14,7 +14,7 @@ import Recycle_loader from '../ui/Recycle_loader'
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
-const useMapEvents = dynamic(() => import('react-leaflet').then(mod => mod.useMapEvents), { ssr: false });
+//const useMapEvents = dynamic(() => import('react-leaflet').then(mod => mod.useMapEvents), { ssr: false });
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -460,7 +460,7 @@ const RecyclingCenters = ({ }) => {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           />
           <Marker position={[newCenter.latitude , newCenter.longitude]} draggable={true}>
-            <Popup>Drag to select your center's location</Popup>
+            <Popup>Drag to select your center&apos;s location</Popup>
           </Marker>
         </MapContainer>
       </div>

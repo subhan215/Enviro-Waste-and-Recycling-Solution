@@ -11,7 +11,7 @@ const Report_to_admin = () => {
   const [description, setDescription] = useState("");
   const [existingReports, setExistingReports] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+ // const [error, setError] = useState(null);
   const [messages, setMessages] = useState([]);
   const userData = useSelector((state) => state.userData.value);
   const user_id = userData.user_id;
@@ -50,7 +50,7 @@ const Report_to_admin = () => {
         setExistingReports(response.data.data);
       }
     } catch (err) {
-      setError(`Error fetching existing reports: ${err.message}`);
+      //setError(`Error fetching existing reports: ${err.message}`);
       console.error("Error fetching existing reports:", err);
     }
      };
@@ -66,7 +66,7 @@ const Report_to_admin = () => {
           setError("No messages found.");
         }
       } catch (err) {
-        setError(`Error fetching messages: ${err.message}`);
+        //setError(`Error fetching messages: ${err.message}`);
         console.error("Error fetching messages:", err);
       } 
     };
@@ -136,7 +136,7 @@ const Report_to_admin = () => {
      
     } catch (err) {
       console.error("Error marking message as read:", err);
-      setError(`Error marking message as read: ${err.message}`);
+      //setError(`Error marking message as read: ${err.message}`);
     }
   };
 
