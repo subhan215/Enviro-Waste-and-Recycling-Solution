@@ -475,9 +475,9 @@ const SignUp = () => {
                             onChange={handleInputChange}
                             value={data.gender}
                         >
-                            <option value="">Select Gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
+                            <option value="" className="text-custom-black">Select Gender</option>
+                            <option value="male" className="text-custom-black">Male</option>
+                            <option value="female" className="text-custom-black">Female</option>
                         </select>
                     </label>
 
@@ -486,7 +486,7 @@ const SignUp = () => {
                             type="tel"
                             name="mobile"
                             placeholder="Mobile Number"
-                            className="form-input flex w-full rounded-xl text-[#00ed64] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-base font-normal"
+                            className="form-input flex w-full rounded-xl text-custom-black h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-base font-normal"
                             required
                             onChange={handleInputChange}
                         />
@@ -504,7 +504,7 @@ const SignUp = () => {
                             <option value="" disabled selected>Select Area</option>
                             {allAreas?.length > 0 ? (
                                 allAreas.map((area) => (
-                                    <option key={area.area_id} value={area.area_id}>
+                                    <option key={area.area_id} value={area.area_id} className="text-custom-black">
                                         <span>{area.name}</span>
                                     </option>
                                 ))

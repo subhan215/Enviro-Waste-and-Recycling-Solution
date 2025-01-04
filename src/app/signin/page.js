@@ -28,38 +28,32 @@ const SignIn = () => {
 
   const handleSignIn = async () => {
     try {
-      console.log("Sending data:", userData);
       const response = await fetch("/api/users/signin", {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         method: "POST",
         body: JSON.stringify(userData),
       });
-
+  
       const responseData = await response.json();
-      if (responseData.success) {
-        showAlert('info' , responseData.message)
+      if (response.ok && responseData.success) {
+        showAlert('info', responseData.message);
         setCookie("access_token", responseData.data.access_token, 2);
         setCookie("refresh_token", responseData.data.refresh_token, 2);
-        console.log(responseData)
         if(responseData.data.role === "user") {
-          navigate.push('/profiles/userProfile')
+          navigate.push('/profiles/userProfile');
+          dispatch(setReduxUserData({...responseData.data}));
+        } else {
+          navigate.push('/profiles/companyProfile');
           dispatch(setReduxUserData({...responseData.data}));
         }
-        else {
-          navigate.push('/profiles/companyProfile')
-          dispatch(setReduxUserData({...responseData.data}));
-        }
-        
-        // Redirect or update state to show home or profile page
       } else {
-        showAlert('info' , responseData.message)
+        showAlert('info', responseData.message || 'Unknown error occurred.');
       }
     } catch (error) {
-      showAlert('error' , error.message)
+      showAlert('error', `Error: ${error.message}`);
     }
   };
+  
 
   const logInWithAccessToken = async (access_token) => {
     try {
@@ -145,7 +139,7 @@ const SignIn = () => {
         <label className="flex flex-col min-w-40 flex-1">
           <input
             placeholder="Enter your email"
-            className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#00ed64] focus:outline-0 focus:ring-0 border-none bg-[#e7f3ea] focus:border-none h-14 placeholder:text-[#00ed64] p-4 text-base font-normal leading-normal"
+            className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-custom-black focus:outline-0 focus:ring-0 border-none bg-[#e7f3ea] focus:border-none h-14 placeholder:text-[#00ed64] p-4 text-base font-normal leading-normal"
             onChange={(e) => setUserData({ ...userData, email: e.target.value })}
           />
         </label>
@@ -155,7 +149,7 @@ const SignIn = () => {
           <input
             placeholder="Enter your password"
             type="password"
-            className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#00ed64] focus:outline-0 focus:ring-0 border-none bg-[#e7f3ea] focus:border-none h-14 placeholder:text-[#00ed64] p-4 text-base font-normal leading-normal"
+            className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-custom-black focus:outline-0 focus:ring-0 border-none bg-[#e7f3ea] focus:border-none h-14 placeholder:text-[#00ed64] p-4 text-base font-normal leading-normal"
             onChange={(e) => setUserData({ ...userData, password: e.target.value })}
           />
         </label>
@@ -163,7 +157,7 @@ const SignIn = () => {
      
       <div className="flex px-4 py-3">
         <button
-          className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-gradient-to-r from-[#00ed64] to-[#00b84c] text-white text-sm font-bold leading-normal tracking-[0.015em]"
+        className="flex w-full sm:w-full cursor-pointer items-center justify-center rounded-xl h-12 px-8 py-4 bg-gradient-to-r from-[#00ed64] to-[#00b84c] text-white font-bold leading-normal hover:scale-105 hover:from-[#00b84c] hover:to-[#00ed64] transition-all duration-300 ease-in-out text-xs sm:text-sm md:text-base shadow-lg hover:shadow-2xl"
           onClick={handleSignIn}
         >
           <span className="truncate">Sign in</span>
