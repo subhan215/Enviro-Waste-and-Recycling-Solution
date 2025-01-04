@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa"; // Import icons from react-icons
-import { ImSpinner2 } from "react-icons/im"; // Spinner icon for loading
 import NoDataDisplay from "../animations/NoDataDisplay";
 import Admin_loader from "../ui/Admin_loader"
 import Alert from "../ui/Alert";

@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Button } from "../ui/Button";
-import { AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle } from 'lucide-react';
 import axios from "axios";
-import NoDataDisplay from "../animations/NoDataDisplay"; // Import the NoDataAnimation component
 import Alert from '../ui/Alert'
 import Admin_loader from "../ui/Admin_loader"
-XCircle
 
-function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFilter }) {
+function ComplaintsTable() {
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState([]);
@@ -27,7 +24,7 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
         setComplaints(response.data.data);
         //alert(response.data.message || "Reports fetched successfully!");
         showAlert('success' , 'Reports fetched successfully!')
-      } catch (error) {
+      } catch {
         //console.error("Error fetching reports:", error);
         //alert(error.response?.data?.message || "Failed to fetch reports.");
         showAlert('error' , 'Failed to fetch reports')
@@ -50,7 +47,7 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
         //alert("Report marked as resolved successfully!");
         showAlert('success' , 'Report marked as resolved successfully!')
       }
-    } catch (error) {
+    } catch {
       //console.error("Error marking report as resolved:", error);
       //alert(error.response?.data?.message || "Failed to mark report as resolved.");
       showAlert('error' , 'Failed to mark report as resolved')
@@ -59,11 +56,11 @@ function ComplaintsTable({ searchTerm, setSearchTerm, statusFilter, setStatusFil
 
   const removeCompany = async (company_id) => {
     try {
-      const response = await axios.post("/api/report/remove_company_agreement", { company_id });
+      await axios.post("/api/report/remove_company_agreement", { company_id });
       setComplaints(complaints.filter(complaint => complaint.company_id !== company_id));
       //alert(response.data.message || "Company agreement removed successfully!");
       showAlert('success' , 'Company agreement removed successfully!')
-    } catch (error) {
+    } catch  {
       //console.error("Error removing company:", error);
       //alert(error.response?.data?.message || "Failed to remove company agreement.");
       showAlert('error' , 'Failed to remove company agreement')

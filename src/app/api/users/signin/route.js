@@ -100,11 +100,11 @@ export async function POST(req) {
       does_user_email_exist.rows[0].name
     );
 
-    const options = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Only set secure in production
-      maxAge: 3600, // Cookie will expire in 1 hour (3600 seconds)
-    };
+    //const options = {
+     // httpOnly: true,
+      //secure: process.env.NODE_ENV === "production", // Only set secure in production
+      //maxAge: 3600, // Cookie will expire in 1 hour (3600 seconds)
+    //};
 
     // Commit the transaction
     await client.query("COMMIT");

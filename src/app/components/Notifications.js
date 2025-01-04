@@ -1,9 +1,9 @@
 import { setCurrentChat } from "@/store/slices/currentChatSlice";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-const FontAwesomeIcon = require("@fortawesome/react-fontawesome").FontAwesomeIcon;
 const Notifications = ({ turnNotificationsToOff }) => {
     const dispatch = useDispatch();
     const [notifications, setNotifications] = useState([]);
@@ -75,7 +75,7 @@ const Notifications = ({ turnNotificationsToOff }) => {
                 }, 10);
             })
             .catch(() => setLoading(false));
-    }, [role, id]);
+    }, [role, id , fetchNotifications , fetchNotificationsForMessages]);
 
     const closeModal = () => {
         const modalElement = document.getElementById("notificationModal");

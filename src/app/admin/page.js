@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Building2, FileText, Trash2, DollarSign, Search } from 'lucide-react';
+import { Building2, FileText, Trash2, DollarSign} from 'lucide-react';
 import DashboardCard from "../components/admin_panel/dashboard";
 import ComplaintsTable from "../components/admin_panel/Reports";
 import RewardConversionRequests from "../components/admin_panel/RewardConversionRequests";

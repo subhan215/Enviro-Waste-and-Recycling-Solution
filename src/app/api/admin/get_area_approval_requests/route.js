@@ -1,7 +1,7 @@
 import { pool } from '../../../../database/database';
 import { NextResponse } from 'next/server';
 
-export async function GET(req) {
+export async function GET() {
   try {
     // Begin transaction
     await pool.query('BEGIN');

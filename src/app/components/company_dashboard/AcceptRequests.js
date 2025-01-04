@@ -4,13 +4,10 @@ import { useSelector } from "react-redux";
 import Loader from "../ui/Loader";
 import NoDataDisplay from "../animations/NoDataDisplay";
 import Alert from '../ui/Alert'
-
-
-
 function AcceptRequests() {
     const [requests, setRequests] = useState([]);
-    const [error, setError] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
+    //const [error, setError] = useState("");
+    //const [successMessage, setSuccessMessage] = useState("");
     const [newPriceOffered, setNewPriceOffered] = useState("");
     const [loading, setLoading] = useState(true); // New state for loading
     const userData = useSelector((state) => state.userData.value);
@@ -43,7 +40,7 @@ function AcceptRequests() {
             setRequests(requestsWithLocationNames);
           } catch (err) {
             console.error("Error fetching requests:", err);
-            setError("Error fetching requests");
+            //setError("Error fetching requests");
           } finally {
             setLoading(false); // End loading
           }
@@ -93,7 +90,7 @@ function AcceptRequests() {
                     )
                 );
             }
-        } catch (err) {
+        } catch{
             //console.log(err);
             //setError("Failed to offer price");
             showAlert('error' , 'Failed to offer price');
@@ -122,7 +119,7 @@ function AcceptRequests() {
     <>
       <NoDataDisplay emptyText="No requests Found" />
       <p className="text-sm sm:text-base md:text-lg text-center">
-        If you haven't located a recycling center, locate one to see requests for wastes, if any are available.
+        If you haven&apos;t located a recycling center, locate one to see requests for wastes, if any are available.
       </p>
     </>
   ) : (

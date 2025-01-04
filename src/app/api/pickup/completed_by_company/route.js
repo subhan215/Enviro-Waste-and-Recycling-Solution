@@ -25,9 +25,9 @@ export async function PUT(req) {
 
     // Gemini AI processing
     const clean_or_unclean = await geminiAi.clean_or_unclean(path);
-    const clean_or_unclean_fin = clean_or_unclean
+    /*const clean_or_unclean_fin = clean_or_unclean
         .split("\n") // Split the string into lines
-        .filter(line => line.trim() !== "") // Remove empty lines  
+        .filter(line => line.trim() !== "") // Remove empty lines   */
 
     // Cloudinary upload
     const upload_clean_or_unclean_image_to_cloud = await upload_to_cloundiary(path);

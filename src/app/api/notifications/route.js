@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-const { pool } = require("../../../database/database");
+import { pool } from "../../../database/database";
 
 export async function GET(request) {
   const client = await pool.connect(); // Acquire a client from the pool

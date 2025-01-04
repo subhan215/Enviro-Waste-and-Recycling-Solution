@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import { useSelector } from "react-redux";
 import Alert from "../ui/Alert";
 const Manage_Areas = () => {

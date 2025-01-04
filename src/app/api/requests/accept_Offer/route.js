@@ -1,7 +1,7 @@
 import { pool } from "../../../../database/database";
 
 // Create a schedule when a user accepts a request
-export async function POST(req, { params }) {
+export async function POST(req) {
     const { requestId } = await req.json();
 
     try {

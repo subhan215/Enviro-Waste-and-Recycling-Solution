@@ -1,10 +1,10 @@
 "use client";
-import { getCookie } from "@/cookies/getCookie";
+//import { getCookie } from "@/cookies/getCookie";
 import pubnub from "@/pubnub/pubnub";
-import { setUserData } from "@/store/slices/userDataSlice";
-import { useRouter } from "next/navigation";
+//import { setUserData } from "@/store/slices/userDataSlice";
+//import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 
 const Chat = () => {
   const [chats, setChats] = useState([]);
@@ -31,7 +31,7 @@ const Chat = () => {
       }
     };
     fetchChats();
-  }, [user_or_company_id]);
+  }, [user_or_company_id , role]);
 
   useEffect(() => {
     const activeChatId = selectedChatId || chatId;

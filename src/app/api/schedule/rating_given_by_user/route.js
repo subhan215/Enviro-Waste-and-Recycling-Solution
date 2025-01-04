@@ -69,10 +69,10 @@ export async function POST(req) {
         }
 
         // Delete the schedule
-        const del_sch = await client.query(
-            'DELETE FROM schedule WHERE schedule_id = $1',
-            [schedule_id]
-        );
+        //const del_sch = await client.query(
+         //   'DELETE FROM schedule WHERE schedule_id = $1',
+          //  [schedule_id]
+        //);
 
         // Commit the transaction
         await client.query("COMMIT");

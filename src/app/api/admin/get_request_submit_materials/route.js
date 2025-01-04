@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { pool } from "../../../../database/database"; // Import the database pool
-export async function GET(req) {
+export async function GET() {
   const client = await pool.connect(); // Get a client from the pool
   try {
     // Query the database to get all records from the request_submit_material table

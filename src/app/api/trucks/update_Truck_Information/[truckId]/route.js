@@ -1,5 +1,5 @@
-const { NextResponse } = require("next/server");
-const { pool } = require("../../../../../database/database");
+import { NextResponse } from "next/server";
+import { pool } from "../../../../../database/database";
 export async function PUT(request, { params }) {
   const { truckId } = params; // Getting the truckId from the URL
   const { licenseplate, capacity} = await request.json(); // Getting updated truck data

@@ -1,7 +1,7 @@
 import { pool } from "../../../../database/database";
 import { NextResponse } from 'next/server';  // Import NextResponse
 
-export async function POST(req, { params }) {
+export async function POST(req) {
     const { schedule_id, truck_id } = await req.json();
 
     if (!schedule_id || !truck_id) {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import Truck_loader from "../ui/Truck_loader";
 import Alert from '../ui/Alert'
@@ -58,7 +58,7 @@ const Add_Trucks = () => {
       setLoading(true);
       try {
         await getNonAssignedTruckAreas();
-      } catch (error) {
+      } catch {
         //console.error('Error getting non assigned area:', error);
         showAlert("error", "Error getting non assigned area");
       } finally {

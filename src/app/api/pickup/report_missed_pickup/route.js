@@ -23,9 +23,9 @@ export async function POST(req) {
 
     // Call Gemini AI to classify the image
     const clean_or_unclean = await geminiAi.clean_or_unclean(path);
-    const clean_or_unclean_fin = clean_or_unclean
-        .split("\n")
-        .filter(line => line.trim() !== "");
+    //const clean_or_unclean_fin = clean_or_unclean
+       // .split("\n")
+        //.filter(line => line.trim() !== "");
 
     // Upload the image to Cloudinary
     const upload_clean_or_unclean_image_to_cloud = await upload_to_cloundiary(path);
@@ -77,7 +77,7 @@ export async function POST(req) {
             const lastPickup = checkPickupResult.rows[0];
             const lastPickupTime = new Date(lastPickup.created_at);
             const currentTime = new Date();
-            const hoursDifference = (currentTime - lastPickupTime) / (1000 * 60 * 60);
+            //const hoursDifference = (currentTime - lastPickupTime) / (1000 * 60 * 60);
             console.log("LastPickupTime: ", lastPickupTime, "current time: ", currentTime);
             // If it's less than 24 hours since the last pickup, don't allow another one
             // Uncomment the below code if you want to restrict pickups within 24 hours

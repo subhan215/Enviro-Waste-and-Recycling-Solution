@@ -1,7 +1,7 @@
 import { pool } from "../../../../database/database";
 import { NextResponse } from "next/server";
 
-export async function GET(req) {
+export async function GET() {
     const client = await pool.connect(); // Get a client for transaction management
 
     try {

@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa"; // Import Font Awesome icons
-import NoDataHappyFace from "../animations/noDataHappyFace";
 import NoDataDisplay from "../animations/NoDataDisplay";
 import Admin_loader from "../ui/Admin_loader";
 import Alert from "../ui/Alert";
