@@ -8,9 +8,6 @@ import Loader from "../ui/Loader";
 import { Popup } from 'react-leaflet';
 import Alert from '../ui/Alert'
 import Recycle_loader from '../ui/Recycle_loader'
-
-
-
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });

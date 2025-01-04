@@ -1,10 +1,22 @@
 "use client";
 import { useState } from "react";
-import ReportMissedPickups from "../../components/user_dashboard/ReportMissedPickups";
-import CreateRequestForRecycledWaste from "../../components/user_dashboard/CreateRequestForRecycledWaste";
-import Waste_Pickup_Schedules from "../../components/user_dashboard/User_Schedules";
-import Report_to_admin from "../../components/user_dashboard/Report_to_admin";
-import LocateRecyclingCenters from "../../components/user_dashboard/LocateRecyclingCenters";
+import dynamic from "next/dynamic";
+
+const ReportMissedPickups = dynamic(() =>
+  import("../../components/user_dashboard/ReportMissedPickups")
+);
+const CreateRequestForRecycledWaste = dynamic(() =>
+  import("../../components/user_dashboard/CreateRequestForRecycledWaste")
+);
+const Waste_Pickup_Schedules = dynamic(() =>
+  import("../../components/user_dashboard/User_Schedules")
+);
+const Report_to_admin = dynamic(() =>
+  import("../../components/user_dashboard/Report_to_admin")
+);
+const LocateRecyclingCenters = dynamic(() =>
+  import("../../components/user_dashboard/LocateRecyclingCenters")
+);
 
 const UserProfilePage = () => {
   const [selectedOption, setSelectedOption] = useState("reportMissedPickups");

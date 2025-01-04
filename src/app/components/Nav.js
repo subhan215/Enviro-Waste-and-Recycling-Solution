@@ -38,13 +38,16 @@ const ModernNavbar = () => {
   };
 
   useEffect(() => {
-    window.addEventListener("resize", handleResize);
-    handleResize();
+    // Ensure this code only runs on the client side
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", handleResize);
+      handleResize();
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+      return () => {
+        window.removeEventListener("resize", handleResize);
+      };
+    }
+  }, []); // Empty 
 
   const handleSignOut = async () => {
     removeCookie("access_token");
