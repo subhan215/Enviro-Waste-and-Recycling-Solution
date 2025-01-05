@@ -1,17 +1,18 @@
-"use client";
-import { useState, useEffect } from "react";
-import Add_Trucks from "../../components/company_dashboard/Add_Trucks";
-import View_Assigned_Areas from "../../components/company_dashboard/View_Assigned_Areas";
-import Trucks_Information from "../../components/company_dashboard/Trucks_Information";
-import MissedPickups from "../../components/company_dashboard/Missed_Pickups";
-import RecyclingCenters from "../../components/company_dashboard/Recycling_Centers";
-import AcceptRequests from "../../components/company_dashboard/AcceptRequests";
-import Waste_Schedules from "../../components/company_dashboard/Waste_Schedules";
-import SubmitUserMaterials from "../../components/company_dashboard/SubmitUserMaterials";
-//import { setUserData } from "@/store/slices/userDataSlice";
+"use client"; 
+import { useState, useEffect, Suspense, lazy } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setAgreementStatus } from "@/store/slices/agreementStatusSlice";
-import Loader from "../../components/ui/Loader"
+import Loader from "../../components/ui/Loader";
+
+const Add_Trucks = lazy(() => import("../../components/company_dashboard/Add_Trucks"));
+const View_Assigned_Areas = lazy(() => import("../../components/company_dashboard/View_Assigned_Areas"));
+const Trucks_Information = lazy(() => import("../../components/company_dashboard/Trucks_Information"));
+const MissedPickups = lazy(() => import("../../components/company_dashboard/Missed_Pickups"));
+const RecyclingCenters = lazy(() => import("../../components/company_dashboard/Recycling_Centers"));
+const AcceptRequests = lazy(() => import("../../components/company_dashboard/AcceptRequests"));
+const Waste_Schedules = lazy(() => import("../../components/company_dashboard/Waste_Schedules"));
+const SubmitUserMaterials = lazy(() => import("../../components/company_dashboard/SubmitUserMaterials"));
+
 const CompanyProfilePage = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state) => state.userData.value);
