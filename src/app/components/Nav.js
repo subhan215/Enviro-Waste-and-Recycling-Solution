@@ -70,7 +70,7 @@ const ModernNavbar = () => {
         {/* Logo */}
         <div className="flex items-center gap-2">
             <Leaf className="text-[#00FF00] h-8 w-8" />
-            <h2 className="text-3xl font-bold flex justify-center">Enviro</h2>
+            <h2 className="text-3xl font-bold flex justify-center text-custom-black">Enviro</h2>
           </div>
         {/* Full Navbar for larger screens */}
         <div className="hidden md:flex gap-8 items-center">

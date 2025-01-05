@@ -332,7 +332,7 @@ function CreateRequestForRecycledWaste() {
                 value={waste}
                 onChange={(e) => setWaste(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-custom-black placeholder:text-custom-black"
               />
             </div>
             <div className="mb-4">
@@ -348,7 +348,7 @@ function CreateRequestForRecycledWaste() {
                 value={preferredDate}
                 onChange={(e) => setPreferredDate(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-custom-black placeholder:text-custom-black"
               />
             </div>
             <div className="mb-4">
@@ -364,7 +364,7 @@ function CreateRequestForRecycledWaste() {
                 value={preferredTime}
                 onChange={(e) => setPreferredTime(e.target.value)}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-custom-black placeholder:text-custom-black"
               />
             </div>
             <button
@@ -386,7 +386,7 @@ function CreateRequestForRecycledWaste() {
               value={locationName}
               onChange={(e) => { setLocationName(e.target.value); handleSearchLocation() }}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-custom-black placeholder:text-custom-black"
             />
             {searchResults.length > 0 && (
               <ul
