@@ -74,16 +74,16 @@ const ModernNavbar = () => {
           </div>
         {/* Full Navbar for larger screens */}
         <div className="hidden md:flex gap-8 items-center">
-          <a className="text-gray-700 hover:text-custom-green transition" onClick={()=> router.push("/")}>
+          <a className="text-gray-700 hover:text-custom-green transition cursor-pointer" onClick={()=> router.push("/")}>
             Home
           </a>
-          <a href="/about" className="text-gray-700 hover:text-custom-green transition">
+          <a href="/about" className="text-gray-700 hover:text-custom-green transition cursor-pointer">
             About Us
           </a>
-          <a href="#" className="text-gray-700 hover:text-custom-green transition">
+          <a href="#" className="text-gray-700 hover:text-custom-green transition cursor-pointer">
             Services
           </a>
-          <a href="#" className="text-gray-700 hover:text-custom-green transition">
+          <a href="#" className="text-gray-700 hover:text-custom-green transition cursor-pointer">
             Contact
           </a>
           {userData.user_id && pathname !== '/admin' ? (
@@ -179,16 +179,16 @@ const ModernNavbar = () => {
   </button>
 
         <div className="flex flex-col p-5 gap-6">
-          <a className="text-gray-700 text-lg hover:text-green-600 transition" onClick={()=> router.push("/")}>
+          <a className="text-gray-700 text-lg hover:text-green-600 transition cursor-pointer" onClick={()=> router.push("/")}>
             Home
           </a>
-          <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition">
+          <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition cursor-pointer">
             About Us
           </a>
-          <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition">
+          <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition cursor-pointer">
             Services
           </a>
-          <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition">
+          <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition cursor-pointer">
             Contact
           </a>
           {userData.user_id && pathname !== "/admin" ? (
