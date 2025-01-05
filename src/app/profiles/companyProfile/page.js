@@ -182,7 +182,7 @@ const CompanyProfilePage = () => {
       style={{ width: "250px" , zIndex: 9999, borderRight: "1px solid black"}}
     >
       <div className="flex justify-between items-center p-4 border-b">
-        <h2 className="text-xl font-bold">Company Dashboard</h2>
+        <h2 className="text-xl font-bold text-custom-black">Company Dashboard</h2>
         <button
           onClick={toggleSidebar}
           className="text-xl font-bold text-custom-green md:hidden"
@@ -192,7 +192,7 @@ const CompanyProfilePage = () => {
       </div>
       <ul>
             <li
-              className={` flex items-center py-2 px-4 mb-2 cursor-pointer ${selectedOption === "assignTrucks"
+              className={` flex text-custom-black items-center py-2 px-4 mb-2 cursor-pointer ${selectedOption === "assignTrucks"
                   ? "bg-custom-green text-custom-black font-semibold"
                   : "hover:bg-custom-green"
                 }`}
@@ -215,7 +215,7 @@ const CompanyProfilePage = () => {
               &nbsp; Assign Trucks
             </li>
             <li
-              className={`flex items-center py-2 px-4 mb-2 cursor-pointer ${selectedOption === "viewAssignedAreas"
+              className={`flex items-center text-custom-black py-2 px-4 mb-2 cursor-pointer ${selectedOption === "viewAssignedAreas"
                   ? "bg-custom-green text-custom-custom-black"
                   : ""
                 }`}
@@ -238,7 +238,7 @@ const CompanyProfilePage = () => {
               &nbsp; View Assigned Areas
             </li>
             <li
-              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${selectedOption === "truckInformation"
+              className={`flex items-center py-2 px-4 mb-2 text-custom-black  cursor-pointer ${selectedOption === "truckInformation"
                  ? "bg-custom-green text-custom-black font-semibold"
                   : "hover:bg-custom-green"
                 }`}
@@ -261,7 +261,7 @@ const CompanyProfilePage = () => {
               &nbsp; Truck Information
             </li>
             <li
-              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${selectedOption === "missedPickups"
+              className={`flex items-center py-2 px-4 mb-2 text-custom-black cursor-pointer ${selectedOption === "missedPickups"
                   ? "bg-custom-green text-custom-custom-black"
                   : ""
                 }`}
@@ -284,7 +284,7 @@ const CompanyProfilePage = () => {
               &nbsp; Missed Pickups
             </li>
             <li
-              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${selectedOption === "recyclingCenters"
+              className={`flex items-center py-2 px-4 mb-2 text-custom-black cursor-pointer ${selectedOption === "recyclingCenters"
                  ? "bg-custom-green text-custom-black font-semibold"
                   : "hover:bg-custom-green"
                 }`}
@@ -307,7 +307,7 @@ const CompanyProfilePage = () => {
               &nbsp; Recycling Centers
             </li>
             <li
-              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${selectedOption === "requests"
+              className={`flex items-center py-2 px-4 mb-2 text-custom-black cursor-pointer ${selectedOption === "requests"
                   ? "bg-custom-green text-custom-black font-semibold"
                   : "hover:bg-custom-green"
                 }`}
@@ -330,7 +330,7 @@ const CompanyProfilePage = () => {
               &nbsp; Accept Requests
             </li>
             <li
-              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${selectedOption === "waste_schedules"
+              className={`flex items-center py-2 px-4 mb-2 text-custom-black cursor-pointer ${selectedOption === "waste_schedules"
                  ? "bg-custom-green text-custom-black font-semibold"
                   : "hover:bg-custom-green"
                 }`}
@@ -353,7 +353,7 @@ const CompanyProfilePage = () => {
               &nbsp; Waste Schedules
             </li>
             <li
-              className={`flex items-center py-2 px-4 mb-2  cursor-pointer ${selectedOption === "submit_materials"
+              className={`flex items-center py-2 px-4 mb-2 text-custom-black cursor-pointer ${selectedOption === "submit_materials"
                   ? "bg-custom-green text-custom-black font-semibold"
                   : "hover:bg-custom-green"
                 }`}

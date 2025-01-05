@@ -51,7 +51,7 @@ const UserProfilePage = () => {
     style={{ minWidth: "250px", borderRight: "1px solid black", zIndex: 9999 }}
   >
     <div className="flex justify-between items-center p-4 border-b">
-      <h2 className="text-xl font-bold">User Dashboard</h2>
+      <h2 className="text-xl font-bold text-custom-black">User Dashboard</h2>
       <button
         onClick={toggleSidebar}
         className="text-xl font-bold text-custom-green md:hidden"
@@ -61,7 +61,7 @@ const UserProfilePage = () => {
     </div>
     <ul>
       <li
-        className={`flex items-center py-2 px-4 w-full mb-2 cursor-pointer ${
+        className={`flex items-center py-2 px-4 w-full mb-2 text-custom-black cursor-pointer ${
           selectedOption === "reportMissedPickups" ? "bg-custom-green text-custom-black font-semibold"
                   : "hover:bg-custom-green"
         }`}
@@ -70,7 +70,7 @@ const UserProfilePage = () => {
         Report Missed Pickup
       </li>
       <li
-        className={`flex items-center py-2 px-4 mb-2 cursor-pointer ${
+        className={`flex items-center py-2 px-4 mb-2 cursor-pointer text-custom-black ${
           selectedOption === "createRequestForRecycledWaste" ? "bg-custom-green text-custom-black font-semibold"
                   : "hover:bg-custom-green"
         }`}
@@ -79,7 +79,7 @@ const UserProfilePage = () => {
         Requests For Recycled Waste
       </li>
       <li
-        className={`flex items-center py-2 px-4 mb-2 cursor-pointer ${
+        className={`flex items-center py-2 px-4 mb-2 cursor-pointer text-custom-black ${
           selectedOption === "waste_pickup_schedules" ? "bg-custom-green text-custom-black font-semibold"
                   : "hover:bg-custom-green"
         }`}
@@ -88,7 +88,7 @@ const UserProfilePage = () => {
         Waste Pickup Schedules
       </li>
       <li
-        className={`flex items-center py-2 px-4 mb-2 cursor-pointer ${
+        className={`flex items-center py-2 px-4 mb-2 cursor-pointer text-custom-black ${
           selectedOption === "report_to_admin" ? "bg-custom-green text-custom-black font-semibold"
                   : "hover:bg-custom-green"
         }`}
@@ -97,7 +97,7 @@ const UserProfilePage = () => {
         Report to Admin
       </li>
       <li
-        className={`flex items-center py-2 px-4 mb-2 cursor-pointer ${
+        className={`flex items-center py-2 px-4 mb-2 cursor-pointer text-custom-black ${
           selectedOption === "locate_recycling_centers" ? "bg-custom-green text-custom-black font-semibold"
                   : "hover:bg-custom-green"
         }`}
