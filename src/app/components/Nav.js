@@ -9,7 +9,6 @@ import { useRouter, usePathname } from "next/navigation";
 import { removeCookie } from "@/cookies/removeCookie";
 import { setUserData } from "@/store/slices/userDataSlice";
 import { Leaf } from "lucide-react";
-import useMediaQuery from "../../hooks/useMediaQuery"
 
 const ModernNavbar = () => {
   const pathname = usePathname();
@@ -19,8 +18,6 @@ const ModernNavbar = () => {
   const userData = useSelector((state) => state.userData.value) || null;
 
   const dispatch = useDispatch();
-
-  const isLargeScreen = useMediaQuery("(min-width: 768px)"); // Use custom hook to detect screen size
 
   const turnNotificationsToOff = useCallback(() => {
     setShowNotifications(false);
@@ -46,12 +43,15 @@ const ModernNavbar = () => {
   };
 
   return (
-    <header className="bg-white shadow-md sticky top-0 border-b border-black" style={{ zIndex: 10000 }}>
+    <header className="bg-white shadow-md sticky top-0 border-b border-black z-50">
       <nav className="container mx-auto flex justify-between items-center p-5">
+        {/* Logo */}
         <div className="flex items-center gap-2">
           <Leaf className="text-[#00FF00] h-8 w-8" />
           <h2 className="text-3xl font-bold flex justify-center">Enviro</h2>
         </div>
+
+        {/* Full Navbar for larger screens */}
         <div className="hidden md:flex gap-8 items-center">
           <a className="text-gray-700 hover:text-custom-green transition" onClick={() => router.push("/")}>
             Home
@@ -65,7 +65,7 @@ const ModernNavbar = () => {
           <a href="#" className="text-gray-700 hover:text-custom-green transition">
             Contact
           </a>
-          {userData.user_id && pathname !== '/admin' ? (
+          {userData?.user_id && pathname !== "/admin" ? (
             <>
               <FontAwesomeIcon
                 icon={faBell}
@@ -74,17 +74,13 @@ const ModernNavbar = () => {
                 onClick={() => setShowNotifications((prev) => !prev)}
                 title="View Notifications"
               />
-              {showNotifications && (
-                <Notifications turnNotificationsToOff={turnNotificationsToOff} />
-              )}
-
+              {showNotifications && <Notifications turnNotificationsToOff={turnNotificationsToOff} />}
               <FaComments
                 size={24}
                 className="text-black hover:cursor-pointer"
                 title="Chat"
                 onClick={() => router.push("/chat")}
               />
-
               <div className="flex gap-4 items-center">
                 <FaUser
                   size={20}
@@ -100,7 +96,7 @@ const ModernNavbar = () => {
                 />
               </div>
             </>
-          ) : pathname !== '/admin' ? (
+          ) : pathname !== "/admin" ? (
             <FaUser
               size={20}
               className="text-custom-green hover:cursor-pointer"
@@ -110,8 +106,9 @@ const ModernNavbar = () => {
           ) : null}
         </div>
 
+        {/* Hamburger Menu for mobile screens */}
         <div className="md:hidden flex items-center">
-          {userData.user_id && pathname !== '/admin' && (
+          {userData?.user_id && pathname !== "/admin" && (
             <FontAwesomeIcon
               icon={faBell}
               size="lg"
@@ -120,7 +117,7 @@ const ModernNavbar = () => {
               title="View Notifications"
             />
           )}
-          {userData.user_id && pathname !== '/admin' && (
+          {userData?.user_id && pathname !== "/admin" && (
             <FaComments
               size={24}
               className="text-black hover:cursor-pointer mr-4"
@@ -129,15 +126,12 @@ const ModernNavbar = () => {
             />
           )}
           <button onClick={toggleMenu} aria-label="Toggle Navigation">
-            {isOpen ? (
-              <FiX className="text-3xl text-green-600" />
-            ) : (
-              <FiMenu className="text-3xl text-green-600" />
-            )}
+            {isOpen ? <FiX className="text-3xl text-green-600" /> : <FiMenu className="text-3xl text-green-600" />}
           </button>
         </div>
       </nav>
 
+      {/* Mobile Menu Sliding from the Left */}
       <div
         className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg transition-transform transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
@@ -156,26 +150,24 @@ const ModernNavbar = () => {
           <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition">
             Contact
           </a>
-          {userData.user_id && pathname !== "/admin" ? (
-            <>
-              <div className="flex flex-col gap-4 mt-4">
-                <div className="flex items-center gap-4">
-                  <FaUser
-                    size={20}
-                    className="text-black hover:cursor-pointer"
-                    title="Profile"
-                    onClick={handleProfileRedirect}
-                  />
-                  <FaSignOutAlt
-                    size={20}
-                    className="text-custom-green hover:cursor-pointer"
-                    title="Sign Out"
-                    onClick={handleSignOut}
-                  />
-                </div>
+          {userData?.user_id && pathname !== "/admin" ? (
+            <div className="flex flex-col gap-4 mt-4">
+              <div className="flex items-center gap-4">
+                <FaUser
+                  size={20}
+                  className="text-black hover:cursor-pointer"
+                  title="Profile"
+                  onClick={handleProfileRedirect}
+                />
+                <FaSignOutAlt
+                  size={20}
+                  className="text-custom-green hover:cursor-pointer"
+                  title="Sign Out"
+                  onClick={handleSignOut}
+                />
               </div>
-            </>
-          ) : pathname !== '/admin' ? (
+            </div>
+          ) : pathname !== "/admin" ? (
             <button
               className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
               onClick={() => router.push("/signin")}
@@ -186,6 +178,7 @@ const ModernNavbar = () => {
         </div>
       </div>
 
+      {/* Notifications for mobile view */}
       {showNotifications && !isLargeScreen && (
         <div className="absolute top-16 right-4 w-64">
           <Notifications turnNotificationsToOff={turnNotificationsToOff} />
