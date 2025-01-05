@@ -139,7 +139,7 @@ const SignIn = () => {
         <label className="flex flex-col min-w-40 flex-1">
           <input
             placeholder="Enter your email"
-            className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-custom-black focus:outline-0 focus:ring-0 border-none bg-[#e7f3ea] focus:border-none h-14 placeholder:text-[#00ed64] p-4 text-base font-normal leading-normal"
+            className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-custom-black focus:outline-0 focus:ring-0 border-none bg-[#e7f3ea] focus:border-none h-14 placeholder:text-[#00ed64] p-4 text-sm md:text-base font-normal leading-normal"
             onChange={(e) => setUserData({ ...userData, email: e.target.value })}
           />
         </label>
@@ -149,7 +149,7 @@ const SignIn = () => {
           <input
             placeholder="Enter your password"
             type="password"
-            className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-custom-black focus:outline-0 focus:ring-0 border-none bg-[#e7f3ea] focus:border-none h-14 placeholder:text-[#00ed64] p-4 text-base font-normal leading-normal"
+            className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-custom-black focus:outline-0 focus:ring-0 border-none bg-[#e7f3ea] focus:border-none h-14 placeholder:text-[#00ed64] p-4 text-sm md:text-base font-normal leading-normal"
             onChange={(e) => setUserData({ ...userData, password: e.target.value })}
           />
         </label>
