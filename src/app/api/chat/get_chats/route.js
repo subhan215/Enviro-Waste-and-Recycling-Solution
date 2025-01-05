@@ -8,8 +8,10 @@ export async function GET(req) {
     // Begin the transaction
     await client.query('BEGIN');
 
-    // Use `req.nextUrl` to parse query parameters
-    const { searchParams } = req.nextUrl;
+    // Get query parameters from the URL
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const searchParams = url.searchParams;
+
     const role = searchParams.get('role');
     const id = searchParams.get('id');
 
