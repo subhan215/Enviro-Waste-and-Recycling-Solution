@@ -422,7 +422,7 @@ const SignUp = () => {
                             type="text"
                             name="name"
                             placeholder="Name"
-                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-base font-normal"
+                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-xs sm:text-sm md:text-base font-normal"
                             required
                             onChange={handleInputChange}
                         />
@@ -432,7 +432,7 @@ const SignUp = () => {
                             type="email"
                             name="email"
                             placeholder="Email"
-                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-base font-normal"
+                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-xs sm:text-sm md:text-base font-normal"
                             required
                             onChange={handleInputChange}
                         />
@@ -442,7 +442,7 @@ const SignUp = () => {
                             type="password"
                             name="password"
                             placeholder="Enter your password"
-                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-base font-normal"
+                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-xs sm:text-sm md:text-base font-normal"
                             required
                             onChange={handleInputChange}
                         />
@@ -452,7 +452,7 @@ const SignUp = () => {
                             type="password"
                             name="confirmPassword"
                             placeholder="Confirm your password"
-                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-base font-normal"
+                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-xs sm:text-sm md:text-base font-normal"
                             required
                             onChange={handleInputChange}
                         />
@@ -462,7 +462,7 @@ const SignUp = () => {
                             type="number"
                             name="age"
                             placeholder="Age"
-                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-base font-normal"
+                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-xs sm:text-sm md:text-base font-normal"
                             required
                             onChange={handleInputChange}
                         />
@@ -470,7 +470,7 @@ const SignUp = () => {
                     <label className="flex flex-col min-w-40 flex-1 mb-4">
                         <select
                             name="gender"
-                            className="form-input flex w-full rounded-xl text-[#00ed64] h-14 p-4 border-none bg-[#e7f3ea] text-base font-normal"
+                            className="form-input flex w-full rounded-xl text-[#00ed64] h-14 p-4 border-none bg-[#e7f3ea] text-xs sm:text-sm md:text-base font-normal"
                             required
                             onChange={handleInputChange}
                             value={data.gender}
@@ -486,7 +486,7 @@ const SignUp = () => {
                             type="tel"
                             name="mobile"
                             placeholder="Mobile Number"
-                            className="form-input flex w-full rounded-xl text-custom-black h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-base font-normal"
+                            className="form-input flex w-full rounded-xl text-custom-black h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-xs sm:text-sm md:text-base font-normal"
                             required
                             onChange={handleInputChange}
                         />
@@ -498,7 +498,7 @@ const SignUp = () => {
                             id="area"
                             value={data.area_id}
                             onChange={(e) => setData({ ...data, area_id: e.target.value })}
-                            className="form-input flex w-full rounded-xl text-[#00ed64] h-14 p-4 border-none bg-[#e7f3ea] text-base font-normal"
+                            className="form-input flex w-full rounded-xl text-[#00ed64] h-14 p-4 border-none bg-[#e7f3ea] text-xs sm:text-sm md:text-base"
                             required
                         >
                             <option value="" disabled selected>Select Area</option>
