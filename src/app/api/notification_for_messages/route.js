@@ -4,12 +4,12 @@ import { NextResponse } from "next/server";
 export async function GET(req) {
   const client = await pool.connect();
 
-  try {
-    // Use req.nextUrl for compatibility with Next.js on Vercel
-    const { searchParams } = req.nextUrl;
-    const userId = searchParams.get('id');
-    const role = searchParams.get('role');
+  // Use dynamic data (req.nextUrl) outside the try-catch block
+  const { searchParams } = req.nextUrl;
+  const userId = searchParams.get('id');
+  const role = searchParams.get('role');
 
+  try {
     // Check if both 'id' and 'role' are provided
     if (!userId || !role) {
       return NextResponse.json(
@@ -35,7 +35,7 @@ export async function GET(req) {
         ORDER BY nf.created_at DESC
         LIMIT 1
       `;
-      result = await client.query(query, [userId, 'company']); // Adjusted sender condition
+      result = await client.query(query, [userId, 'company']);
     } else if (role === 'company') {
       query = `
         SELECT nf.notification_id, nf.content, nf.created_at, nf.is_read, nf.chat_id, co.name
@@ -46,7 +46,7 @@ export async function GET(req) {
         ORDER BY nf.created_at DESC
         LIMIT 1
       `;
-      result = await client.query(query, [userId, 'user']); // Adjusted sender condition
+      result = await client.query(query, [userId, 'user']);
     } else {
       return NextResponse.json(
         { error: 'Invalid role provided.' },
