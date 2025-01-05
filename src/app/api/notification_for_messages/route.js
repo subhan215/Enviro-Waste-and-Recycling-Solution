@@ -1,12 +1,12 @@
 import { pool } from "../../../database/database";
 import { NextResponse } from "next/server";
 
-export async function GET(request) {
+export async function GET(req) {
   const client = await pool.connect();
 
   try {
-    // Extract user_id and role from query parameters
-    const { searchParams } = new URL(request.url);
+    // Use req.nextUrl for compatibility with Next.js on Vercel
+    const { searchParams } = req.nextUrl;
     const userId = searchParams.get('id');
     const role = searchParams.get('role');
 
@@ -18,7 +18,7 @@ export async function GET(request) {
       );
     }
 
-    // Start transaction
+    // Start a transaction
     await client.query('BEGIN');
 
     let result;
@@ -32,9 +32,10 @@ export async function GET(request) {
         JOIN chat c ON nf.chat_id = c.chat_id
         JOIN "User" u ON u.user_id = c.user_id
         WHERE c.user_id = $1 AND nf.sender != $2
-        ORDER BY nf.created_at DESC LIMIT 1
+        ORDER BY nf.created_at DESC
+        LIMIT 1
       `;
-      result = await client.query(query, [userId, role]);
+      result = await client.query(query, [userId, 'company']); // Adjusted sender condition
     } else if (role === 'company') {
       query = `
         SELECT nf.notification_id, nf.content, nf.created_at, nf.is_read, nf.chat_id, co.name
@@ -42,9 +43,10 @@ export async function GET(request) {
         JOIN chat c ON nf.chat_id = c.chat_id
         JOIN company co ON co.user_id = c.company_id
         WHERE c.company_id = $1 AND nf.sender != $2
-        ORDER BY nf.created_at DESC LIMIT 1
+        ORDER BY nf.created_at DESC
+        LIMIT 1
       `;
-      result = await client.query(query, [userId, role]);
+      result = await client.query(query, [userId, 'user']); // Adjusted sender condition
     } else {
       return NextResponse.json(
         { error: 'Invalid role provided.' },

@@ -8,15 +8,10 @@ export async function GET(req) {
     // Begin the transaction
     await client.query('BEGIN');
 
-    // Retrieve role and id from query parameters or URL params
-    const fullUrl = req.url;
-
-    // Create a URL object to parse the query string
-    const url = new URL(fullUrl, `http://${req.headers.host}`);
-
-    // Get query parameters from the URL
-    const role = url.searchParams.get('role');
-    const id = url.searchParams.get('id');
+    // Use `req.nextUrl` to parse query parameters
+    const { searchParams } = req.nextUrl;
+    const role = searchParams.get('role');
+    const id = searchParams.get('id');
 
     // Log for debugging
     console.log('Role:', role); // e.g., 'user'

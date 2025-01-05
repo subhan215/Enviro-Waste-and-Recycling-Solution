@@ -5,19 +5,19 @@ import Notifications from "./Notifications";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter  , usePathname} from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { removeCookie } from "@/cookies/removeCookie";
 import { setUserData } from "@/store/slices/userDataSlice";
-import { Leaf } from "lucide-react" ; 
+import { Leaf } from "lucide-react";
+
 const ModernNavbar = () => {
-  const pathname = usePathname() ; 
-  const router = useRouter() ; 
-  console.log(pathname)
+  const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const userData = useSelector((state) => state.userData.value) || null;
- 
+
   const dispatch = useDispatch();
 
   const turnNotificationsToOff = useCallback(() => {
@@ -28,26 +28,28 @@ const ModernNavbar = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleResize = () => {
-    if (window.innerWidth >= 768) {
-      setIsOpen(false);
-      setIsLargeScreen(true);
-    } else {
-      setIsLargeScreen(false);
-    }
-  };
-
   useEffect(() => {
-    // Ensure this code only runs on the client side
-    if (typeof window !== "undefined") {
-      window.addEventListener("resize", handleResize);
-      handleResize();
+    // Using media query to detect screen size changes
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
 
-      return () => {
-        window.removeEventListener("resize", handleResize);
-      };
-    }
-  }, []); // Empty 
+    const handleResize = () => {
+      setIsLargeScreen(mediaQuery.matches);
+      if (mediaQuery.matches) {
+        setIsOpen(false); // Close the menu on large screens
+      }
+    };
+
+    // Set initial screen size status
+    handleResize();
+
+    // Listen for changes in screen size
+    mediaQuery.addEventListener("change", handleResize);
+
+    // Cleanup listener when component unmounts
+    return () => {
+      mediaQuery.removeEventListener("change", handleResize);
+    };
+  }, []); // Empty dependency array ensures this runs once on mount
 
   const handleSignOut = async () => {
     removeCookie("access_token");
@@ -65,16 +67,14 @@ const ModernNavbar = () => {
   };
 
   return (
-    <header className="bg-white shadow-md sticky top-0 border-b border-black" style={{zIndex:10000}}>
+    <header className="bg-white shadow-md sticky top-0 border-b border-black" style={{ zIndex: 10000 }}>
       <nav className="container mx-auto flex justify-between items-center p-5">
-        {/* Logo */}
         <div className="flex items-center gap-2">
-            <Leaf className="text-[#00FF00] h-8 w-8" />
-            <h2 className="text-3xl font-bold flex justify-center">Enviro</h2>
-          </div>
-        {/* Full Navbar for larger screens */}
+          <Leaf className="text-[#00FF00] h-8 w-8" />
+          <h2 className="text-3xl font-bold flex justify-center">Enviro</h2>
+        </div>
         <div className="hidden md:flex gap-8 items-center">
-          <a className="text-gray-700 hover:text-custom-green transition" onClick={()=> router.push("/")}>
+          <a className="text-gray-700 hover:text-custom-green transition" onClick={() => router.push("/")}>
             Home
           </a>
           <a href="/about" className="text-gray-700 hover:text-custom-green transition">
@@ -87,57 +87,52 @@ const ModernNavbar = () => {
             Contact
           </a>
           {userData.user_id && pathname !== '/admin' ? (
-  <>
-    <FontAwesomeIcon
-      icon={faBell}
-      size="lg"
-      className="text-black hover:cursor-pointer"
-      onClick={() => setShowNotifications((prev) => !prev)}
-      title="View Notifications"
-    />
-    {showNotifications && (
-      <Notifications turnNotificationsToOff={turnNotificationsToOff} />
-    )}
+            <>
+              <FontAwesomeIcon
+                icon={faBell}
+                size="lg"
+                className="text-black hover:cursor-pointer"
+                onClick={() => setShowNotifications((prev) => !prev)}
+                title="View Notifications"
+              />
+              {showNotifications && (
+                <Notifications turnNotificationsToOff={turnNotificationsToOff} />
+              )}
 
-    <FaComments
-      size={24}
-      className="text-black hover:cursor-pointer"
-      title="Chat"
-      onClick={() => router.push("/chat")}
-    />
+              <FaComments
+                size={24}
+                className="text-black hover:cursor-pointer"
+                title="Chat"
+                onClick={() => router.push("/chat")}
+              />
 
-    {/* Profile and Sign Out Icons */}
-    <div className="flex gap-4 items-center">
-      <FaUser
-        size={20}
-        className="text-black hover:cursor-pointer"
-        title="Profile"
-        onClick={handleProfileRedirect}
-      />
-      <FaSignOutAlt
-        size={20}
-        className="text-custom-green hover:cursor-pointer"
-        title="Sign Out"
-        onClick={handleSignOut}
-      />
-    </div>
-  </>
-) : pathname !== '/admin' ? (
-  <>
-    <FaUser
-      size={20}
-      className="text-custom-green hover:cursor-pointer"
-      title="Sign In"
-      onClick={() => router.push("/signin")}
-    />
-  </>
-) : null}
-
+              <div className="flex gap-4 items-center">
+                <FaUser
+                  size={20}
+                  className="text-black hover:cursor-pointer"
+                  title="Profile"
+                  onClick={handleProfileRedirect}
+                />
+                <FaSignOutAlt
+                  size={20}
+                  className="text-custom-green hover:cursor-pointer"
+                  title="Sign Out"
+                  onClick={handleSignOut}
+                />
+              </div>
+            </>
+          ) : pathname !== '/admin' ? (
+            <FaUser
+              size={20}
+              className="text-custom-green hover:cursor-pointer"
+              title="Sign In"
+              onClick={() => router.push("/signin")}
+            />
+          ) : null}
         </div>
 
-        {/* Hamburger Menu for mobile screens */}
         <div className="md:hidden flex items-center">
-          {userData.user_id && pathname!='/admin'&& (
+          {userData.user_id && pathname !== '/admin' && (
             <FontAwesomeIcon
               icon={faBell}
               size="lg"
@@ -146,14 +141,14 @@ const ModernNavbar = () => {
               title="View Notifications"
             />
           )}
-          {userData.user_id && pathname!='/admin' &&
-          <FaComments
-            size={24}
-            className="text-black hover:cursor-pointer mr-4"
-            title="Chat"
-            onClick={() => router.push("/chat")}
-          />
-}
+          {userData.user_id && pathname !== '/admin' && (
+            <FaComments
+              size={24}
+              className="text-black hover:cursor-pointer mr-4"
+              title="Chat"
+              onClick={() => router.push("/chat")}
+            />
+          )}
           <button onClick={toggleMenu} aria-label="Toggle Navigation">
             {isOpen ? (
               <FiX className="text-3xl text-green-600" />
@@ -164,14 +159,13 @@ const ModernNavbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu Sliding from the Left */}
       <div
         className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg transition-transform transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } duration-300 ease-in-out z-40`}
       >
         <div className="flex flex-col p-5 gap-6">
-          <a className="text-gray-700 text-lg hover:text-green-600 transition" onClick={()=> router.push("/")}>
+          <a className="text-gray-700 text-lg hover:text-green-600 transition" onClick={() => router.push("/")}>
             Home
           </a>
           <a href="#" className="text-gray-700 text-lg hover:text-green-600 transition">
@@ -184,37 +178,35 @@ const ModernNavbar = () => {
             Contact
           </a>
           {userData.user_id && pathname !== "/admin" ? (
-  <>
-    <div className="flex flex-col gap-4 mt-4">
-      <div className="flex items-center gap-4">
-        <FaUser
-          size={20}
-          className="text-black hover:cursor-pointer"
-          title="Profile"
-          onClick={handleProfileRedirect}
-        />
-        <FaSignOutAlt
-          size={20}
-          className="text-custom-green hover:cursor-pointer"
-          title="Sign Out"
-          onClick={handleSignOut}
-        />
-      </div>
-    </div>
-  </>
-) : pathname !== '/admin' ? (
-  <button
-    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
-    onClick={() => router.push("/signin")}
-  >
-    Sign In
-  </button>
-) : null}
-
+            <>
+              <div className="flex flex-col gap-4 mt-4">
+                <div className="flex items-center gap-4">
+                  <FaUser
+                    size={20}
+                    className="text-black hover:cursor-pointer"
+                    title="Profile"
+                    onClick={handleProfileRedirect}
+                  />
+                  <FaSignOutAlt
+                    size={20}
+                    className="text-custom-green hover:cursor-pointer"
+                    title="Sign Out"
+                    onClick={handleSignOut}
+                  />
+                </div>
+              </div>
+            </>
+          ) : pathname !== '/admin' ? (
+            <button
+              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition"
+              onClick={() => router.push("/signin")}
+            >
+              Sign In
+            </button>
+          ) : null}
         </div>
       </div>
 
-      {/* Notifications for mobile view */}
       {showNotifications && !isLargeScreen && (
         <div className="absolute top-16 right-4 w-64">
           <Notifications turnNotificationsToOff={turnNotificationsToOff} />
