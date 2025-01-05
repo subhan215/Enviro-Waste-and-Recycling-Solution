@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { FaComments, FaUser, FaSignOutAlt } from "react-icons/fa";
 import Notifications from "./Notifications";
@@ -9,16 +9,18 @@ import { useRouter, usePathname } from "next/navigation";
 import { removeCookie } from "@/cookies/removeCookie";
 import { setUserData } from "@/store/slices/userDataSlice";
 import { Leaf } from "lucide-react";
+import useMediaQuery from "../../hooks/useMediaQuery"
 
 const ModernNavbar = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const userData = useSelector((state) => state.userData.value) || null;
 
   const dispatch = useDispatch();
+
+  const isLargeScreen = useMediaQuery("(min-width: 768px)"); // Use custom hook to detect screen size
 
   const turnNotificationsToOff = useCallback(() => {
     setShowNotifications(false);
@@ -27,29 +29,6 @@ const ModernNavbar = () => {
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
-
-  useEffect(() => {
-    // Using media query to detect screen size changes
-    const mediaQuery = window.matchMedia("(min-width: 768px)");
-
-    const handleResize = () => {
-      setIsLargeScreen(mediaQuery.matches);
-      if (mediaQuery.matches) {
-        setIsOpen(false); // Close the menu on large screens
-      }
-    };
-
-    // Set initial screen size status
-    handleResize();
-
-    // Listen for changes in screen size
-    mediaQuery.addEventListener("change", handleResize);
-
-    // Cleanup listener when component unmounts
-    return () => {
-      mediaQuery.removeEventListener("change", handleResize);
-    };
-  }, []); // Empty dependency array ensures this runs once on mount
 
   const handleSignOut = async () => {
     removeCookie("access_token");
