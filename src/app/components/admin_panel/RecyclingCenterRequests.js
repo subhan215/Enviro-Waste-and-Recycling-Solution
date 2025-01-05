@@ -191,7 +191,7 @@ const RecyclingCenterRequests = () => {
       ))}
     </div>
   ) : (
-    <NoDataDisplay emptyText="No area approval requests found" />
+    <NoDataDisplay emptyText="No recycling center requests found" />
   )}
 </div>
     );

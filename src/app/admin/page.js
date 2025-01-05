@@ -138,7 +138,7 @@ export default function AdminPanel() {
               <li key={tab}>
                 <button
                   onClick={() => setActiveTab(tab)}
-                  className={`w-full text-left p-3 transition-colors ${
+                  className={`w-full text-left p-3 transition-colors text-custom-black ${
                     activeTab === tab
                       ? "bg-custom-green text-custom-black font-semibold"
                       : "hover:bg-custom-green"

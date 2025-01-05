@@ -134,8 +134,8 @@ const RecyclingCenters = ({ }) => {
       const data = await response.json();
       console.log(data)
       //alert(data.message)
-      showAlert("success", "Recycle center created!")
-      setRecyclingCenters([...recyclingCenters, data.data])
+      showAlert("success", "Recycle center request created!")
+      //setRecyclingCenters([...recyclingCenters, data.data])
       //fetchRecyclingCenters()
       setNewCenter({ area_id: '', latitude: '', longitude: '' });
 
