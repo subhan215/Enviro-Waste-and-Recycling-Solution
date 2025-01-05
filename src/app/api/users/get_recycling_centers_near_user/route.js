@@ -15,32 +15,26 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
 };
 
 export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const latitude = searchParams.get('latitude');
+  const longitude = searchParams.get('longitude');
+
+  if (!latitude || !longitude) {
+    return NextResponse.json(
+      { message: 'Latitude and Longitude are required' },
+      { status: 400 }
+    );
+  }
+
   try {
-    // Get user coordinates from query parameters
-    const { searchParams } = new URL(req.url);
-    const latitude = searchParams.get('latitude');
-    const longitude = searchParams.get('longitude');
-
-    if (!latitude || !longitude) {
-      return NextResponse.json(
-        { message: 'Latitude and Longitude are required' },
-        { status: 400 }
-      );
-    }
-
-    // Query to fetch recycling centers
+    // Now `latitude` and `longitude` are already handled outside the try block
     const { rows } = await pool.query(`
-      SELECT
-        recycling_center_id,
-        company_id,
-        latitude,
-        longitude
-      FROM
-        recycling_center;
+      SELECT recycling_center_id, company_id, latitude, longitude
+      FROM recycling_center;
     `);
 
-    // Calculate the distance to each recycling center
-    const recyclingCenters = rows.map((center) => {
+    // Calculate the distance and sort
+    const recyclingCenters = rows.map(center => {
       const distance = getDistance(
         parseFloat(latitude),
         parseFloat(longitude),
@@ -50,10 +44,8 @@ export async function GET(req) {
       return { ...center, distance };
     });
 
-    // Sort recycling centers by distance
     recyclingCenters.sort((a, b) => a.distance - b.distance);
 
-    // Return the sorted list of recycling centers
     return NextResponse.json(recyclingCenters);
   } catch (error) {
     console.error(error);
