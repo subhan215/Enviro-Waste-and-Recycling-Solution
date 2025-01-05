@@ -4,16 +4,12 @@ import { NextResponse } from "next/server";
 export async function GET(req) {
   const client = await pool.connect(); // Start a new client connection for transaction handling
 
+  // Move dynamic data usage outside of the try block
+  const { role, id } = req.nextUrl.searchParams; // Get parameters using searchParams
+
   try {
     // Begin the transaction
     await client.query('BEGIN');
-
-    // Get query parameters from the URL
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const searchParams = url.searchParams;
-
-    const role = searchParams.get('role');
-    const id = searchParams.get('id');
 
     // Log for debugging
     console.log('Role:', role); // e.g., 'user'
@@ -28,14 +24,12 @@ export async function GET(req) {
 
     // Query for user or company chats
     if (role === 'user') {
-      // If role is user, filter by user_id
       const res = await client.query(
         'SELECT * FROM chat ch JOIN company c ON c.user_id = ch.user_id WHERE ch.user_id = $1 ORDER BY created_at DESC',
         [id]
       );
       chats = res.rows;
     } else if (role === 'company') {
-      // If role is company, filter by company_id
       const res = await client.query(
         'SELECT * FROM chat ch JOIN "User" u ON u.user_id = ch.user_id WHERE company_id = $1 ORDER BY created_at DESC',
         [id]
