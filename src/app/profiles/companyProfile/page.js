@@ -1,5 +1,5 @@
 "use client"; 
-import { useState, useEffect, Suspense, lazy } from "react";
+import { useState, useEffect, lazy } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setAgreementStatus } from "@/store/slices/agreementStatusSlice";
 import Loader from "../../components/ui/Loader";
