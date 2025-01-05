@@ -155,11 +155,9 @@ const ModernNavbar = () => {
           />
 }
           <button onClick={toggleMenu} aria-label="Toggle Navigation">
-            {isOpen ? (
-              <FiX className="text-3xl text-green-600" />
-            ) : (
+            {!isOpen ? (
               <FiMenu className="text-3xl text-green-600" />
-            )}
+            ): null}
           </button>
         </div>
       </nav>
