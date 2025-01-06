@@ -19,7 +19,7 @@ const teamMembers = [
     name: "SUBHAN RANGILA",
     role: "PERN STACK DEVELOPER",
     image: "/images/subhan.jpg",
-    description: "Subhan has over 15 years of experience in environmental conservation and sustainable business practices. She founded Enviro Solutions with a vision to create innovative, eco-friendly waste management solutions."
+    description: "Subhan has over 15 years of experience in environmental conservation and sustainable business practices. He founded Enviro Solutions with a vision to create innovative, eco-friendly waste management solutions."
   },
   {
     name: "JUNAID ASIF",
@@ -31,7 +31,7 @@ const teamMembers = [
     name: "MUHAMMAD SADIQ",
     role: "PERN STACK DEVELOPER",
     image: "/images/sadiq.jpg",
-    description: "Sadiq is passionate about community engagement and education. She spearheads our initiatives to raise awareness about recycling and sustainable living practices in local communities."
+    description: "Sadiq is passionate about community engagement and education. He spearheads our initiatives to raise awareness about recycling and sustainable living practices in local communities."
   }
 ]
 
