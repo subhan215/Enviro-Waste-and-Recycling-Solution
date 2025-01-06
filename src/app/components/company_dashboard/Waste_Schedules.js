@@ -390,7 +390,7 @@ const Waste_Schedules = ({}) => {
           </h3>
           {wastePrices.map((item) => (
             <div key={item.name} className="mb-4">
-              <label className="block mb-1 font-medium">
+              <label className="block mb-1 font-medium text-custom-black">
                 {item.name} ({item.rate_per_kg} per kg):
               </label>
               <input
@@ -399,13 +399,13 @@ const Waste_Schedules = ({}) => {
                 onChange={(e) =>
                   setWeights({ ...weights, [item.name]: e.target.value })
                 }
-                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-custom-black"
+                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-custom-black text-custom-black"
               />
             </div>
           ))}
           <button
             type="submit"
-            className="mt-4 px-4 py-2 bg-custom-green text-cusiom-black border border-custom-black hover:bg-green-600 hover:text-white focus:ring-custom-green rounded-lg"
+            className="mt-4 px-4 py-2 bg-custom-green text-cusiom-black border border-custom-black hover:bg-green-600 hover:text-white focus:ring-custom-green rounded-lg text-custom-black"
           >
             Submit
           </button>

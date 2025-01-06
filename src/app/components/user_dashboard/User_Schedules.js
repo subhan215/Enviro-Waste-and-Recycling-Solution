@@ -492,7 +492,7 @@ const SchedulesList = () => {
                 step="0.1"
                 value={rating}
                 onChange={(e) => setRating(e.target.value)}
-                className="w-full p-2 border rounded-lg"
+                className="w-full p-2 border rounded-lg text-custom-black"
               />
               <button
                 type="submit"
