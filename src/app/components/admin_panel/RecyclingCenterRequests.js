@@ -160,14 +160,14 @@ const RecyclingCenterRequests = () => {
           {/* Action Icons */}
           <div className="absolute top-2 right-2 flex space-x-1.5">
             <button
-              onClick={() => handleStatusChange(request.area_approval_id , "Approved")}
+              onClick={() => handleStatusChange(request.request_id , "Approved")}
               className="p-1.5 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors duration-200"
               title="Approve Request"
             >
               <FaCheck className = "sm:text-[1rem] text-[0.875rem]" />
             </button>
             <button
-              onClick={() => handleStatusChange(request.area_approval_id , "Rejected")}
+              onClick={() => handleStatusChange(request.request_id , "Rejected")}
               className="p-1.5 rounded-full bg-red-500 text-white hover:bg-red-600 transition-colors duration-200"
               title="Reject Request"
             >

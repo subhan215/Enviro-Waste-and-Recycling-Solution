@@ -7,7 +7,7 @@ export async function PUT(req) {
     const client = await pool.connect(); // Database connection
     try {
         const { request_id, status } = await req.json();
-
+        console.log(request_id , status)
         // Validate input
         if (!request_id || !status) {
             return NextResponse.json(
