@@ -175,7 +175,7 @@ const Chat = () => {
           }`}
           onClick={() => handleChatSelect(chat.chat_id)}
         >
-          <strong className="text-sm sm:text-base">{chat.name}</strong>
+          <strong className="text-sm sm:text-base text-custom-black">{chat.name}</strong>
         </div>
       ))
     )}
@@ -243,7 +243,7 @@ const Chat = () => {
         value={newMessage}
         onChange={(e) => setNewMessage(e.target.value)}
         placeholder="Type your message..."
-        className="flex-1 px-6 py-3 rounded-md bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-md text-sm sm:text-base"
+        className="flex-1 px-6 py-3 rounded-md bg-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-md text-sm sm:text-base text-custom-black"
       />
       <button
         onClick={sendMessage}
