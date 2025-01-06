@@ -131,7 +131,7 @@ const Add_Trucks = () => {
                 onChange={(e) => setData({ ...data, licensePlate: e.target.value })}
                 placeholder="License Plate"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-custom-black"
               />
             </div>
             <div className="mb-4">
@@ -143,9 +143,9 @@ const Add_Trucks = () => {
                 value={data.area_id}
                 onChange={(e) => setData({ ...data, area_id: e.target.value })}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-custom-black"
               >
-                <option value="" disabled>
+                <option value="" disabled className="text-custom-black">
                   Select Area
                 </option>
                 {allAreas?.length > 0 ? (
@@ -171,7 +171,7 @@ const Add_Trucks = () => {
                 placeholder="Capacity (in tons)"
                 step="0.01"
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-custom-black"
               />
             </div>
             <button

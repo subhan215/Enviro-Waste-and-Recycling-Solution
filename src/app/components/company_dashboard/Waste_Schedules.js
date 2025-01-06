@@ -337,16 +337,16 @@ const Waste_Schedules = ({}) => {
   
               {schedule.status === "Scheduled" && !schedule.truckid && (
                 <div className="mt-6 p-6 rounded-lg">
-                  <label className="block mb-4 text-sm sm:text-base font-medium text-gray-700">
+                  <label className="block mb-4 text-sm sm:text-base font-medium text-custom-black">
                     Select Truck:
                     <select
                       value={selectedTruck}
                       onChange={(e) => setSelectedTruck(e.target.value)}
                       className="w-full mt-2 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                     >
-                      <option value="">Choose a truck</option>
+                      <option value="" className="text-custom-black">Choose a truck</option>
                       {trucks.map((truck) => (
-                        <option key={truck.truckid} value={truck.truckid}>
+                        <option key={truck.truckid} value={truck.truckid} className="text-custom-blak">
                           {truck.licenseplate}
                         </option>
                       ))}

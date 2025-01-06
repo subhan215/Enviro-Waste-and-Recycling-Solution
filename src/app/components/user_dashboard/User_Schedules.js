@@ -503,7 +503,7 @@ const SchedulesList = () => {
             </form>
           )}
           {schedule.truckid && (
-            <p><strong>Truck Assigned:</strong> {schedule.licenseplate}</p>
+            <p className='text-custom-black'><strong>Truck Assigned:</strong> {schedule.licenseplate}</p>
           )}
 
           </div>
