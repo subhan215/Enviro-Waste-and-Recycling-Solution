@@ -3,9 +3,15 @@ import { NextResponse } from "next/server";
 
 export async function GET(req) {
   const client = await pool.connect(); // Start a new client connection for transaction handling
+  // Retrieve role and id from query parameters or URL params
+  const fullUrl = req.url;
 
-  // Move dynamic data usage outside of the try block
-  const { role, id } = req.nextUrl.searchParams; // Get parameters using searchParams
+  // Create a URL object to parse the query string
+  const url = new URL(fullUrl, `http://${req.headers.host}`);
+
+  // Get query parameters from the URL
+  const role = url.searchParams.get('role');
+  const id = url.searchParams.get('id');
 
   try {
     // Begin the transaction
