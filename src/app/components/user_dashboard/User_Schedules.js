@@ -470,17 +470,17 @@ const SchedulesList = () => {
             </button>
           </div>
             {/* Schedule Information */}
-            <p className="md:text-lg sm:text-md font-semibold mb-2">
+            <p className="md:text-lg sm:text-md font-semibold text-custom-black">
               Date:{" "}
               {`${new Date(schedule.date).toLocaleDateString()}`}
             </p>
-            <p>
+            <p className='text-custom-black'>
               <strong>Time:</strong> {schedule.time}
             </p>
-            <p>
+            <p className='text-custom-black'>
               <strong>Status:</strong> {schedule.status}
             </p>
-            {!schedule.price && <p><strong>No Price Offered</strong> </p>}
+            {!schedule.price && <p className='text-custom-black'><strong>No Price Offered</strong> </p>}
           {schedule.price && <p><strong>Price:</strong> {schedule.price}</p>}
           {schedule.status === 'RatingRequired' && (
             <form
