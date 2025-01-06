@@ -70,8 +70,8 @@ export async function POST(req) {
 
         // Delete the schedule
         await client.query(
-          'DELETE FROM schedule WHERE schedule_id = $1',
-            [schedule_id]
+          'UPDATE schedule set status = $2 WHERE schedule_id = $1',
+            [schedule_id , 'completed']
         );
 
         // Commit the transaction

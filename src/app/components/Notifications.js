@@ -2,8 +2,9 @@ import { setCurrentChat } from "@/store/slices/currentChatSlice";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 const Notifications = ({ turnNotificationsToOff }) => {
     const dispatch = useDispatch();
     const [notifications, setNotifications] = useState([]);
@@ -12,7 +13,8 @@ const Notifications = ({ turnNotificationsToOff }) => {
     const userData = useSelector((state) => state.userData.value);
     const role = userData.role;
     const id = userData.user_id;
-    const router = useRouter() ; 
+    const router = useRouter();
+
     const handleSpecificClickForChat = (notification) => {
         if (notification.chat_id) {
             dispatch(setCurrentChat(notification.chat_id));
@@ -20,7 +22,7 @@ const Notifications = ({ turnNotificationsToOff }) => {
         }
     };
 
-    const fetchNotifications = async () => {
+    const fetchNotifications = useCallback(async () => {
         try {
             const response = await fetch(`/api/notifications?role=${role}&id=${id}`, {
                 method: "GET",
@@ -30,8 +32,7 @@ const Notifications = ({ turnNotificationsToOff }) => {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Failed to fetch notifications.");
+                throw new Error("Failed to fetch notifications.");
             }
 
             const data = await response.json();
@@ -39,9 +40,9 @@ const Notifications = ({ turnNotificationsToOff }) => {
         } catch (error) {
             console.error("Error fetching notifications:", error);
         }
-    };
+    }, [role, id]);
 
-    const fetchNotificationsForMessages = async () => {
+    const fetchNotificationsForMessages = useCallback(async () => {
         try {
             const response = await fetch(`/api/notification_for_messages?role=${role}&id=${id}`, {
                 method: "GET",
@@ -51,22 +52,25 @@ const Notifications = ({ turnNotificationsToOff }) => {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Failed to fetch notifications.");
+                throw new Error("Failed to fetch message notifications.");
             }
 
             const data = await response.json();
             setNotificationForMessages(data.notifications);
         } catch (error) {
-            console.error("Error fetching notifications:", error);
+            console.error("Error fetching message notifications:", error);
         }
-    };
+    }, [role, id]);
 
     useEffect(() => {
+        console.log("Setting loading to true...");
         setLoading(true);
+
         Promise.all([fetchNotifications(), fetchNotificationsForMessages()])
             .then(() => {
+                console.log("Setting loading to false...");
                 setLoading(false);
+
                 const modalElement = document.getElementById("notificationModal");
                 modalElement.classList.add("translate-x-full");
                 setTimeout(() => {
@@ -74,8 +78,11 @@ const Notifications = ({ turnNotificationsToOff }) => {
                     modalElement.classList.add("translate-x-0");
                 }, 10);
             })
-            .catch(() => setLoading(false));
-    }, [role, id , fetchNotifications , fetchNotificationsForMessages]);
+            .catch((error) => {
+                console.error("Error in Promise.all:", error);
+                setLoading(false);
+            });
+    }, [fetchNotifications, fetchNotificationsForMessages]);
 
     const closeModal = () => {
         const modalElement = document.getElementById("notificationModal");
@@ -120,7 +127,7 @@ const Notifications = ({ turnNotificationsToOff }) => {
         >
             <div className="bg-white shadow-lg rounded-lg overflow-hidden">
                 <div className="px-4 py-2 flex justify-between items-center border-b border-gray-300">
-                    <h3 className="text-2xl font-semibold text-black">Notifications</h3>
+                    <h3 className="text-xl sm:text-2xl font-semibold text-black">Notifications</h3>
                     <FontAwesomeIcon
                         icon={faTimes}
                         className="text-gray-500 cursor-pointer hover:text-gray-800"
@@ -129,9 +136,9 @@ const Notifications = ({ turnNotificationsToOff }) => {
                 </div>
                 <div className="p-4">
                     {loading ? (
-                        <p className="text-gray-600 text-sm">Loading notifications...</p>
+                        <p className="text-gray-600 text-xs sm:text-sm">Loading notifications...</p>
                     ) : allNotifications.length === 0 ? (
-                        <p className="text-gray-600 text-sm">No notifications to show</p>
+                        <p className="text-gray-600 text-xs sm:text-sm">No notifications to show</p>
                     ) : (
                         allNotifications.map((notification) => (
                             <div
@@ -141,7 +148,10 @@ const Notifications = ({ turnNotificationsToOff }) => {
                             >
                                 <div className="flex items-center">
                                     <div className="flex-1">
-                                        <p className="font-medium text-gray-800">{notification.name ? notification.name + ":" : null }{notification.content}</p>
+                                        <p className="font-medium text-gray-800 text-sm sm:text-base">
+                                            {notification.name ? notification.name + ":" : null}
+                                            {notification.content}
+                                        </p>
                                     </div>
                                     <span className="text-xs text-gray-500">
                                         {formatRelativeTime(new Date(notification.created_at))}
