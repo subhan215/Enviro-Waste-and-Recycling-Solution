@@ -247,7 +247,7 @@ const Chat = () => {
       />
       <button
         onClick={sendMessage}
-        className="ml-4 px-8 py-3 rounded-md bg-green-500 text-white font-medium hover:bg-green-400 transition duration-300 ease-in-out text-sm sm:text-base"
+        className="ml-2 px-8 py-3 rounded-md bg-green-500 text-white font-medium hover:bg-green-400 transition duration-300 ease-in-out text-sm sm:text-base"
       >
         Send
       </button>

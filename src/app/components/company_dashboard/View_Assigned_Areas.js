@@ -92,7 +92,7 @@ const ManageAndViewAreas = () => {
           showAlert("success", "Assigned areas to company!");
           
           fetchAreas(); // Re-fetch areas after assignment
-          setIsAddingArea(false);
+          //setIsAddingArea(false);
           setSelectedAreas([]); // Clear the selected areas after assigning
           setViewMode(true) ; 
           setNonAssignedAreas([])
@@ -243,7 +243,7 @@ const ManageAndViewAreas = () => {
         {selectedAreas.length > 0 && (
           <div>
             <button
-              className="px-4 py-2 bg-custom-green text-black rounded hover:bg-green-600 hover:rounded-2xl border border-custom-black"
+              className="px-4 py-2 bg-custom-green text-custom-black rounded hover:bg-green-600 hover:rounded-2xl border border-custom-black"
               onClick={handleAssignArea}
             >
               Click to send the add area request for approval
