@@ -24,7 +24,7 @@ const slideOut = keyframes`
 // Styled component for the alert container
 const AlertContainer = styled.div`
   position: fixed;
-  top: 50px;
+  top: 70px;
   right: 20px;
   z-index: 9999;
   display: flex;
