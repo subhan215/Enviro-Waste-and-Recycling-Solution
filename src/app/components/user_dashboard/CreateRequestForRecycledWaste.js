@@ -500,7 +500,7 @@ function CreateRequestForRecycledWaste() {
         {currentRequest.offered_by && (
           <>
             <strong className="text-black">Offered By:</strong>
-            <span>{currentRequest.offered_by}</span>
+            <span>{currentRequest.company_name}</span>
           </>
         )}
       </div>

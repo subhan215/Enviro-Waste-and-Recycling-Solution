@@ -21,8 +21,8 @@ export async function GET(req, { params }) {
 
         // Query the database for all requests by the user
         const result = await client.query(
-            `SELECT *
-             FROM request_for_waste r join "User" u on u.user_id = r.user_id WHERE r.user_id = $1`,
+            `SELECT r.* , u.* , c.name as company_name
+             FROM request_for_waste r join "User" u on u.user_id = r.user_id WHERE r.user_id = $1 join company c on c.user_id = r.offered_by`,
             [userId]
         );
         console.log(result.rows);
