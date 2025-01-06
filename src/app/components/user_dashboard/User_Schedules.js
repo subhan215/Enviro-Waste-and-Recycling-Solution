@@ -450,7 +450,7 @@ const SchedulesList = () => {
             className="p-6 sm:p-4 bg-white border border-custom-green rounded-lg shadow hover:shadow-md transition duration-200"
           >
              {/* Chat Icon Button - Positioned at Top Right */}
-          <div className="absolute top-2 right-2">
+          <div className="relative top-2 right-2">
             <button
               onClick={() => handleInitiateChat(schedule.company_id, user_id)}
               className="text-custom-green hover:text-green-700"
@@ -481,7 +481,7 @@ const SchedulesList = () => {
               <strong>Status:</strong> {schedule.status}
             </p>
             {!schedule.price && <p className='text-custom-black'><strong>No Price Offered</strong> </p>}
-          {schedule.price && <p><strong>Price:</strong> {schedule.price}</p>}
+          {schedule.price && <p className='text-custom-black'><strong>Price:</strong> {schedule.price}</p>}
           {schedule.status === 'RatingRequired' && (
             <form
               onSubmit={(e) => handleRating(e, schedule.schedule_id)}
