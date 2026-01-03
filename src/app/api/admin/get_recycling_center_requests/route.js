@@ -11,7 +11,6 @@ export async function GET() {
             `SELECT rrc.*, c.name as company_name, c.name as name
              FROM request_recycling_center rrc
              JOIN company c ON rrc.company_id = c.user_id
-             WHERE rrc.status = 'Pending' OR rrc.status IS NULL
              ORDER BY rrc.request_id DESC`
         );
 
