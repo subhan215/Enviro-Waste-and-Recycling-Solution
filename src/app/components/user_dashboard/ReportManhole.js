@@ -333,7 +333,7 @@ const ReportManhole = () => {
                   </option>
                   {areas.map((area) => (
                     <option key={area.area_id} value={area.area_id}>
-                      {area.area_name}
+                      {area.name}
                     </option>
                   ))}
                 </select>
