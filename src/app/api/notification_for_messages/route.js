@@ -26,23 +26,25 @@ export async function GET(req) {
 
     // Determine the query based on role (user or company)
     if (role === 'user') {
-      query = `
-        SELECT nf.notification_id, nf.content, nf.created_at, nf.is_read, nf.chat_id, u.name
-        FROM notification_for_new_message nf
-        JOIN chat c ON nf.chat_id = c.chat_id
-        JOIN "User" u ON u.user_id = c.user_id
-        WHERE c.user_id = $1 AND nf.sender != $2
-        ORDER BY nf.created_at DESC
-        LIMIT 1
-      `;
-      result = await client.query(query, [userId, 'company']);
-    } else if (role === 'company') {
+      // User wants to see notifications from company
       query = `
         SELECT nf.notification_id, nf.content, nf.created_at, nf.is_read, nf.chat_id, co.name
         FROM notification_for_new_message nf
         JOIN chat c ON nf.chat_id = c.chat_id
         JOIN company co ON co.user_id = c.company_id
-        WHERE c.company_id = $1 AND nf.sender != $2
+        WHERE c.user_id = $1 AND nf.sender = $2 AND nf.is_read = false
+        ORDER BY nf.created_at DESC
+        LIMIT 1
+      `;
+      result = await client.query(query, [userId, 'company']);
+    } else if (role === 'company') {
+      // Company wants to see notifications from user
+      query = `
+        SELECT nf.notification_id, nf.content, nf.created_at, nf.is_read, nf.chat_id, u.name
+        FROM notification_for_new_message nf
+        JOIN chat c ON nf.chat_id = c.chat_id
+        JOIN "User" u ON u.user_id = c.user_id
+        WHERE c.company_id = $1 AND nf.sender = $2 AND nf.is_read = false
         ORDER BY nf.created_at DESC
         LIMIT 1
       `;

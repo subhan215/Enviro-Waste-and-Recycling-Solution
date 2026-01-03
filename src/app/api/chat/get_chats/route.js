@@ -31,7 +31,7 @@ export async function GET(req) {
     // Query for user or company chats
     if (role === 'user') {
       const res = await client.query(
-        'SELECT * FROM chat ch JOIN company c ON c.user_id = ch.user_id WHERE ch.user_id = $1 ORDER BY created_at DESC',
+        'SELECT * FROM chat ch JOIN company c ON c.user_id = ch.company_id WHERE ch.user_id = $1 ORDER BY created_at DESC',
         [id]
       );
       chats = res.rows;
