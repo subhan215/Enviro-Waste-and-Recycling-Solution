@@ -6,7 +6,6 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import Loader from "../ui/Loader";
 import Alert from '../ui/Alert';
-import NoDataDisplay from '../animations/NoDataDisplay';
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),

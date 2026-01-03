@@ -141,7 +141,7 @@ const RecyclingCenters = () => {
       } else {
         showAlert("error", data.message || "Failed to create request");
       }
-    } catch (err) {
+    } catch {
       showAlert("error", "Error creating recycling center request");
     } finally {
       setSubmitting(false);

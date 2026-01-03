@@ -339,7 +339,7 @@ const ManageAndViewAreas = () => {
                 <div className="py-12">
                   <NoDataDisplay emptyText="No areas assigned yet" />
                   <p className="text-center text-gray-500 mt-4">
-                    Go to "Request New Areas" tab to request areas for your services
+                    Go to &quot;Request New Areas&quot; tab to request areas for your services
                   </p>
                 </div>
               )}
@@ -497,7 +497,7 @@ const ManageAndViewAreas = () => {
                     </svg>
                   </div>
                   <p className="text-gray-600 font-medium">No services registered</p>
-                  <p className="text-gray-400 text-sm mt-1">Your company hasn't registered for any services yet</p>
+                  <p className="text-gray-400 text-sm mt-1">Your company hasn&apos;t registered for any services yet</p>
                 </div>
               )}
             </div>

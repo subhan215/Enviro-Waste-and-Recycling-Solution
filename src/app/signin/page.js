@@ -126,7 +126,8 @@ const SignIn = () => {
     return () => {
       isMounted = false;
     };
-  }, []); // Run only once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run only once on mount - intentional to avoid re-running on token changes
 
   return (
     <div className="relative flex min-h-screen flex-col bg-surface-secondary overflow-x-hidden">

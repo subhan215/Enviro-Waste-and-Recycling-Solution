@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
-import DashboardCard from "../components/admin_panel/dashboard";
+// DashboardCard imported for potential future use
+// import DashboardCard from "../components/admin_panel/dashboard";
 import ComplaintsTable from "../components/admin_panel/Reports";
 import RewardConversionRequests from "../components/admin_panel/RewardConversionRequests";
 import ResignAgreements from "../components/admin_panel/ResignAgreements";

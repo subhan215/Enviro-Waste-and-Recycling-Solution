@@ -1,5 +1,5 @@
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentChat } from '../../../store/slices/currentChatSlice';
 import Loader from '../ui/Loader';
@@ -166,7 +166,7 @@ const SchedulesList = () => {
     }
   };
 
-  const fetchActiveRequest = async () => {
+  const fetchActiveRequest = useCallback(async () => {
     try {
       const response = await fetch(`/api/rewards/get_current_request/${userData.user_id}`);
       if (!response.ok) return;
@@ -177,9 +177,9 @@ const SchedulesList = () => {
     } catch {
       console.error('Error fetching active request');
     }
-  };
+  }, [userData.user_id]);
 
-  const fetchSchedules = async () => {
+  const fetchSchedules = useCallback(async () => {
     try {
       const response = await fetch(`/api/schedule/get_schedule_for_user/${userData.user_id}`);
       if (!response.ok) return;
@@ -188,7 +188,7 @@ const SchedulesList = () => {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [userData.user_id]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -199,7 +199,7 @@ const SchedulesList = () => {
       setLoading(false);
     };
     fetchData();
-  }, [userData]);
+  }, [fetchActiveRequest, fetchSchedules]);
 
   const getStatusBadge = (status) => {
     const styles = {

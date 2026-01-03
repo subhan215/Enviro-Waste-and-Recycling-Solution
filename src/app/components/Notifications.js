@@ -193,7 +193,7 @@ const Notifications = ({ turnNotificationsToOff }) => {
               <div className="p-8 flex flex-col items-center justify-center">
                 <Icons.Empty />
                 <p className="text-gray-500 text-sm mt-3">No notifications yet</p>
-                <p className="text-gray-400 text-xs mt-1">We'll notify you when something arrives</p>
+                <p className="text-gray-400 text-xs mt-1">We&apos;ll notify you when something arrives</p>
               </div>
             ) : (
               <div className="p-3 space-y-2">

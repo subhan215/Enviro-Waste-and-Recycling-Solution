@@ -295,9 +295,6 @@ const SignUp = () => {
         }
     };
 
-    const handleOptionChange = (e) => {
-        setSelectedOption(e.target.value);
-    };
     const [allAreas, setAllAreas] = useState([]);
     const getAllAreas = async () => {
         try {
@@ -318,8 +315,8 @@ const SignUp = () => {
     }
     useEffect(() => {
         getAllAreas();
-        console.log(allAreas)
-    }, [])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     return (
         <div className="relative flex min-h-screen flex-col bg-surface-secondary overflow-x-hidden">
             {alert.map((alert) => (

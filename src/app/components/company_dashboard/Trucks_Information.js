@@ -155,7 +155,7 @@ const Truck_Information = () => {
             <div className="py-8">
               <NoDataDisplay emptyText="No trucks assigned yet" />
               <p className="text-center text-gray-500 mt-4">
-                Go to "Assign Trucks" to add trucks to your fleet
+                Go to &quot;Assign Trucks&quot; to add trucks to your fleet
               </p>
             </div>
           ) : (
