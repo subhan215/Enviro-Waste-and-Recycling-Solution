@@ -13,15 +13,25 @@ export async function POST(req) {
         await client.query("BEGIN");
 
         // Perform sentiment analysis
-        const sentiment = await geminiAi.sentiment_analysis(description);
-        console.log("Sentiment:", sentiment);
+        const sentimentResponse = await geminiAi.sentiment_analysis(description);
+        console.log("Sentiment Response:", sentimentResponse);
+
+        // Extract number from response (AI might return "7", "7/10", "Rating: 7", etc.)
+        const numberMatch = sentimentResponse.match(/\d+/);
+        let sentimentRating = numberMatch ? parseInt(numberMatch[0]) : 5; // Default to 5 if no number found
+
+        // Ensure rating is between 1-10
+        if (sentimentRating < 1) sentimentRating = 1;
+        if (sentimentRating > 10) sentimentRating = 10;
+
+        console.log("Parsed Sentiment Rating:", sentimentRating);
 
         // Insert the new report into the reports table
         const inserting_to_reports = await client.query(
-            `INSERT INTO reports (user_id, company_id, description, sentiment_rating) 
-             VALUES ($1, $2, $3, $4) 
+            `INSERT INTO reports (user_id, company_id, description, sentiment_rating)
+             VALUES ($1, $2, $3, $4)
              RETURNING *`,
-            [user_id, company_id, description, parseInt(sentiment)]
+            [user_id, company_id, description, sentimentRating]
         );
 
         console.log("Inserted Report:", inserting_to_reports.rows[0]);
