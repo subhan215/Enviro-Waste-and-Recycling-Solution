@@ -7,7 +7,7 @@ export async function GET() {
     try {
         // Begin the transaction
         await client.query('BEGIN');
-        
+
         // Fetch all areas from the database
         all_areas = await client.query('SELECT * FROM area');
         console.log(all_areas.rows);
