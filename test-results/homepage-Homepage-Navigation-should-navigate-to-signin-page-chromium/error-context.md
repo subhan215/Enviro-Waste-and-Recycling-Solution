@@ -1,0 +1,366 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - navigation [ref=e4]:
+        - generic [ref=e5]:
+          - button "Enviro Waste Solutions" [ref=e6] [cursor=pointer]:
+            - img [ref=e8]
+            - generic [ref=e10]:
+              - heading "Enviro" [level=2] [ref=e11]
+              - paragraph [ref=e12]: Waste Solutions
+          - generic [ref=e13]:
+            - button "Home" [ref=e14] [cursor=pointer]
+            - button "About Us" [ref=e15] [cursor=pointer]
+            - button "Services" [ref=e16] [cursor=pointer]
+            - button "Contact" [ref=e17] [cursor=pointer]
+          - button "Sign In" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+            - generic [ref=e22]: Sign In
+    - main [ref=e23]:
+      - main [ref=e24]:
+        - generic [ref=e33]:
+          - generic [ref=e35]: Sustainable Waste Management
+          - heading "Building a Greener Future Together" [level=1] [ref=e37]:
+            - generic [ref=e38]: Building a
+            - text: Greener Future
+            - generic [ref=e39]: Together
+          - paragraph [ref=e40]: Innovative waste management and recycling solutions for a cleaner, healthier planet
+          - generic [ref=e41]:
+            - button "Get Started" [ref=e42] [cursor=pointer]:
+              - text: Get Started
+              - img [ref=e43]
+            - button "Learn More" [ref=e45] [cursor=pointer]:
+              - img [ref=e46]
+              - text: Learn More
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - paragraph [ref=e51]: 50K+
+              - paragraph [ref=e52]: Tons Recycled
+            - generic [ref=e53]:
+              - paragraph [ref=e54]: 100K+
+              - paragraph [ref=e55]: Trees Saved
+            - generic [ref=e56]:
+              - paragraph [ref=e57]: 500+
+              - paragraph [ref=e58]: Communities
+            - generic [ref=e59]:
+              - paragraph [ref=e60]: 98%
+              - paragraph [ref=e61]: Satisfaction
+        - generic [ref=e68]:
+          - generic [ref=e69]:
+            - generic [ref=e70]: What We Offer
+            - heading "Our Services" [level=2] [ref=e71]
+            - paragraph [ref=e72]: Comprehensive waste management and recycling solutions designed for a sustainable future
+          - generic [ref=e73]:
+            - generic [ref=e75]:
+              - generic [ref=e76]:
+                - img "Waste Collection" [ref=e77]
+                - generic [ref=e79]: Service
+              - generic [ref=e80]:
+                - img [ref=e82]
+                - heading "Waste Collection" [level=4] [ref=e84]
+                - paragraph [ref=e85]: Professional and efficient waste collection services tailored for residential and commercial needs.
+                - button "Learn More" [ref=e86] [cursor=pointer]:
+                  - text: Learn More
+                  - img [ref=e87]
+            - generic [ref=e90]:
+              - generic [ref=e91]:
+                - img "Recycling Centers" [ref=e92]
+                - generic [ref=e94]: Service
+              - generic [ref=e95]:
+                - img [ref=e97]
+                - heading "Recycling Centers" [level=4] [ref=e99]
+                - paragraph [ref=e100]: State-of-the-art recycling facilities designed to maximize material recovery and minimize waste.
+                - button "Learn More" [ref=e101] [cursor=pointer]:
+                  - text: Learn More
+                  - img [ref=e102]
+            - generic [ref=e105]:
+              - generic [ref=e106]:
+                - img "Home Collection" [ref=e107]
+                - generic [ref=e109]: Service
+              - generic [ref=e110]:
+                - img [ref=e112]
+                - heading "Home Collection" [level=4] [ref=e114]
+                - paragraph [ref=e115]: Convenient doorstep collection services that make recycling effortless for every household.
+                - button "Learn More" [ref=e116] [cursor=pointer]:
+                  - text: Learn More
+                  - img [ref=e117]
+          - button "Explore All Services" [ref=e120] [cursor=pointer]:
+            - text: Explore All Services
+            - img [ref=e121]
+        - generic [ref=e127]:
+          - generic [ref=e128]:
+            - generic [ref=e129]: Our Impact
+            - heading "Making a Difference" [level=3] [ref=e130]
+            - paragraph [ref=e131]: Together, we are creating a sustainable future for our planet and communities
+          - generic [ref=e132]:
+            - generic [ref=e133]:
+              - img [ref=e136]
+              - heading "50,000+" [level=4] [ref=e138]
+              - paragraph [ref=e139]: Tons Recycled
+            - generic [ref=e140]:
+              - img [ref=e143]
+              - heading "100,000+" [level=4] [ref=e145]
+              - paragraph [ref=e146]: Trees Saved
+            - generic [ref=e147]:
+              - img [ref=e150]
+              - heading "25,000 tons" [level=4] [ref=e152]
+              - paragraph [ref=e153]: CO2 Reduced
+            - generic [ref=e154]:
+              - img [ref=e157]
+              - heading "500+" [level=4] [ref=e159]
+              - paragraph [ref=e160]: Communities Served
+        - generic [ref=e163]:
+          - generic [ref=e164]:
+            - generic [ref=e165]: Gallery
+            - heading "Our Work in Action" [level=3] [ref=e166]
+            - paragraph [ref=e167]: See how we are making a difference in communities across the region
+          - generic [ref=e168]:
+            - generic [ref=e169]:
+              - img "Community Cleanup" [ref=e170]
+              - generic [ref=e172]:
+                - heading "Community Cleanup" [level=4] [ref=e173]
+                - paragraph [ref=e174]: View Details
+              - img [ref=e176]
+            - generic [ref=e178]:
+              - img "Recycling Center" [ref=e179]
+              - generic [ref=e181]:
+                - heading "Recycling Center" [level=4] [ref=e182]
+                - paragraph [ref=e183]: View Details
+              - img [ref=e185]
+            - generic [ref=e187]:
+              - img "Green Initiative" [ref=e188]
+              - generic [ref=e190]:
+                - heading "Green Initiative" [level=4] [ref=e191]
+                - paragraph [ref=e192]: View Details
+              - img [ref=e194]
+            - generic [ref=e196]:
+              - img "Waste Collection" [ref=e197]
+              - generic [ref=e199]:
+                - heading "Waste Collection" [level=4] [ref=e200]
+                - paragraph [ref=e201]: View Details
+              - img [ref=e203]
+          - button "View All Photos" [ref=e206] [cursor=pointer]:
+            - text: View All Photos
+            - img [ref=e207]
+        - generic [ref=e209]:
+          - img [ref=e213]
+          - generic [ref=e215]:
+            - generic [ref=e216]:
+              - generic [ref=e217]: Testimonials
+              - heading "What People Say" [level=2] [ref=e218]
+              - paragraph [ref=e219]: Hear from our satisfied customers and community members
+            - generic [ref=e220]:
+              - generic [ref=e221]:
+                - img [ref=e223]
+                - paragraph [ref=e225]: “Enviro Solutions has transformed our community's approach to waste management. Their innovative systems made recycling effortless for everyone.”
+                - generic [ref=e226]:
+                  - generic [ref=e227]: JK
+                  - generic [ref=e228]:
+                    - heading "Jhanzed Khan" [level=4] [ref=e229]
+                    - paragraph [ref=e230]: Community Leader
+                - generic [ref=e231]:
+                  - img [ref=e232]
+                  - img [ref=e234]
+                  - img [ref=e236]
+                  - img [ref=e238]
+                  - img [ref=e240]
+              - generic [ref=e242]:
+                - img [ref=e244]
+                - paragraph [ref=e246]: “Their innovative recycling programs have significantly reduced our carbon footprint. We've seen a 40% reduction in waste going to landfills.”
+                - generic [ref=e247]:
+                  - generic [ref=e248]: GK
+                  - generic [ref=e249]:
+                    - heading "Gulshan Kumar" [level=4] [ref=e250]
+                    - paragraph [ref=e251]: Environmental Activist
+                - generic [ref=e252]:
+                  - img [ref=e253]
+                  - img [ref=e255]
+                  - img [ref=e257]
+                  - img [ref=e259]
+                  - img [ref=e261]
+              - generic [ref=e263]:
+                - img [ref=e265]
+                - paragraph [ref=e267]: “The home collection service has made recycling effortless for our family. The team is professional and always on time.”
+                - generic [ref=e268]:
+                  - generic [ref=e269]: ZM
+                  - generic [ref=e270]:
+                    - heading "Zain Mushtaq" [level=4] [ref=e271]
+                    - paragraph [ref=e272]: Satisfied Customer
+                - generic [ref=e273]:
+                  - img [ref=e274]
+                  - img [ref=e276]
+                  - img [ref=e278]
+                  - img [ref=e280]
+                  - img [ref=e282]
+        - generic [ref=e287]:
+          - generic [ref=e288]:
+            - generic [ref=e289]: Reviews
+            - heading "Customer Satisfaction" [level=2] [ref=e290]
+            - paragraph [ref=e291]: Your satisfaction is our greatest achievement
+          - generic [ref=e292]:
+            - generic [ref=e293]:
+              - img [ref=e294]
+              - img [ref=e296]
+              - img [ref=e298]
+              - img [ref=e300]
+              - img
+            - paragraph [ref=e302]: "4.9"
+            - paragraph [ref=e303]: Based on 500+ reviews
+          - generic [ref=e304]:
+            - generic [ref=e305]:
+              - generic [ref=e306]:
+                - generic [ref=e307]:
+                  - img [ref=e308]
+                  - img [ref=e310]
+                  - img [ref=e312]
+                  - img [ref=e314]
+                  - img [ref=e316]
+                - generic [ref=e318]: "5.0"
+              - paragraph [ref=e319]: “At first I doubted the reliability of the site but after receiving my order, I was completely satisfied with the service. The team was professional and efficient.”
+              - generic [ref=e320]:
+                - generic [ref=e321]:
+                  - generic [ref=e322]: VK
+                  - generic [ref=e323]: Victor K
+                - generic [ref=e324]:
+                  - img [ref=e325]
+                  - text: 11/24/2024
+              - generic [ref=e328]:
+                - img [ref=e329]
+                - text: Verified
+            - generic [ref=e331]:
+              - generic [ref=e332]:
+                - generic [ref=e333]:
+                  - img [ref=e334]
+                  - img [ref=e336]
+                  - img [ref=e338]
+                  - img [ref=e340]
+                  - img [ref=e342]
+                - generic [ref=e344]: "5.0"
+              - paragraph [ref=e345]: “Beautiful service and clean process throughout. The waste collection was done on time and the recycling reports are very helpful.”
+              - generic [ref=e346]:
+                - generic [ref=e347]:
+                  - generic [ref=e348]: SM
+                  - generic [ref=e349]: Sarah M
+                - generic [ref=e350]:
+                  - img [ref=e351]
+                  - text: 11/21/2024
+              - generic [ref=e354]:
+                - img [ref=e355]
+                - text: Verified
+        - generic [ref=e360]:
+          - generic [ref=e361]:
+            - generic [ref=e362]:
+              - generic [ref=e363]:
+                - img [ref=e365]
+                - generic [ref=e367]:
+                  - heading "Enviro Solutions" [level=2] [ref=e368]
+                  - paragraph [ref=e369]: Waste & Recycling
+              - paragraph [ref=e370]: Your trusted partner in environmental sustainability. We focus on innovative waste management, recycling solutions, and environmental services for a greener future.
+              - generic [ref=e371]:
+                - link "Facebook" [ref=e372] [cursor=pointer]:
+                  - /url: "#"
+                  - img [ref=e373]
+                - link "Twitter" [ref=e375] [cursor=pointer]:
+                  - /url: "#"
+                  - img [ref=e376]
+                - link "Instagram" [ref=e378] [cursor=pointer]:
+                  - /url: "#"
+                  - img [ref=e379]
+                - link "LinkedIn" [ref=e381] [cursor=pointer]:
+                  - /url: "#"
+                  - img [ref=e382]
+            - generic [ref=e384]:
+              - heading "Get in Touch" [level=3] [ref=e385]
+              - paragraph [ref=e386]: Have questions? Send us a message.
+              - generic [ref=e387]:
+                - generic [ref=e388]:
+                  - textbox "Your Name" [ref=e389]
+                  - textbox "Your Email" [ref=e390]
+                - textbox "Your Message" [ref=e391]
+                - button "Send Message" [ref=e392] [cursor=pointer]:
+                  - text: Send Message
+                  - img [ref=e393]
+          - generic [ref=e395]:
+            - generic [ref=e396]:
+              - heading "Our Services" [level=3] [ref=e397]
+              - list [ref=e398]:
+                - listitem [ref=e399]:
+                  - link "Waste Collection" [ref=e400] [cursor=pointer]:
+                    - /url: "#"
+                    - text: Waste Collection
+                - listitem [ref=e402]:
+                  - link "Recycling Centers" [ref=e403] [cursor=pointer]:
+                    - /url: "#"
+                    - text: Recycling Centers
+                - listitem [ref=e405]:
+                  - link "Home Collection" [ref=e406] [cursor=pointer]:
+                    - /url: "#"
+                    - text: Home Collection
+                - listitem [ref=e408]:
+                  - link "Commercial Services" [ref=e409] [cursor=pointer]:
+                    - /url: "#"
+                    - text: Commercial Services
+                - listitem [ref=e411]:
+                  - link "Waste Management" [ref=e412] [cursor=pointer]:
+                    - /url: "#"
+                    - text: Waste Management
+            - generic [ref=e414]:
+              - heading "Company" [level=3] [ref=e415]
+              - list [ref=e416]:
+                - listitem [ref=e417]:
+                  - link "About Us" [ref=e418] [cursor=pointer]:
+                    - /url: /about
+                    - text: About Us
+                - listitem [ref=e420]:
+                  - link "Our Team" [ref=e421] [cursor=pointer]:
+                    - /url: /about
+                    - text: Our Team
+                - listitem [ref=e423]:
+                  - link "Careers" [ref=e424] [cursor=pointer]:
+                    - /url: "#"
+                    - text: Careers
+                - listitem [ref=e426]:
+                  - link "News & Updates" [ref=e427] [cursor=pointer]:
+                    - /url: "#"
+                    - text: News & Updates
+                - listitem [ref=e429]:
+                  - link "Sustainability Goals" [ref=e430] [cursor=pointer]:
+                    - /url: "#"
+                    - text: Sustainability Goals
+            - generic [ref=e432]:
+              - heading "Support" [level=3] [ref=e433]
+              - list [ref=e434]:
+                - listitem [ref=e435]:
+                  - link "Help Center" [ref=e436] [cursor=pointer]:
+                    - /url: "#"
+                    - text: Help Center
+                - listitem [ref=e438]:
+                  - link "Contact Us" [ref=e439] [cursor=pointer]:
+                    - /url: "#contact"
+                    - text: Contact Us
+                - listitem [ref=e441]:
+                  - link "FAQs" [ref=e442] [cursor=pointer]:
+                    - /url: "#"
+                    - text: FAQs
+                - listitem [ref=e444]:
+                  - link "Privacy Policy" [ref=e445] [cursor=pointer]:
+                    - /url: "#"
+                    - text: Privacy Policy
+                - listitem [ref=e447]:
+                  - link "Terms of Service" [ref=e448] [cursor=pointer]:
+                    - /url: "#"
+                    - text: Terms of Service
+          - generic [ref=e451]:
+            - paragraph [ref=e452]: © 2026 Enviro Solutions. All rights reserved.
+            - generic [ref=e453]:
+              - link "Privacy Policy" [ref=e454] [cursor=pointer]:
+                - /url: "#"
+              - link "Terms of Service" [ref=e455] [cursor=pointer]:
+                - /url: "#"
+              - link "Cookies" [ref=e456] [cursor=pointer]:
+                - /url: "#"
+  - alert [ref=e457]
+```

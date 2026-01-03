@@ -1,0 +1,41 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - navigation [ref=e4]:
+        - generic [ref=e5]:
+          - button "Enviro Waste Solutions" [ref=e6] [cursor=pointer]:
+            - img [ref=e8]
+            - generic [ref=e10]:
+              - heading "Enviro" [level=2] [ref=e11]
+              - paragraph [ref=e12]: Waste Solutions
+          - generic [ref=e13]:
+            - button "Home" [ref=e14] [cursor=pointer]
+            - button "About Us" [ref=e15] [cursor=pointer]
+            - button "Services" [ref=e16] [cursor=pointer]
+            - button "Contact" [ref=e17] [cursor=pointer]
+          - button "Sign In" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+            - generic [ref=e22]: Sign In
+    - main [ref=e23]:
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - img [ref=e30]
+          - heading "Welcome to Enviro" [level=1] [ref=e32]
+          - paragraph [ref=e33]: Sign in to your account
+        - generic [ref=e34]:
+          - generic [ref=e35]:
+            - generic [ref=e36]: Email
+            - textbox "Enter your email" [ref=e37]
+          - generic [ref=e38]:
+            - generic [ref=e39]: Password
+            - textbox "Enter your password" [ref=e40]
+          - button "Sign In" [ref=e41] [cursor=pointer]
+        - paragraph [ref=e42]:
+          - text: Don't have an account?
+          - link "Create one" [ref=e43] [cursor=pointer]:
+            - /url: /signup
+  - alert [ref=e44]
+```

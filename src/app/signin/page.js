@@ -109,66 +109,96 @@ const SignIn = () => {
   };
 
   useEffect(() => {
-    if (accessToken) {
-      logInWithAccessToken(accessToken);
-    }
-  }, [accessToken]);
+    let isMounted = true;
 
-  useEffect(() => {
-    if (!accessToken && refreshToken) {
-      refreshAccessToken(refreshToken);
+    const attemptAutoLogin = async () => {
+      if (accessToken) {
+        await logInWithAccessToken(accessToken);
+      } else if (refreshToken) {
+        await refreshAccessToken(refreshToken);
+      }
+    };
+
+    if (isMounted) {
+      attemptAutoLogin();
     }
-  }, [refreshToken]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Run only once on mount
 
   return (
-<div className="relative flex min-h-screen flex-col bg-[#f8fcf9] group/design-root overflow-x-hidden" style={{ fontFamily: '"Public Sans", "Noto Sans", sans-serif' }}>
-{alert.map((alert) => (
+    <div className="relative flex min-h-screen flex-col bg-surface-secondary overflow-x-hidden">
+      {alert.map((alert) => (
         <Alert
           key={alert.id}
           type={alert.type}
           message={alert.message}
-          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
+          onClose={() => setAlert((alerts) => alerts.filter((a) => a.id !== alert.id))}
         />
-      ))}    
-  <div className="flex justify-center items-center flex-1">
-    <div className="layout-content-container flex flex-col w-[512px] max-w-[960px] py-5">
-      <h3 className="text-custom-black tracking-light text-2xl font-bold leading-tight px-4 text-center pb-2 pt-5">
-        Welcome to Enviro
-      </h3>
-      <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-        <label className="flex flex-col min-w-40 flex-1">
-          <input
-            placeholder="Enter your email"
-            className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-custom-black focus:outline-0 focus:ring-0 border-none bg-[#e7f3ea] focus:border-none h-14 placeholder:text-[#00ed64] p-4 text-sm md:text-base font-normal leading-normal"
-            onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-          />
-        </label>
+      ))}
+
+      <div className="flex justify-center items-center flex-1 px-4">
+        <div className="w-full max-w-md">
+          {/* Card Container */}
+          <div className="bg-white rounded-2xl shadow-card p-8">
+            {/* Logo/Brand */}
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-custom-green-light rounded-full mb-4">
+                <svg className="w-8 h-8 text-custom-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+              </div>
+              <h1 className="text-2xl font-bold text-text-primary">Welcome to Enviro</h1>
+              <p className="text-text-secondary mt-2">Sign in to your account</p>
+            </div>
+
+            {/* Form */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-1.5">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary placeholder:text-text-muted transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20"
+                  onChange={(e) => setUserData({ ...userData, email: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-1.5">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  placeholder="Enter your password"
+                  className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary placeholder:text-text-muted transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20"
+                  onChange={(e) => setUserData({ ...userData, password: e.target.value })}
+                />
+              </div>
+
+              <button
+                className="w-full h-12 bg-custom-green text-custom-black font-semibold rounded-lg transition-all duration-200 hover:bg-custom-green-dark focus:outline-none focus:ring-2 focus:ring-custom-green focus:ring-offset-2 shadow-button hover:shadow-md"
+                onClick={handleSignIn}
+              >
+                Sign In
+              </button>
+            </div>
+
+            {/* Footer */}
+            <p className="text-center text-sm text-text-secondary mt-6">
+              Don&apos;t have an account?{" "}
+              <Link href="/signup" className="text-custom-green font-medium hover:underline">
+                Create one
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
-      <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-        <label className="flex flex-col min-w-40 flex-1">
-          <input
-            placeholder="Enter your password"
-            type="password"
-            className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-custom-black focus:outline-0 focus:ring-0 border-none bg-[#e7f3ea] focus:border-none h-14 placeholder:text-[#00ed64] p-4 text-sm md:text-base font-normal leading-normal"
-            onChange={(e) => setUserData({ ...userData, password: e.target.value })}
-          />
-        </label>
-      </div>
-     
-      <div className="flex px-4 py-3">
-        <button
-        className="flex w-full sm:w-full cursor-pointer items-center justify-center rounded-xl h-12 px-8 py-4 bg-gradient-to-r from-[#00ed64] to-[#00b84c] text-white font-bold leading-normal hover:scale-105 hover:from-[#00b84c] hover:to-[#00ed64] transition-all duration-300 ease-in-out text-xs sm:text-sm md:text-base shadow-lg hover:shadow-2xl"
-          onClick={handleSignIn}
-        >
-          <span className="truncate">Sign in</span>
-        </button>
-      </div>
-      <p className="text-custom-black text-sm font-normal leading-normal pb-3 pt-1 px-4 text-center">
-        Don&apos;t have an account? <Link href="/signup">Create one</Link>
-      </p>
     </div>
-  </div>
-</div>
   );
 };
 

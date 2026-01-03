@@ -6,12 +6,13 @@ export async function GET() {
     // Begin transaction
     await pool.query('BEGIN');
 
-    // Query to get all area approval requests
+    // Query to get all area approval requests (now includes service_type)
     console.log("hello");
-    const query = `SELECT area_approval_id, area.area_id, request_for_area_approval.company_id, status, area.name , company.name as company_name
+    const query = `SELECT area_approval_id, area.area_id, request_for_area_approval.company_id, status, area.name, company.name as company_name, COALESCE(request_for_area_approval.service_type, 'waste_collection') as service_type
                    FROM request_for_area_approval join area on area.area_id = request_for_area_approval.area_id
-                   JOIN company 
-                   ON company.user_id = request_for_area_approval.company_id`;
+                   JOIN company
+                   ON company.user_id = request_for_area_approval.company_id
+                   ORDER BY request_for_area_approval.service_type, area.name`;
     const { rows } = await pool.query(query);
 
     // Commit transaction

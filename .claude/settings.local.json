@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(dir \"C:\\\\Users\\\\ABC\\\\Downloads\\\\Enviro-Waste-and-Recycling-Solution-main\\\\Enviro-Waste-and-Recycling-Solution-main\" /s /b)",
+      "Bash(findstr:*)"
+    ]
+  }
+}

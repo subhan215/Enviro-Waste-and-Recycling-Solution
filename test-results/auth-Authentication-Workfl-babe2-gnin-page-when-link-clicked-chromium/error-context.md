@@ -1,0 +1,71 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - navigation [ref=e4]:
+        - generic [ref=e5]:
+          - button "Enviro Waste Solutions" [ref=e6] [cursor=pointer]:
+            - img [ref=e8]
+            - generic [ref=e10]:
+              - heading "Enviro" [level=2] [ref=e11]
+              - paragraph [ref=e12]: Waste Solutions
+          - generic [ref=e13]:
+            - button "Home" [ref=e14] [cursor=pointer]
+            - button "About Us" [ref=e15] [cursor=pointer]
+            - button "Services" [ref=e16] [cursor=pointer]
+            - button "Contact" [ref=e17] [cursor=pointer]
+          - button "Sign In" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+            - generic [ref=e22]: Sign In
+    - main [ref=e23]:
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - heading "Create Account" [level=1] [ref=e28]
+          - generic [ref=e29]:
+            - button "Individual" [ref=e30] [cursor=pointer]
+            - button "Company" [ref=e31] [cursor=pointer]
+        - generic [ref=e32]:
+          - heading "Personal Information" [level=2] [ref=e33]
+          - generic [ref=e34]:
+            - generic [ref=e35]:
+              - generic [ref=e36]: Full Name
+              - textbox "Enter your full name" [ref=e37]
+            - generic [ref=e38]:
+              - generic [ref=e39]: Email
+              - textbox "Enter your email" [ref=e40]
+            - generic [ref=e41]:
+              - generic [ref=e42]:
+                - generic [ref=e43]: Password
+                - textbox "Password" [ref=e44]
+              - generic [ref=e45]:
+                - generic [ref=e46]: Confirm
+                - textbox "Confirm" [ref=e47]
+            - generic [ref=e48]:
+              - generic [ref=e49]:
+                - generic [ref=e50]: Age
+                - spinbutton [ref=e51]
+              - generic [ref=e52]:
+                - generic [ref=e53]: Gender
+                - generic [ref=e54]:
+                  - combobox [ref=e55] [cursor=pointer]:
+                    - option "Select" [selected]
+                    - option "Male"
+                    - option "Female"
+                  - generic:
+                    - img
+            - generic [ref=e56]:
+              - generic [ref=e57]: Mobile Number
+              - textbox "Enter mobile number" [ref=e58]
+            - generic [ref=e59]:
+              - generic [ref=e60]: Area
+              - generic [ref=e61]:
+                - combobox [ref=e62] [cursor=pointer]:
+                  - option "Select Area"
+                  - option "No areas available" [selected]
+                - generic:
+                  - img
+            - button "Sign Up" [ref=e63] [cursor=pointer]
+  - alert [ref=e64]
+```

@@ -1,27 +1,83 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Building2, FileText, Trash2, DollarSign} from 'lucide-react';
 import DashboardCard from "../components/admin_panel/dashboard";
 import ComplaintsTable from "../components/admin_panel/Reports";
 import RewardConversionRequests from "../components/admin_panel/RewardConversionRequests";
 import ResignAgreements from "../components/admin_panel/ResignAgreements";
 import AreaApprovalRequests from "../components/admin_panel/AreaApprovalRequests";
-import Admin_loader from "../components/ui/Admin_loader"
-import RecyclingCenterRequests from "../components/admin_panel/RecyclingCenterRequests"
-import SubmitMaterialRequests from "../components/admin_panel/SubmitMaterialRequests" ; 
+import Admin_loader from "../components/ui/Admin_loader";
+import RecyclingCenterRequests from "../components/admin_panel/RecyclingCenterRequests";
+import SubmitMaterialRequests from "../components/admin_panel/SubmitMaterialRequests";
+import { DashboardLayout, SidebarItem, SidebarSection } from "../components/layouts/DashboardLayout";
+
+// SVG Icons
+const Icons = {
+  Dashboard: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+    </svg>
+  ),
+  Complaints: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  Rewards: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  Resign: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  ),
+  Area: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+    </svg>
+  ),
+  Recycling: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+    </svg>
+  ),
+  Upload: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+    </svg>
+  ),
+  Building: () => (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+    </svg>
+  ),
+  Document: () => (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    </svg>
+  ),
+  Alert: () => (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+    </svg>
+  ),
+  Dollar: () => (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+};
+
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
   const [companiesCount, setCompaniesCount] = useState(0);
   const [agreementsCount, setAgreementsCount] = useState(0);
   const [transactionsCount, setTransactionsCount] = useState(0);
   const [totalEquivalentPkr, setTotalEquivalentPkr] = useState(0);
   const [complaintsCount, setComplaintsCount] = useState(0);
-  const [loading, setLoading] = useState(true); // State to track loading status
+  const [loading, setLoading] = useState(true);
 
-  // Function to fetch total number of companies
   const fetchCompaniesCount = async () => {
     try {
       const response = await fetch('/api/admin/get_total_companies/');
@@ -33,7 +89,6 @@ export default function AdminPanel() {
     }
   };
 
-  // Function to fetch total number of agreements
   const fetchAgreementsCount = async () => {
     try {
       const response = await fetch('/api/admin/get_all_agreements/');
@@ -45,7 +100,6 @@ export default function AdminPanel() {
     }
   };
 
-  // Function to fetch total approved transactions and total equivalent_pkr this month
   const fetchApprovedTransactionsWithTotal = async () => {
     try {
       const response = await fetch('/api/admin/get_current_month_transactions/');
@@ -66,7 +120,6 @@ export default function AdminPanel() {
     }
   };
 
-  // Function to fetch total number of complaints this month
   const fetchComplaintsCount = async () => {
     try {
       const response = await fetch('/api/admin/get_current_month_complaints/');
@@ -80,8 +133,7 @@ export default function AdminPanel() {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true); // Set loading to true before fetching data
-
+      setLoading(true);
       const companies = await fetchCompaniesCount();
       const agreements = await fetchAgreementsCount();
       const { transactionsCount, totalEquivalentPkr } = await fetchApprovedTransactionsWithTotal();
@@ -92,179 +144,196 @@ export default function AdminPanel() {
       setTransactionsCount(transactionsCount);
       setTotalEquivalentPkr(totalEquivalentPkr);
       setComplaintsCount(complaints);
-
-      setLoading(false); // Set loading to false once data is fetched
+      setLoading(false);
     };
 
     fetchData();
   }, []);
 
   if (loading) {
-    return <Admin_loader></Admin_loader>
+    return <Admin_loader />;
   }
 
-  return (
-    <div className="relative min-h-screen flex bg-green-50">
-      {/* Sidebar */}
-      <>
-      {/* Button to toggle sidebar */}
-      <button
-        className={`fixed z-30 left-0 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-custom-green text-white flex items-center justify-center rounded-r-full shadow-lg md:hidden ${
-          isOpen ? "hidden" : "block"
-        }`}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        →
-      </button>
+  const sidebar = (
+    <>
+      <SidebarSection title="Overview">
+        <SidebarItem
+          icon={<Icons.Dashboard />}
+          label="Dashboard"
+          active={activeTab === 'dashboard'}
+          onClick={() => setActiveTab('dashboard')}
+        />
+      </SidebarSection>
 
-      {/* Sidebar */}
-      <aside style={{width: "250px", zIndex: 9999, borderRight: "1px solid black"}}
-       className={`absolute top-0 left-0 min-h-screen bg-white shadow-lg border-r transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0  ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      }`}
-      >
-        <div className="p-4 flex w-full justify-between text-custom-black">
-          <h1 className="text-2xl font-bold">Admin Panel</h1>
-          <button
-          onClick={()=> setIsOpen(!isOpen)}
-          className="text-xl font-bold text-custom-green md:hidden"
-        >
-          &times;
-        </button>
-        </div>
-        <nav className="mt-4">
-          <ul className="space-y-2">
-            {["Dashboard", "Complaints", "Reward requests", "Resign agreements", "Area approval requests", "Recycling requests" , "Submit Material Requests"].map((tab) => (
-              <li key={tab}>
-                <button
-                  onClick={() => setActiveTab(tab)}
-                  className={`w-full text-left p-3 transition-colors text-custom-black ${
-                    activeTab === tab
-                      ? "bg-custom-green text-custom-black font-semibold"
-                      : "hover:bg-custom-green"
-                  }`}
-                >
-                  <div className="flex items-center space-x-2">
-                  {tab === "Dashboard" && (
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
-</svg>
+      <SidebarSection title="Management">
+        <SidebarItem
+          icon={<Icons.Complaints />}
+          label="User Complaints"
+          active={activeTab === 'complaints'}
+          onClick={() => setActiveTab('complaints')}
+          badge={complaintsCount > 0 ? complaintsCount : null}
+        />
+        <SidebarItem
+          icon={<Icons.Rewards />}
+          label="Reward Requests"
+          active={activeTab === 'reward-requests'}
+          onClick={() => setActiveTab('reward-requests')}
+        />
+        <SidebarItem
+          icon={<Icons.Resign />}
+          label="Resign Agreements"
+          active={activeTab === 'resign-agreements'}
+          onClick={() => setActiveTab('resign-agreements')}
+        />
+      </SidebarSection>
 
-          )}
-          {tab === "Complaints" && (
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 3.75v4.5m0-4.5h-4.5m4.5 0-6 6m3 12c-8.284 0-15-6.716-15-15V4.5A2.25 2.25 0 0 1 4.5 2.25h1.372c.516 0 .966.351 1.091.852l1.106 4.423c.11.44-.054.902-.417 1.173l-1.293.97a1.062 1.062 0 0 0-.38 1.21 12.035 12.035 0 0 0 7.143 7.143c.441.162.928-.004 1.21-.38l.97-1.293a1.125 1.125 0 0 1 1.173-.417l4.423 1.106c.5.125.852.575.852 1.091V19.5a2.25 2.25 0 0 1-2.25 2.25h-2.25Z" />
-</svg>
-
-          )}
-          {tab === "Reward requests" && (
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
-</svg>
-
-          )}
-          {tab === "Resign agreements" && (
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-</svg>
-
-          )}
-          {tab === "Area approval requests" && (
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 0 1 0 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 0 1 0-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375Z" />
-</svg>
-
-          )}
-                    {tab === "Recycling requests" && (
-           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-           <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 0 0-3.7-3.7 48.678 48.678 0 0 0-7.324 0 4.006 4.006 0 0 0-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 0 0 3.7 3.7 48.656 48.656 0 0 0 7.324 0 4.006 4.006 0 0 0 3.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3-3 3" />
-         </svg>
-
-          )}
-          {tab === "Submit Material Requests" && (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0-3-3m3 3 3-3M6 18h12M6 18a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H6z" />
-  </svg>
-)}
-
-                    {/* Insert your SVG icons here for each tab */}
-                    <span>{tab.replace(/_/g, " ")}</span>
-                  </div>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </aside>
+      <SidebarSection title="Services">
+        <SidebarItem
+          icon={<Icons.Area />}
+          label="Area Approval"
+          active={activeTab === 'area-approval'}
+          onClick={() => setActiveTab('area-approval')}
+        />
+        <SidebarItem
+          icon={<Icons.Recycling />}
+          label="Recycling Centers"
+          active={activeTab === 'recycling-requests'}
+          onClick={() => setActiveTab('recycling-requests')}
+        />
+        <SidebarItem
+          icon={<Icons.Upload />}
+          label="Material Submissions"
+          active={activeTab === 'submit-materials'}
+          onClick={() => setActiveTab('submit-materials')}
+        />
+      </SidebarSection>
     </>
-{/* Main content */}
-<main className="flex-1 p-8 bg-green-50">
-  {/* Conditionally render content based on activeTab */}
-  {activeTab === "Dashboard" && (
-    <div>
-      <h2 className="text-xl sm:text-xl md:text-2xl font-bold mb-4 text-custom-black text-center">Dashboard Overview</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <DashboardCard title="Total Companies" value={companiesCount} icon={<Building2 />} />
-        <DashboardCard title="Active Agreements" value={agreementsCount} icon={<FileText />} />
-        <DashboardCard title="Complaints (This Month)" value={complaintsCount} icon={<Trash2 />} />
-        <DashboardCard title="Transactions (This Month)" value={transactionsCount} icon={<DollarSign />} />
-        <DashboardCard title="Transactions Amount (This Month)" value={totalEquivalentPkr} icon={<DollarSign />} />
-      </div>
-    </div>
-  )}
+  );
 
-  {activeTab === "Complaints" && (
-    <div>
-      <h2 className="text-xl sm:text-xl md:text-2xl font-bold mb-4 text-custom-black text-center">Citizen Complaints</h2>
-      <ComplaintsTable
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-      />
-    </div>
-  )}
+  return (
+    <DashboardLayout sidebar={sidebar} title="Admin Panel">
+      {activeTab === "dashboard" && (
+        <div className="p-4 md:p-6">
+          {/* Dashboard Header */}
+          <div className="mb-6">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Dashboard Overview</h1>
+            <p className="text-gray-500 mt-1">Monitor key metrics and system activity</p>
+          </div>
 
-  {activeTab === "Reward requests" && (
-    <div>
-      <h2 className="text-xl sm:text-xl md:text-2xl font-bold mb-4 text-custom-black text-center">Reward Conversion Requests</h2>
-      <RewardConversionRequests />
-    </div>
-  )}
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 font-medium">Total Companies</p>
+                  <p className="text-2xl font-bold text-gray-800 mt-1">{companiesCount}</p>
+                </div>
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                  <Icons.Building />
+                </div>
+              </div>
+            </div>
 
-  {activeTab === "Resign agreements" && (
-    <div>
-      <h2 className="text-xl sm:text-xl md:text-2xl font-bold mb-4 text-custom-black text-center">Resign Agreements Requests</h2>
-      <ResignAgreements
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-      />
-    </div>
-  )}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 font-medium">Active Agreements</p>
+                  <p className="text-2xl font-bold text-emerald-600 mt-1">{agreementsCount}</p>
+                </div>
+                <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                  <Icons.Document />
+                </div>
+              </div>
+            </div>
 
-  {activeTab === "Area approval requests" && (
-    <div>
-      <h2 className="text-xl sm:text-xl md:text-2xl font-bold mb-4 text-custom-black text-center">Area Approval Requests</h2>
-      <AreaApprovalRequests />
-    </div>
-  )}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 font-medium">Complaints (Month)</p>
+                  <p className="text-2xl font-bold text-red-600 mt-1">{complaintsCount}</p>
+                </div>
+                <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                  <Icons.Alert />
+                </div>
+              </div>
+            </div>
 
-  {activeTab === "Submit Material Requests" && (
-    <div>
-      <h2 className="text-xl sm:text-xl md:text-2xl font-bold mb-4 text-custom-black text-center">Submit Material Requests</h2>
-      <SubmitMaterialRequests />
-    </div>
-  )}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 font-medium">Transactions (Month)</p>
+                  <p className="text-2xl font-bold text-purple-600 mt-1">{transactionsCount}</p>
+                </div>
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                  <Icons.Dollar />
+                </div>
+              </div>
+            </div>
 
-  {activeTab === "Recycling requests" && (
-    <div>
-      <h2 className="text-xl sm:text-xl md:text-2xl font-bold mb-4 text-custom-black text-center">Recycling Center Requests</h2>
-      <RecyclingCenterRequests />
-    </div>
-  )}
-</main>
-    </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 font-medium">Amount (Month)</p>
+                  <p className="text-2xl font-bold text-yellow-600 mt-1">Rs. {totalEquivalentPkr.toLocaleString()}</p>
+                </div>
+                <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                  <Icons.Dollar />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <button
+                onClick={() => setActiveTab('complaints')}
+                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
+              >
+                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                  <Icons.Complaints />
+                </div>
+                <span className="text-sm font-medium text-gray-700">View Complaints</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('reward-requests')}
+                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
+              >
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <Icons.Rewards />
+                </div>
+                <span className="text-sm font-medium text-gray-700">Reward Requests</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('area-approval')}
+                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
+              >
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Icons.Area />
+                </div>
+                <span className="text-sm font-medium text-gray-700">Area Approvals</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('submit-materials')}
+                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors"
+              >
+                <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                  <Icons.Upload />
+                </div>
+                <span className="text-sm font-medium text-gray-700">Material Submissions</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "complaints" && <ComplaintsTable />}
+      {activeTab === "reward-requests" && <RewardConversionRequests />}
+      {activeTab === "resign-agreements" && <ResignAgreements />}
+      {activeTab === "area-approval" && <AreaApprovalRequests />}
+      {activeTab === "recycling-requests" && <RecyclingCenterRequests />}
+      {activeTab === "submit-materials" && <SubmitMaterialRequests />}
+    </DashboardLayout>
   );
 }

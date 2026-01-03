@@ -2,49 +2,45 @@ import { pool } from "../../../../../database/database";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
-  const client = await pool.connect(); // Start a new client connection to handle the transaction
-  let companyId = parseInt(params.id);
-  let all_areas;
+  const { id } = await params;
+  const client = await pool.connect();
+  let companyId = parseInt(id);
 
   console.log("Company ID:", companyId);
 
   try {
-    // Begin a transaction to ensure atomicity
     await client.query('BEGIN');
 
-    // Fetch assigned areas for the given company
-    all_areas = await client.query(
-      'SELECT DISTINCT area.name, area.area_id, trucks.truckid, trucks.licenseplate FROM area LEFT JOIN trucks ON area.area_id = trucks.area_id WHERE area.company_id = $1',
+    // Fetch assigned areas from area_service_assignment table (includes all service types)
+    // Also include legacy areas from area.company_id for backward compatibility
+    const all_areas = await client.query(
+      `SELECT DISTINCT
+        a.name,
+        a.area_id,
+        t.truckid,
+        t.licenseplate,
+        COALESCE(asa.service_type, 'waste_collection') as service_type
+      FROM area a
+      LEFT JOIN trucks t ON a.area_id = t.area_id AND t.companyid = $1
+      LEFT JOIN area_service_assignment asa ON a.area_id = asa.area_id AND asa.company_id = $1
+      WHERE a.company_id = $1 OR asa.company_id = $1
+      ORDER BY a.name`,
       [companyId]
     );
 
-    if (all_areas.rows.length === 0) {
-      // Commit the transaction and return a response if no areas found
-      await client.query('COMMIT');
-      return NextResponse.json({
-        success: true,
-        data: [],
-        message: 'No assigned areas found for this company.',
-      }, {
-        status: 200,
-      });
-    }
-
-    console.log(all_areas.rows); // Log all the fetched areas
-
-    // Commit the transaction after successfully fetching the data
     await client.query('COMMIT');
 
     return NextResponse.json({
       success: true,
       data: all_areas.rows,
-      message: 'All assigned areas fetched successfully!',
+      message: all_areas.rows.length > 0
+        ? 'All assigned areas fetched successfully!'
+        : 'No assigned areas found for this company.',
     }, {
       status: 200,
     });
 
   } catch (error) {
-    // Rollback the transaction if an error occurs
     await client.query('ROLLBACK');
     console.error("Error fetching assigned areas: ", error);
 
@@ -53,9 +49,9 @@ export async function GET(req, { params }) {
       message: 'Failed to fetch assigned areas.',
       error: error.message,
     }, {
-      status: 500, // Internal Server Error
+      status: 500,
     });
   } finally {
-    client.release(); // Release the client back to the pool
+    client.release();
   }
 }

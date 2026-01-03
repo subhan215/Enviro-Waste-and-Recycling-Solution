@@ -1,0 +1,94 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - navigation [ref=e4]:
+        - generic [ref=e5]:
+          - button "Enviro Waste Solutions" [ref=e6] [cursor=pointer]:
+            - img [ref=e8]
+            - generic [ref=e10]:
+              - heading "Enviro" [level=2] [ref=e11]
+              - paragraph [ref=e12]: Waste Solutions
+          - generic [ref=e13]:
+            - button "Home" [ref=e14] [cursor=pointer]
+            - button "About Us" [ref=e15] [cursor=pointer]
+            - button "Services" [ref=e16] [cursor=pointer]
+            - button "Contact" [ref=e17] [cursor=pointer]
+          - button "Sign In" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+            - generic [ref=e22]: Sign In
+    - main [ref=e23]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - img [ref=e26]
+          - paragraph [ref=e28]: All areas fetched successfully!
+        - generic [ref=e30]:
+          - generic [ref=e31]:
+            - heading "Create Account" [level=1] [ref=e32]
+            - generic [ref=e33]:
+              - button "Individual" [ref=e34] [cursor=pointer]
+              - button "Company" [ref=e35] [cursor=pointer]
+          - generic [ref=e36]:
+            - heading "Personal Information" [level=2] [ref=e37]
+            - generic [ref=e38]:
+              - generic [ref=e39]:
+                - generic [ref=e40]: Full Name
+                - textbox "Enter your full name" [active] [ref=e41]
+              - generic [ref=e42]:
+                - generic [ref=e43]: Email
+                - textbox "Enter your email" [ref=e44]
+              - generic [ref=e45]:
+                - generic [ref=e46]:
+                  - generic [ref=e47]: Password
+                  - textbox "Password" [ref=e48]
+                - generic [ref=e49]:
+                  - generic [ref=e50]: Confirm
+                  - textbox "Confirm" [ref=e51]
+              - generic [ref=e52]:
+                - generic [ref=e53]:
+                  - generic [ref=e54]: Age
+                  - spinbutton [ref=e55]
+                - generic [ref=e56]:
+                  - generic [ref=e57]: Gender
+                  - generic [ref=e58]:
+                    - combobox [ref=e59] [cursor=pointer]:
+                      - option "Select" [selected]
+                      - option "Male"
+                      - option "Female"
+                    - generic:
+                      - img
+              - generic [ref=e60]:
+                - generic [ref=e61]: Mobile Number
+                - textbox "Enter mobile number" [ref=e62]
+              - generic [ref=e63]:
+                - generic [ref=e64]: Area
+                - generic [ref=e65]:
+                  - combobox [ref=e66] [cursor=pointer]:
+                    - option "Select Area" [selected]
+                    - option "Gulshan-e-Iqbal"
+                    - option "Clifton"
+                    - option "Defence (DHA)"
+                    - option "Nazimabad"
+                    - option "North Nazimabad"
+                    - option "PECHS"
+                    - option "Johar (Gulistan-e-Johar)"
+                    - option "Korangi"
+                    - option "Malir"
+                    - option "Shah Faisal Colony"
+                    - option "Saddar"
+                    - option "North Karachi"
+                    - option "Buffer Zone"
+                    - option "Federal B Area"
+                    - option "Orangi Town"
+                    - option "Liaquatabad"
+                    - option "Garden"
+                    - option "Baldia Town"
+                    - option "Landhi"
+                    - option "Model Colony"
+                  - generic:
+                    - img
+              - button "Sign Up" [ref=e67] [cursor=pointer]
+  - alert [ref=e68]
+```

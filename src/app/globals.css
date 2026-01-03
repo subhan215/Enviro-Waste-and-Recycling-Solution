@@ -1,10 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fcf9;
+  --foreground: #001E2B;
+  --primary: #00ED64;
+  --primary-dark: #00b84c;
+  --surface: #ffffff;
+  --border: #e5e7eb;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -14,10 +20,105 @@
   }
 }
 
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base layer styles */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  input, textarea, select {
+    font-family: inherit;
+  }
+
+  ::placeholder {
+    color: #9ca3af;
+    opacity: 1;
+  }
+
+  /* Focus ring styles */
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+}
+
+/* Component layer styles */
+@layer components {
+  /* Button base styles */
+  .btn {
+    @apply inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply bg-custom-green text-custom-black hover:bg-custom-green-dark focus:ring-custom-green shadow-button hover:shadow-md;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-custom-black border-2 border-custom-green hover:bg-custom-green-light focus:ring-custom-green;
+  }
+
+  .btn-outline {
+    @apply bg-transparent text-custom-green border-2 border-custom-green hover:bg-custom-green hover:text-custom-black focus:ring-custom-green;
+  }
+
+  .btn-danger {
+    @apply bg-error text-white hover:bg-red-600 focus:ring-error;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-custom-black hover:bg-gray-100 focus:ring-gray-300;
+  }
+
+  /* Button sizes */
+  .btn-sm {
+    @apply h-9 px-4 text-sm;
+  }
+
+  .btn-md {
+    @apply h-11 px-6 text-base;
+  }
+
+  .btn-lg {
+    @apply h-12 px-8 text-base;
+  }
+
+  /* Input styles */
+  .input {
+    @apply w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary placeholder:text-text-muted transition-colors duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20;
+  }
+
+  .input-error {
+    @apply border-error focus:border-error focus:ring-error/20;
+  }
+
+  /* Card styles */
+  .card {
+    @apply bg-white rounded-xl border border-border shadow-card transition-shadow duration-200 hover:shadow-card-hover;
+  }
+
+  /* Dashboard sidebar item */
+  .sidebar-item {
+    @apply flex items-center gap-3 px-4 py-3 text-text-primary rounded-lg transition-colors duration-200 cursor-pointer hover:bg-custom-green-light;
+  }
+
+  .sidebar-item-active {
+    @apply bg-custom-green text-custom-black font-semibold;
+  }
 }
 
 @layer utilities {

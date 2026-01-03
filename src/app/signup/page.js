@@ -25,7 +25,8 @@ const CompanyRegistrationForm = () => {
     });
     const [agreementChecked, setAgreementChecked] = useState(false);
     const [selectedServices, setSelectedServices] = useState({
-        wasteCollection: false,
+        waste_collection: false,
+        manhole_management: false,
         recycling: false
     });
 
@@ -81,193 +82,147 @@ const CompanyRegistrationForm = () => {
     };
 
     return (
-        <div
-            className="relative flex flex-col bg-[#f8fcf9] group/design-root overflow-x-hidden"
-            style={{ fontFamily: '"Public Sans", "Noto Sans", sans-serif' }}
-        >
+        <div className="relative flex flex-col bg-surface-secondary overflow-x-hidden min-h-screen">
             {alert.map((alert) => (
-        <Alert
-          key={alert.id}
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
-        />
-      ))}    
+                <Alert
+                    key={alert.id}
+                    type={alert.type}
+                    message={alert.message}
+                    onClose={() => setAlert((alerts) => alerts.filter((a) => a.id !== alert.id))}
+                />
+            ))}
 
-            <div className="layout-container flex h-full grow flex-col">
-                {/* Main content - centered */}
-                <div className="flex justify-center flex-1">
-                    <div className="layout-content-container flex flex-col w-full max-w-[512px] sm:max-w-[400px] md:max-w-[480px] lg:max-w-[512px] py-5">
-                        <form
-                            onSubmit={handleSubmit}
-                            className="flex flex-col px-4"
-                        >
+            <div className="flex-1 flex justify-center items-start py-8">
+                <div className="w-full max-w-md px-4">
+                    <div className="bg-white rounded-2xl shadow-card p-6 sm:p-8">
+                        <h2 className="text-xl font-bold text-text-primary text-center mb-6">Company Registration</h2>
+                        <form onSubmit={handleSubmit} className="space-y-4">
                             {/* Company Name */}
-                            <label className="flex flex-col min-w-40 flex-1 mb-4">
+                            <div>
+                                <label className="block text-sm font-medium text-text-primary mb-1.5">Company Name</label>
                                 <input
                                     type="text"
                                     name="companyName"
-                                    placeholder="Company Name"
-                                    className="form-input w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] font-normal text-xs sm:text-sm md:text-base"
+                                    placeholder="Enter company name"
+                                    className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary placeholder:text-text-muted transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20"
                                     required
                                     onChange={(e) => setData({ ...data, name: e.target.value })}
                                 />
-                            </label>
+                            </div>
 
                             {/* Email */}
-                            <label className="flex flex-col min-w-40 flex-1 mb-4">
+                            <div>
+                                <label className="block text-sm font-medium text-text-primary mb-1.5">Email</label>
                                 <input
                                     type="email"
                                     name="email"
-                                    placeholder="Email"
-                                    className="form-input w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] font-normal text-xs sm:text-sm md:text-base"
+                                    placeholder="Enter email address"
+                                    className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary placeholder:text-text-muted transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20"
                                     required
                                     onChange={(e) => setData({ ...data, email: e.target.value })}
                                 />
-                            </label>
+                            </div>
 
                             {/* Password */}
-                            <label className="flex flex-col min-w-40 flex-1 mb-4">
+                            <div>
+                                <label className="block text-sm font-medium text-text-primary mb-1.5">Password</label>
                                 <input
                                     type="password"
                                     name="password"
                                     placeholder="Enter your password"
-                                    className="form-input w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] font-normal text-xs sm:text-sm md:text-base"
+                                    className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary placeholder:text-text-muted transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20"
                                     required
                                     onChange={(e) => setData({ ...data, password: e.target.value })}
                                 />
-                            </label>
+                            </div>
 
                             {/* Confirm Password */}
-                            <label className="flex flex-col min-w-40 flex-1 mb-4">
+                            <div>
+                                <label className="block text-sm font-medium text-text-primary mb-1.5">Confirm Password</label>
                                 <input
                                     type="password"
                                     name="confirmPassword"
                                     placeholder="Confirm your password"
-                                    className="form-input w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] font-normal text-xs sm:text-sm md:text-base"
+                                    className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary placeholder:text-text-muted transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20"
                                     required
                                     onChange={(e) => setData({ ...data, confirmPassword: e.target.value })}
                                 />
-                            </label>
+                            </div>
 
-                            {/* Waste Collection */}
-                            <label className="flex items-center gap-2 mb-4">
-                                <input
-                                    type="checkbox"
-                                    name="wasteCollection"
-                                    checked={selectedServices.wasteCollection}
-                                    onChange={handleCheckboxChange}
-                                    className="form-checkbox hidden"
-                                />
-                                <div className="relative flex items-center cursor-pointer">
-                                    <div className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 max-w-5 max-h-5 flex justify-center items-center border-2 border-[#4e975f] bg-[#e7f3ea] rounded-lg transition-all duration-300 ease-in-out hover:border-[#00ed64] focus:outline-none focus:ring-2 focus:ring-[#00ed64]">
-                                        {selectedServices.wasteCollection && (
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#00ed64] absolute"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M5 13l4 4L19 7"
-                                                />
-                                            </svg>
-                                        )}
-                                    </div>
-                                    <span className="ml-2 text-[#0e1b11] font-normal text-xs sm:text-sm md:text-base">
-                                        Waste Collection
-                                    </span>
-                                </div>
-                            </label>
+                            {/* Services Section */}
+                            <div>
+                                <label className="block text-sm font-medium text-text-primary mb-3">Select Services</label>
+                                <div className="space-y-3">
+                                    {/* Waste Collection */}
+                                    <label className="flex items-center gap-3 p-3 bg-custom-green-light/50 rounded-lg cursor-pointer hover:bg-custom-green-light transition-colors">
+                                        <input
+                                            type="checkbox"
+                                            name="waste_collection"
+                                            checked={selectedServices.waste_collection}
+                                            onChange={handleCheckboxChange}
+                                            className="w-5 h-5 rounded border-border text-custom-green focus:ring-custom-green"
+                                        />
+                                        <span className="text-sm text-text-primary">Waste Collection</span>
+                                    </label>
 
-                            {/* Recycling */}
-                            <label className="flex items-center gap-2 mb-4">
-                                <input
-                                    type="checkbox"
-                                    name="recycling"
-                                    checked={selectedServices.recycling}
-                                    onChange={handleCheckboxChange}
-                                    className="form-checkbox hidden"
-                                />
-                                <div className="relative flex items-center cursor-pointer">
-                                    <div className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 max-w-5 max-h-5 flex justify-center items-center border-2 border-[#4e975f] bg-[#e7f3ea] rounded-lg transition-all duration-300 ease-in-out hover:border-[#00ed64] focus:outline-none focus:ring-2 focus:ring-[#00ed64]">
-                                        {selectedServices.recycling && (
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#00ed64] absolute"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M5 13l4 4L19 7"
-                                                />
-                                            </svg>
-                                        )}
-                                    </div>
-                                    <span className="ml-2 text-[#0e1b11] font-normal text-xs sm:text-sm md:text-base">
-                                        Recycling
-                                    </span>
+                                    {/* Manhole Management */}
+                                    <label className="flex items-center gap-3 p-3 bg-orange-50 rounded-lg cursor-pointer hover:bg-orange-100 transition-colors">
+                                        <input
+                                            type="checkbox"
+                                            name="manhole_management"
+                                            checked={selectedServices.manhole_management}
+                                            onChange={handleCheckboxChange}
+                                            className="w-5 h-5 rounded border-border text-orange-500 focus:ring-orange-500"
+                                        />
+                                        <span className="text-sm text-text-primary">Manhole Cover Maintenance & Repair</span>
+                                    </label>
+
+                                    {/* Recycling */}
+                                    <label className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors">
+                                        <input
+                                            type="checkbox"
+                                            name="recycling"
+                                            checked={selectedServices.recycling}
+                                            onChange={handleCheckboxChange}
+                                            className="w-5 h-5 rounded border-border text-blue-500 focus:ring-blue-500"
+                                        />
+                                        <span className="text-sm text-text-primary">Recycling</span>
+                                    </label>
                                 </div>
-                            </label>
+                            </div>
 
                             {/* Phone Number */}
-                            <label className="flex flex-col min-w-40 flex-1 mb-4">
+                            <div>
+                                <label className="block text-sm font-medium text-text-primary mb-1.5">Phone Number</label>
                                 <input
                                     type="tel"
                                     name="phone"
-                                    placeholder="Phone Number"
-                                    className="form-input w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] font-normal text-xs sm:text-sm md:text-base"
+                                    placeholder="Enter phone number"
+                                    className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary placeholder:text-text-muted transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20"
                                     required
                                     onChange={(e) => setData({ ...data, phone: e.target.value })}
                                 />
-                            </label>
+                            </div>
 
-                            <label className="flex items-center gap-2 mb-4">
+                            {/* Agreement */}
+                            <label className="flex items-start gap-3 cursor-pointer">
                                 <input
                                     type="checkbox"
                                     name="agreement"
                                     checked={agreementChecked}
-                                    onChange={()=> setAgreementChecked(!agreementChecked)}
-                                    className="form-checkbox hidden"
+                                    onChange={() => setAgreementChecked(!agreementChecked)}
+                                    className="w-5 h-5 mt-0.5 rounded border-border text-custom-green focus:ring-custom-green"
                                     required
                                 />
-                                <div className="relative flex items-center cursor-pointer">
-                                    <div className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 max-w-5 max-h-5 flex justify-center items-center border-2 border-[#4e975f] bg-[#e7f3ea] rounded-lg transition-all duration-300 ease-in-out hover:border-[#00ed64] focus:outline-none focus:ring-2 focus:ring-[#00ed64]">
-                                        {agreementChecked && (
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#00ed64] absolute"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M5 13l4 4L19 7"
-                                                />
-                                            </svg>
-                                        )}
-                                    </div>
-                                    <span className="ml-2 text-[#0e1b11] font-normal text-xs sm:text-sm md:text-base">
-                                        I agree to the terms and conditions of Trash Solutions.
-                                    </span>
-                                </div>
+                                <span className="text-sm text-text-secondary">
+                                    I agree to the terms and conditions of Enviro Waste Solutions.
+                                </span>
                             </label>
 
                             {/* Submit Button */}
                             <button
                                 type="submit"
-                                className="flex min-w-[100px] max-w-[450px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-8 py-4 flex-1 bg-gradient-to-r from-[#00ed64] to-[#00b84c] text-white font-bold leading-normal hover:scale-105 hover:from-[#00b84c] hover:to-[#00ed64] transition-all duration-300 ease-in-out text-xs sm:text-sm md:text-base shadow-lg hover:shadow-2xl"
+                                className="w-full h-12 bg-custom-green text-custom-black font-semibold rounded-lg transition-all duration-200 hover:bg-custom-green-dark focus:outline-none focus:ring-2 focus:ring-custom-green focus:ring-offset-2 shadow-button hover:shadow-md"
                             >
                                 Register Company
                             </button>
@@ -366,168 +321,192 @@ const SignUp = () => {
         console.log(allAreas)
     }, [])
     return (
-        <div className="relative flex min-h-screen flex-col bg-[#f8fcf9] overflow-x-hidden" style={{ fontFamily: '"Public Sans", "Noto Sans", sans-serif' }}>
+        <div className="relative flex min-h-screen flex-col bg-surface-secondary overflow-x-hidden">
             {alert.map((alert) => (
-        <Alert
-          key={alert.id}
-          type={alert.type}
-          message={alert.message}
-          onClose={() => setAlert((alert) => alert.filter((a) => a.id !== alert.id))}
-        />
-      ))}    
+                <Alert
+                    key={alert.id}
+                    type={alert.type}
+                    message={alert.message}
+                    onClose={() => setAlert((alerts) => alerts.filter((a) => a.id !== alert.id))}
+                />
+            ))}
 
-    <div className="flex justify-center items-center flex-1">
-        <div className="layout-content-container flex flex-col w-[512px] max-w-[960px] py-5">
-            <label className="flex flex-col min-w-40 flex-1 mb-4">
-                <span className="text-[#0e1b11] text-base font-normal mb-1 text-center">Register as:</span>
-                <div className="flex justify-center space-x-2 flex-wrap mt-4 md:mt-0">
-                    <label className="flex items-center mb-4 hover:cursor-pointer">
-                        <input
-                            type="radio"
-                            name="type"
-                            value="individual"
-                            checked={selectedOption === "individual"}
-                            onChange={handleOptionChange}
-                            className="hidden"
-                        />
-                        <div className={`flex items-center justify-center w-40 h-14 rounded-xl border-2 
-                            ${selectedOption === "individual" ? "bg-gradient-to-r from-[#00ed64] to-[#00b84c] border-[#00ed64] text-white" : "bg-[#e7f3ea] border-[#0e1b11] text-[#0e1b11]"} 
-                            hover:bg-gradient-to-r hover:from-[#00ed64] hover:to-[#00b84c] hover:text-white transition-all duration-300`}>
-                            Individual
+            <div className="flex justify-center items-start flex-1 py-8">
+                <div className="w-full max-w-md px-4">
+                    {/* Toggle Buttons */}
+                    <div className="bg-white rounded-2xl shadow-card p-6 sm:p-8 mb-6">
+                        <h1 className="text-xl font-bold text-text-primary text-center mb-6">Create Account</h1>
+                        <div className="flex justify-center gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setSelectedOption("individual")}
+                                className={`flex-1 h-12 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                                    selectedOption === "individual"
+                                        ? "bg-custom-green text-custom-black"
+                                        : "bg-gray-100 text-text-secondary hover:bg-gray-200"
+                                }`}
+                            >
+                                Individual
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setSelectedOption("company")}
+                                className={`flex-1 h-12 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                                    selectedOption === "company"
+                                        ? "bg-custom-green text-custom-black"
+                                        : "bg-gray-100 text-text-secondary hover:bg-gray-200"
+                                }`}
+                            >
+                                Company
+                            </button>
                         </div>
-                    </label>
-                    <label className="flex items-center mb-4 hover:cursor-pointer">
-                        <input
-                            type="radio"
-                            name="type"
-                            value="company"
-                            checked={selectedOption === "company"}
-                            onChange={handleOptionChange}
-                            className="hidden"
-                        />
-                        <div className={`flex items-center justify-center w-40 h-14 rounded-xl border-2 
-                            ${selectedOption === "company" ? "bg-gradient-to-r from-[#00ed64] to-[#00b84c] border-[#00ed64] text-white" : "bg-[#e7f3ea] border-[#0e1b11] text-[#0e1b11]"} 
-                            hover:bg-gradient-to-r hover:from-[#00ed64] hover:to-[#00b84c] hover:text-white transition-all duration-300`}>
-                            Company
+                    </div>
+
+                    {/* Individual Registration Form */}
+                    {selectedOption === "individual" && (
+                        <div className="bg-white rounded-2xl shadow-card p-6 sm:p-8">
+                            <h2 className="text-lg font-semibold text-text-primary mb-6">Personal Information</h2>
+                            <form onSubmit={handleSignUp} className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-text-primary mb-1.5">Full Name</label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        placeholder="Enter your full name"
+                                        className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary placeholder:text-text-muted transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20"
+                                        required
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-text-primary mb-1.5">Email</label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        placeholder="Enter your email"
+                                        className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary placeholder:text-text-muted transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20"
+                                        required
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-text-primary mb-1.5">Password</label>
+                                        <input
+                                            type="password"
+                                            name="password"
+                                            placeholder="Password"
+                                            className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary placeholder:text-text-muted transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20"
+                                            required
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-text-primary mb-1.5">Confirm</label>
+                                        <input
+                                            type="password"
+                                            name="confirmPassword"
+                                            placeholder="Confirm"
+                                            className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary placeholder:text-text-muted transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20"
+                                            required
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-text-primary mb-1.5">Age</label>
+                                        <input
+                                            type="number"
+                                            name="age"
+                                            placeholder="Age"
+                                            className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary placeholder:text-text-muted transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20"
+                                            required
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-text-primary mb-1.5">Gender</label>
+                                        <div className="relative">
+                                            <select
+                                                name="gender"
+                                                className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20 appearance-none cursor-pointer"
+                                                required
+                                                onChange={handleInputChange}
+                                                value={data.gender}
+                                            >
+                                                <option value="">Select</option>
+                                                <option value="male">Male</option>
+                                                <option value="female">Female</option>
+                                            </select>
+                                            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                <svg className="w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-text-primary mb-1.5">Mobile Number</label>
+                                    <input
+                                        type="tel"
+                                        name="mobile"
+                                        placeholder="Enter mobile number"
+                                        className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary placeholder:text-text-muted transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20"
+                                        required
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-text-primary mb-1.5">Area</label>
+                                    <div className="relative">
+                                        <select
+                                            id="area"
+                                            value={data.area_id}
+                                            onChange={(e) => setData({ ...data, area_id: e.target.value })}
+                                            className="w-full h-12 px-4 bg-white border border-border rounded-lg text-text-primary transition-all duration-200 focus:outline-none focus:border-custom-green focus:ring-2 focus:ring-custom-green/20 appearance-none cursor-pointer"
+                                            required
+                                        >
+                                            <option value="">Select Area</option>
+                                            {allAreas?.length > 0 ? (
+                                                allAreas.map((area) => (
+                                                    <option key={area.area_id} value={area.area_id}>
+                                                        {area.name}
+                                                    </option>
+                                                ))
+                                            ) : (
+                                                <option value="">No areas available</option>
+                                            )}
+                                        </select>
+                                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                            <svg className="w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    className="w-full h-12 bg-custom-green text-custom-black font-semibold rounded-lg transition-all duration-200 hover:bg-custom-green-dark focus:outline-none focus:ring-2 focus:ring-custom-green focus:ring-offset-2 shadow-button hover:shadow-md"
+                                >
+                                    Sign Up
+                                </button>
+                            </form>
                         </div>
-                    </label>
+                    )}
+
+                    {/* Company Registration Form */}
+                    {selectedOption === "company" && <CompanyRegistrationForm />}
                 </div>
-            </label>
-
-            {selectedOption === "individual" && (
-                <form onSubmit={handleSignUp} className="flex flex-col px-4">
-                    {/* Individual Registration Fields */}
-                    <label className="flex flex-col min-w-40 flex-1 mb-4">
-                        <input
-                            type="text"
-                            name="name"
-                            placeholder="Name"
-                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-xs sm:text-sm md:text-base font-normal"
-                            required
-                            onChange={handleInputChange}
-                        />
-                    </label>
-                    <label className="flex flex-col min-w-40 flex-1 mb-4">
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="Email"
-                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-xs sm:text-sm md:text-base font-normal"
-                            required
-                            onChange={handleInputChange}
-                        />
-                    </label>
-                    <label className="flex flex-col min-w-40 flex-1 mb-4">
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder="Enter your password"
-                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-xs sm:text-sm md:text-base font-normal"
-                            required
-                            onChange={handleInputChange}
-                        />
-                    </label>
-                    <label className="flex flex-col min-w-40 flex-1 mb-4">
-                        <input
-                            type="password"
-                            name="confirmPassword"
-                            placeholder="Confirm your password"
-                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-xs sm:text-sm md:text-base font-normal"
-                            required
-                            onChange={handleInputChange}
-                        />
-                    </label>
-                    <label className="flex flex-col min-w-40 flex-1 mb-4">
-                        <input
-                            type="number"
-                            name="age"
-                            placeholder="Age"
-                            className="form-input flex w-full rounded-xl text-[#0e1b11] h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-xs sm:text-sm md:text-base font-normal"
-                            required
-                            onChange={handleInputChange}
-                        />
-                    </label>
-                    <label className="flex flex-col min-w-40 flex-1 mb-4">
-                        <select
-                            name="gender"
-                            className="form-input flex w-full rounded-xl text-[#00ed64] h-14 p-4 border-none bg-[#e7f3ea] text-xs sm:text-sm md:text-base font-normal"
-                            required
-                            onChange={handleInputChange}
-                            value={data.gender}
-                        >
-                            <option value="" className="text-custom-black">Select Gender</option>
-                            <option value="male" className="text-custom-black">Male</option>
-                            <option value="female" className="text-custom-black">Female</option>
-                        </select>
-                    </label>
-
-                    <label className="flex flex-col min-w-40 flex-1 mb-4">
-                        <input
-                            type="tel"
-                            name="mobile"
-                            placeholder="Mobile Number"
-                            className="form-input flex w-full rounded-xl text-custom-black h-14 p-4 border-none bg-[#e7f3ea] placeholder:text-[#00ed64] text-xs sm:text-sm md:text-base font-normal"
-                            required
-                            onChange={handleInputChange}
-                        />
-                    </label>
-
-                    <label className="flex flex-col min-w-40 flex-1 mb-4">
-                        {/* Dropdown for selecting area */}
-                        <select
-                            id="area"
-                            value={data.area_id}
-                            onChange={(e) => setData({ ...data, area_id: e.target.value })}
-                            className="form-input flex w-full rounded-xl text-[#00ed64] h-14 p-4 border-none bg-[#e7f3ea] text-xs sm:text-sm md:text-base"
-                            required
-                        >
-                            <option value="" disabled selected>Select Area</option>
-                            {allAreas?.length > 0 ? (
-                                allAreas.map((area) => (
-                                    <option key={area.area_id} value={area.area_id} className="text-custom-black">
-                                        <span>{area.name}</span>
-                                    </option>
-                                ))
-                            ) : (
-                                <option value="">No areas available</option>
-                            )}
-                        </select>
-                    </label>
-
-                    <button
-                        type="submit"
-                        className="flex w-full sm:w-full cursor-pointer items-center justify-center rounded-xl h-12 px-8 py-4 bg-gradient-to-r from-[#00ed64] to-[#00b84c] text-white font-bold leading-normal hover:scale-105 hover:from-[#00b84c] hover:to-[#00ed64] transition-all duration-300 ease-in-out text-xs sm:text-sm md:text-base shadow-lg hover:shadow-2xl"
-                    >
-                        Sign Up
-                    </button>
-
-                </form>
-            )}
-
-            {selectedOption === "company" && <CompanyRegistrationForm />}
+            </div>
         </div>
-    </div>
-</div>
 
 
     );

@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
       <body>
         <ReduxProvider>
           <LayoutContent>
-            <div className="layout-container flex h-full grow flex-col relative flex min-h-screen flex-col bg-[#f8fcf9] overflow-x-hidden">
+            <div className="layout-container flex flex-col min-h-screen bg-[#f8fcf9]">
               <Nav />
               <main>{children}</main>
             </div>

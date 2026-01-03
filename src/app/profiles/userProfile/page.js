@@ -1,9 +1,14 @@
 "use client";
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { AlertTriangle, Construction, Recycle, Calendar, MessageSquare, MapPin } from "lucide-react";
+import { DashboardLayout, SidebarItem, PageHeader } from "../../components/layouts/DashboardLayout";
 
 const ReportMissedPickups = dynamic(() =>
   import("../../components/user_dashboard/ReportMissedPickups")
+);
+const ReportManhole = dynamic(() =>
+  import("../../components/user_dashboard/ReportManhole")
 );
 const CreateRequestForRecycledWaste = dynamic(() =>
   import("../../components/user_dashboard/CreateRequestForRecycledWaste")
@@ -20,14 +25,41 @@ const LocateRecyclingCenters = dynamic(() =>
 
 const UserProfilePage = () => {
   const [selectedOption, setSelectedOption] = useState("reportMissedPickups");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const menuItems = [
+    { id: "reportMissedPickups", label: "Report Missed Pickup", icon: <AlertTriangle className="w-5 h-5" /> },
+    { id: "reportManhole", label: "Report Manhole Issue", icon: <Construction className="w-5 h-5" />, variant: "warning" },
+    { id: "createRequestForRecycledWaste", label: "Recycled Waste Requests", icon: <Recycle className="w-5 h-5" /> },
+    { id: "waste_pickup_schedules", label: "Pickup Schedules", icon: <Calendar className="w-5 h-5" /> },
+    { id: "report_to_admin", label: "Report to Admin", icon: <MessageSquare className="w-5 h-5" /> },
+    { id: "locate_recycling_centers", label: "Recycling Centers", icon: <MapPin className="w-5 h-5" /> },
+  ];
+
+  const getPageInfo = () => {
+    switch (selectedOption) {
+      case "reportMissedPickups":
+        return { title: "Report Missed Pickup", subtitle: "Submit a report for missed waste collection" };
+      case "reportManhole":
+        return { title: "Report Manhole Issue", subtitle: "Report manhole problems in your area" };
+      case "createRequestForRecycledWaste":
+        return { title: "Recycled Waste Requests", subtitle: "Request recycled waste collection" };
+      case "waste_pickup_schedules":
+        return { title: "Pickup Schedules", subtitle: "View your waste pickup schedule" };
+      case "report_to_admin":
+        return { title: "Report to Admin", subtitle: "Send a message to the administrator" };
+      case "locate_recycling_centers":
+        return { title: "Recycling Centers", subtitle: "Find recycling centers near you" };
+      default:
+        return { title: "Dashboard", subtitle: "Select an option to get started" };
+    }
+  };
 
   const renderContent = () => {
     switch (selectedOption) {
       case "reportMissedPickups":
         return <ReportMissedPickups />;
+      case "reportManhole":
+        return <ReportManhole />;
       case "createRequestForRecycledWaste":
         return <CreateRequestForRecycledWaste />;
       case "waste_pickup_schedules":
@@ -37,95 +69,32 @@ const UserProfilePage = () => {
       case "locate_recycling_centers":
         return <LocateRecyclingCenters />;
       default:
-        return <p>Select an option to get started.</p>;
+        return <p className="text-text-secondary">Select an option to get started.</p>;
     }
   };
 
-  return (
-    <div className="flex bg-green-50 relative w-screen h-screen">
-  {/* Sidebar */}
-  <div
-    className={`absolute top-0 left-0 h-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
-      isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-    }`}
-    style={{ minWidth: "250px", borderRight: "1px solid black", zIndex: 9999 }}
-  >
-    <div className="flex justify-between items-center p-4 border-b">
-      <h2 className="text-xl font-bold text-custom-black">User Dashboard</h2>
-      <button
-        onClick={toggleSidebar}
-        className="text-xl font-bold text-custom-green md:hidden"
-      >
-        &times;
-      </button>
+  const sidebar = (
+    <div className="space-y-1">
+      {menuItems.map((item) => (
+        <SidebarItem
+          key={item.id}
+          icon={item.icon}
+          label={item.label}
+          active={selectedOption === item.id}
+          onClick={() => setSelectedOption(item.id)}
+          variant={item.variant || "default"}
+        />
+      ))}
     </div>
-    <ul>
-      <li
-        className={`flex items-center py-2 px-4 w-full mb-2 text-custom-black cursor-pointer ${
-          selectedOption === "reportMissedPickups" ? "bg-custom-green text-custom-black font-semibold"
-                  : "hover:bg-custom-green"
-        }`}
-        onClick={() => setSelectedOption("reportMissedPickups")}
-      >
-        Report Missed Pickup
-      </li>
-      <li
-        className={`flex items-center py-2 px-4 mb-2 cursor-pointer text-custom-black ${
-          selectedOption === "createRequestForRecycledWaste" ? "bg-custom-green text-custom-black font-semibold"
-                  : "hover:bg-custom-green"
-        }`}
-        onClick={() => setSelectedOption("createRequestForRecycledWaste")}
-      >
-        Requests For Recycled Waste
-      </li>
-      <li
-        className={`flex items-center py-2 px-4 mb-2 cursor-pointer text-custom-black ${
-          selectedOption === "waste_pickup_schedules" ? "bg-custom-green text-custom-black font-semibold"
-                  : "hover:bg-custom-green"
-        }`}
-        onClick={() => setSelectedOption("waste_pickup_schedules")}
-      >
-        Waste Pickup Schedules
-      </li>
-      <li
-        className={`flex items-center py-2 px-4 mb-2 cursor-pointer text-custom-black ${
-          selectedOption === "report_to_admin" ? "bg-custom-green text-custom-black font-semibold"
-                  : "hover:bg-custom-green"
-        }`}
-        onClick={() => setSelectedOption("report_to_admin")}
-      >
-        Report to Admin
-      </li>
-      <li
-        className={`flex items-center py-2 px-4 mb-2 cursor-pointer text-custom-black ${
-          selectedOption === "locate_recycling_centers" ? "bg-custom-green text-custom-black font-semibold"
-                  : "hover:bg-custom-green"
-        }`}
-        onClick={() => setSelectedOption("locate_recycling_centers")}
-      >
-        Locate Recycling Centers
-      </li>
-    </ul>
-  </div>
+  );
 
-  {/* Sidebar Toggle Button */}
-  <button
-    onClick={toggleSidebar}
-    className={`fixed z-30 left-0 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-custom-green text-white flex items-center justify-center rounded-r-full shadow-lg md:hidden ${
-      isSidebarOpen ? "hidden" : "block"
-    }`}
-  >
-    →
-  </button>
+  const pageInfo = getPageInfo();
 
-  {/* Main Content */}
-  <div
-    className={`p-6 transition-all duration-300 ease-in-out flex-1 overflow-y-auto`}
-  >
-    {renderContent()}
-  </div>
-</div>
-
+  return (
+    <DashboardLayout sidebar={sidebar} title="User Dashboard">
+      <PageHeader title={pageInfo.title} subtitle={pageInfo.subtitle} />
+      {renderContent()}
+    </DashboardLayout>
   );
 };
 

@@ -13,58 +13,73 @@ export async function POST(req) {
     );
   }
 
+  const client = await pool.connect();
   try {
     // Begin transaction
-    await pool.query('BEGIN');
+    await client.query('BEGIN');
 
-    // Retrieve the request_for_area_approval record
-    const requestQuery = `SELECT area_id, company_id FROM request_for_area_approval WHERE area_approval_id = $1`;
-    const { rows } = await pool.query(requestQuery, [areaApprovalId]);
+    // Retrieve the request_for_area_approval record (now includes service_type)
+    const requestQuery = `SELECT area_id, company_id, service_type FROM request_for_area_approval WHERE area_approval_id = $1`;
+    const { rows } = await client.query(requestQuery, [areaApprovalId]);
 
     if (rows.length === 0) {
-      await pool.query('ROLLBACK');
+      await client.query('ROLLBACK');
       return NextResponse.json(
         { success: false, message: 'Area approval request not found' },
         { status: 404 }
       );
     }
 
-    const { area_id, company_id } = rows[0];
+    const { area_id, company_id, service_type } = rows[0];
 
     // Delete the request_for_area_approval record
     const deleteQuery = `DELETE FROM request_for_area_approval WHERE area_approval_id = $1`;
-    await pool.query(deleteQuery, [areaApprovalId]);
+    await client.query(deleteQuery, [areaApprovalId]);
 
-    // Assign the company_id to the area
-    const assignCompanyQuery = `UPDATE area SET company_id = $1 WHERE area_id = $2`;
-    await pool.query(assignCompanyQuery, [company_id, area_id]);
+    // Insert into area_service_assignment table
+    await client.query(
+      `INSERT INTO area_service_assignment (area_id, company_id, service_type)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (area_id, company_id, service_type) DO NOTHING`,
+      [area_id, company_id, service_type || 'waste_collection']
+    );
 
-    const notificationMessage = "Your selected area has been approved!";
-    const notificationIdResult = await pool.query(
+    // For backward compatibility, also update area.company_id for waste_collection
+    if (service_type === 'waste_collection' || !service_type) {
+      const assignCompanyQuery = `UPDATE area SET company_id = $1 WHERE area_id = $2`;
+      await client.query(assignCompanyQuery, [company_id, area_id]);
+    }
+
+    const serviceTypeLabel = service_type === 'manhole_management' ? 'Manhole Management' :
+                             service_type === 'recycling' ? 'Recycling' : 'Waste Collection';
+    const notificationMessage = `Your area request for ${serviceTypeLabel} has been approved!`;
+    const notificationIdResult = await client.query(
         'INSERT INTO notification(content) VALUES ($1) RETURNING notification_id',
         [notificationMessage]
     );
 
     const notificationId = notificationIdResult.rows[0].notification_id;
-    await pool.query(
+    await client.query(
         'INSERT INTO notification_company(notification_id, company_id) VALUES ($1, $2)',
         [notificationId, company_id]
     );
 
     // Commit transaction
-    await pool.query('COMMIT');
+    await client.query('COMMIT');
 
     return NextResponse.json(
-      { success: true, message: 'Area approved and company assigned successfully' },
+      { success: true, message: `Area approved for ${serviceTypeLabel} successfully` },
       { status: 200 }
     );
   } catch (error) {
     // Rollback transaction in case of error
-    await pool.query('ROLLBACK');
+    await client.query('ROLLBACK');
     console.error('Error approving area:', error);
     return NextResponse.json(
       { success: false, message: 'An error occurred while processing the request' },
       { status: 500 }
     );
+  } finally {
+    client.release();
   }
 }
