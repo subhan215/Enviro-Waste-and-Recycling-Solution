@@ -6,9 +6,13 @@ export async function GET() {
 
     const client = await pool.connect();
     try {
-        // Fetch all recycling center requests from the database
+        // Fetch all recycling center requests with company name
         const result = await client.query(
-            `SELECT * FROM request_recycling_center`
+            `SELECT rrc.*, c.name as company_name, c.name as name
+             FROM request_recycling_center rrc
+             JOIN company c ON rrc.company_id = c.user_id
+             WHERE rrc.status = 'Pending' OR rrc.status IS NULL
+             ORDER BY rrc.request_id DESC`
         );
 
         // Return the fetched results
