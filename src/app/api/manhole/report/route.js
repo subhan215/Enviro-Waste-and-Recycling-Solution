@@ -15,13 +15,20 @@ export async function POST(req) {
         const areaId = data.get('areaId');
         const reportType = data.get('reportType');
         const description = data.get('description');
-        const latitude = data.get('latitude');
-        const longitude = data.get('longitude');
+        const streetNumber = data.get('streetNumber');
+        const nearbyLocation = data.get('nearbyLocation');
 
         // Validate required fields
-        if (!userId || !areaId) {
+        if (!userId) {
             return NextResponse.json({
-                message: "User ID and Area ID are required",
+                message: "User ID is required",
+                success: false
+            }, { status: 400 });
+        }
+
+        if (!areaId) {
+            return NextResponse.json({
+                message: "Please select an area",
                 success: false
             }, { status: 400 });
         }
@@ -84,7 +91,7 @@ export async function POST(req) {
         if (numbers[0] === 0) {
             try { await unlink(filePath); } catch {}
             return NextResponse.json({
-                message: "No manhole issue detected in the image",
+                message: "No manhole issue detected in the image. Please upload a clear photo of the manhole problem.",
                 success: false
             }, { status: 400 });
         }
@@ -117,31 +124,34 @@ export async function POST(req) {
 
         // Find a company with manhole_management service approved for this area
         const companyResult = await client.query(
-            `SELECT asa.company_id
+            `SELECT asa.company_id, c.name as company_name
              FROM area_service_assignment asa
+             JOIN company c ON asa.company_id = c.user_id
              WHERE asa.area_id = $1 AND asa.service_type = 'manhole_management'
              LIMIT 1`,
             [areaId]
         );
 
         let companyId = null;
+        let companyName = null;
         let status = 'pending';
 
         if (companyResult.rows.length > 0) {
             companyId = companyResult.rows[0].company_id;
+            companyName = companyResult.rows[0].company_name;
             status = 'assigned';
         }
 
         // Insert manhole report into the database
         manhole_report = await client.query(
-            `INSERT INTO manhole_report(user_id, area_id, company_id, report_type, description, latitude, longitude, before_img, status, created_at, assigned_at)
+            `INSERT INTO manhole_report(user_id, area_id, company_id, report_type, description, street_number, nearby_location, before_img, status, created_at, assigned_at)
              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
-            [userId, areaId, companyId, reportType, description, latitude, longitude, upload_manhole_image_to_cloud.url, status, new Date(), companyId ? new Date() : null]
+            [userId, areaId, companyId, reportType, description || null, streetNumber || null, nearbyLocation || null, upload_manhole_image_to_cloud.url, status, new Date(), companyId ? new Date() : null]
         );
 
         // If company is assigned, send notification
         if (companyId) {
-            const notificationMessage = `A new manhole report (${reportType}) has been assigned to you`;
+            const notificationMessage = `New manhole report (${reportType}) in your assigned area. Street: ${streetNumber || 'N/A'}`;
             const notificationIdResult = await client.query(
                 'INSERT INTO notification(content) VALUES ($1) RETURNING notification_id',
                 [notificationMessage]
@@ -158,7 +168,9 @@ export async function POST(req) {
         return NextResponse.json({
             success: true,
             data: manhole_report.rows,
-            message: 'Manhole report created successfully',
+            message: companyId
+                ? `Manhole report submitted and assigned to ${companyName}`
+                : 'Manhole report submitted. Waiting for a company to be assigned to this area.',
         }, { status: 200 });
 
     } catch (error) {

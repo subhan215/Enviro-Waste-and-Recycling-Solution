@@ -271,10 +271,16 @@ const Manhole_Reports = () => {
                       </div>
 
                       {/* Reporter Info */}
-                      <div className="mt-3 text-sm text-gray-600">
+                      <div className="mt-3 text-sm text-gray-600 space-y-1">
                         <p><span className="text-gray-400">Reported by:</span> {report.user_name}</p>
+                        {report.street_number && (
+                          <p><span className="text-gray-400">Street:</span> {report.street_number}</p>
+                        )}
+                        {report.nearby_location && (
+                          <p><span className="text-gray-400">Nearby:</span> {report.nearby_location}</p>
+                        )}
                         {report.description && (
-                          <p className="mt-1"><span className="text-gray-400">Note:</span> {report.description}</p>
+                          <p><span className="text-gray-400">Note:</span> {report.description}</p>
                         )}
                       </div>
                     </div>

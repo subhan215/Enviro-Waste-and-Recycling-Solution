@@ -14,6 +14,11 @@ const ReportManhole = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [alert, setAlert] = useState([]);
+  const [areas, setAreas] = useState([]);
+  const [selectedArea, setSelectedArea] = useState('');
+  const [streetNumber, setStreetNumber] = useState('');
+  const [nearbyLocation, setNearbyLocation] = useState('');
+  const [loadingAreas, setLoadingAreas] = useState(false);
 
   const showAlert = (type, message) => {
     const id = Date.now();
@@ -24,7 +29,6 @@ const ReportManhole = () => {
   };
 
   let userId = userData?.user_id;
-  let areaId = userData?.area_id;
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -42,6 +46,11 @@ const ReportManhole = () => {
   const reportManhole = async (event) => {
     event.preventDefault();
 
+    if (!selectedArea) {
+      showAlert("warning", "Please select an area");
+      return;
+    }
+
     if (!selectedImage) {
       showAlert("warning", "Please select an image of the manhole issue");
       return;
@@ -51,25 +60,14 @@ const ReportManhole = () => {
     try {
       const formData = new FormData();
       formData.append("userId", userId);
-      formData.append("areaId", areaId);
+      formData.append("areaId", selectedArea);
       formData.append("reportType", reportType);
       formData.append("description", description);
+      formData.append("streetNumber", streetNumber);
+      formData.append("nearbyLocation", nearbyLocation);
       formData.append("manhole_image", selectedImage);
 
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            formData.append("latitude", position.coords.latitude);
-            formData.append("longitude", position.coords.longitude);
-            await submitReport(formData);
-          },
-          async () => {
-            await submitReport(formData);
-          }
-        );
-      } else {
-        await submitReport(formData);
-      }
+      await submitReport(formData);
     } catch (error) {
       showAlert("error", error.message);
       setSubmitting(false);
@@ -92,11 +90,14 @@ const ReportManhole = () => {
       const responseData = JSON.parse(text);
       if (responseData.success) {
         getAllManholeReports();
-        showAlert("success", "Manhole report submitted successfully");
+        showAlert("success", responseData.message || "Manhole report submitted successfully");
         setSelectedImagePreview(null);
         setSelectedImage(null);
         setDescription('');
         setReportType('open');
+        setStreetNumber('');
+        setNearbyLocation('');
+        setSelectedArea('');
       } else {
         showAlert("error", responseData.message || "Failed to submit report");
       }
@@ -161,13 +162,43 @@ const ReportManhole = () => {
     }
   };
 
+  const fetchAreas = async () => {
+    setLoadingAreas(true);
+    try {
+      const response = await fetch('/api/area/get_all_areas', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) {
+        console.error('Failed to fetch areas:', response.status);
+        return;
+      }
+
+      const text = await response.text();
+      if (!text) {
+        console.error('Empty response from server');
+        return;
+      }
+
+      const responseData = JSON.parse(text);
+      if (responseData.success) {
+        setAreas(responseData.data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching areas:', error);
+    } finally {
+      setLoadingAreas(false);
+    }
+  };
+
   useEffect(() => {
     const fetchManholeReports = async () => {
       setLoading(true);
       try {
-        await getAllManholeReports();
+        await Promise.all([getAllManholeReports(), fetchAreas()]);
       } catch (error) {
-        console.error('Error fetching manhole reports:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setTimeout(() => setLoading(false), 1000);
       }
@@ -288,6 +319,26 @@ const ReportManhole = () => {
             </div>
 
             <form onSubmit={reportManhole} className="p-6 space-y-4">
+              {/* Area Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Select Area *</label>
+                <select
+                  value={selectedArea}
+                  onChange={(e) => setSelectedArea(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  disabled={loadingAreas}
+                >
+                  <option value="">
+                    {loadingAreas ? 'Loading areas...' : 'Select an area'}
+                  </option>
+                  {areas.map((area) => (
+                    <option key={area.area_id} value={area.area_id}>
+                      {area.area_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               {/* Issue Type */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Issue Type</label>
@@ -304,14 +355,38 @@ const ReportManhole = () => {
                 </select>
               </div>
 
+              {/* Street Number */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Street Number / Address</label>
+                <input
+                  type="text"
+                  value={streetNumber}
+                  onChange={(e) => setStreetNumber(e.target.value)}
+                  placeholder="e.g., 123 Main Street"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Nearby Location */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Nearby Location / Landmark</label>
+                <input
+                  type="text"
+                  value={nearbyLocation}
+                  onChange={(e) => setNearbyLocation(e.target.value)}
+                  placeholder="e.g., Near ABC Mall, opposite XYZ Bank"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                />
+              </div>
+
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Additional Description (Optional)</label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Describe the issue in detail..."
-                  rows="3"
+                  placeholder="Any other details about the issue..."
+                  rows="2"
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
                 />
               </div>
@@ -430,6 +505,18 @@ const ReportManhole = () => {
                           <div>
                             <p className="text-sm text-gray-500">Assigned Company</p>
                             <p className="font-medium text-gray-800">{report.company_name}</p>
+                          </div>
+                        )}
+                        {report.street_number && (
+                          <div>
+                            <p className="text-sm text-gray-500">Street Address</p>
+                            <p className="font-medium text-gray-800">{report.street_number}</p>
+                          </div>
+                        )}
+                        {report.nearby_location && (
+                          <div>
+                            <p className="text-sm text-gray-500">Nearby Location</p>
+                            <p className="font-medium text-gray-800">{report.nearby_location}</p>
                           </div>
                         )}
                         {report.description && (
