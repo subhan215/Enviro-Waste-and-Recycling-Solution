@@ -25,7 +25,7 @@ export async function POST(req) {
     // Locally storing the image
     const userImageBuffer = await userImage.arrayBuffer();
     const userImageBufferStream = Buffer.from(userImageBuffer);
-    const path = `./public/${userImage.name}`;
+    const path = `/tmp/${Date.now()}-${userImage.name}`;
     await writeFile(path, userImageBufferStream);
 
     // Upload the image to Cloudinary

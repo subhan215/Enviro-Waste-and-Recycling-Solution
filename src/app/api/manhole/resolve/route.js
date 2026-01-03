@@ -18,7 +18,7 @@ export async function PUT(req) {
     // Locally storing the image
     const after_image_buffer = await after_image.arrayBuffer();
     const after_image_buffer_stream = Buffer.from(after_image_buffer);
-    const path = `./public/${after_image.name}`;
+    const path = `/tmp/${Date.now()}-${after_image.name}`;
     await writeFile(path, after_image_buffer_stream);
 
     // Call Gemini AI to verify the resolution

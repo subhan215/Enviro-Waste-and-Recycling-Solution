@@ -20,7 +20,7 @@ export async function PUT(req) {
     // Locally storing the image
     const clean_or_unclean_image_buffer = await clean_or_unclean_image.arrayBuffer();
     const clean_or_unclean_image_buffer_stream = Buffer.from(clean_or_unclean_image_buffer);
-    const path = `./public/${clean_or_unclean_image.name}`;
+    const path = `/tmp/${Date.now()}-${clean_or_unclean_image.name}`;
     await writeFile(path, clean_or_unclean_image_buffer_stream);
 
     // Gemini AI processing

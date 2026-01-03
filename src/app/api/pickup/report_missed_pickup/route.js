@@ -32,8 +32,9 @@ export async function POST(req) {
         }
 
         // Generate unique filename to avoid conflicts
+        // Use /tmp directory for serverless environments (Vercel, etc.)
         const uniqueFileName = `${Date.now()}-${clean_or_unclean_image.name}`;
-        filePath = path.join(process.cwd(), 'public', uniqueFileName);
+        filePath = path.join('/tmp', uniqueFileName);
 
         // Locally storing the image
         const clean_or_unclean_image_buffer = await clean_or_unclean_image.arrayBuffer();

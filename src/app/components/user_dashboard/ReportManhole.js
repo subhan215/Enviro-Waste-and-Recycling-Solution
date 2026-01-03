@@ -83,7 +83,13 @@ const ReportManhole = () => {
         body: formData,
       });
 
-      const responseData = await response.json();
+      const text = await response.text();
+      if (!text) {
+        showAlert("error", "Server returned empty response. Please try again.");
+        return;
+      }
+
+      const responseData = JSON.parse(text);
       if (responseData.success) {
         getAllManholeReports();
         showAlert("success", "Manhole report submitted successfully");
@@ -92,28 +98,42 @@ const ReportManhole = () => {
         setDescription('');
         setReportType('open');
       } else {
-        showAlert("error", responseData.message);
+        showAlert("error", responseData.message || "Failed to submit report");
       }
     } catch (error) {
-      showAlert("error", error.message);
+      console.error("Submit error:", error);
+      showAlert("error", error.message || "Failed to submit report");
     } finally {
       setSubmitting(false);
     }
   };
 
   const getAllManholeReports = async () => {
+    if (!userId) return; // Don't fetch if userId is not available
+
     try {
       let response = await fetch(`/api/manhole/get_all_for_user/${userId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
 
-      const responseData = await response.json();
+      if (!response.ok) {
+        console.error("Failed to fetch manhole reports:", response.status);
+        return;
+      }
+
+      const text = await response.text();
+      if (!text) {
+        console.error("Empty response from server");
+        return;
+      }
+
+      const responseData = JSON.parse(text);
       if (responseData.success) {
         setAllManholeReports(responseData.data || []);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching manhole reports:", error);
     }
   };
 
